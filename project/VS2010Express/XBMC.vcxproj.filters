@@ -343,6 +343,12 @@
     <Filter Include="input\joysticks\generic">
       <UniqueIdentifier>{4a62df5e-b96a-42c2-9303-795d9605b333}</UniqueIdentifier>
     </Filter>
+    <Filter Include="games">
+      <UniqueIdentifier>{56b8c4ee-0f45-42e9-a7f7-eeae1c8940fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="games\tags">
+      <UniqueIdentifier>{43ec8ed7-e2f3-4e78-8d03-350479c4b40a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\xbmc\win32\pch.cpp">
@@ -3181,6 +3187,12 @@
     </ClCompile>
     <ClCompile Include="..\..\xbmc\input\joysticks\generic\GenericJoystickInputHandler.cpp">
       <Filter>input\joysticks\generic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\xbmc\games\tags\GameInfoTag.cpp">
+      <Filter>games\tags</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\xbmc\games\tags\GameInfoTagLoader.cpp">
+      <Filter>games\tags</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -6182,6 +6194,12 @@
     </ClInclude>
     <ClInclude Include="..\..\xbmc\input\joysticks\generic\GenericJoystickInputHandler.h">
       <Filter>input\joysticks\generic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\games\tags\GameInfoTagLoader.h">
+      <Filter>games\tags</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\games\tags\GameInfoTag.h">
+      <Filter>games\tags</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
