@@ -391,8 +391,8 @@ public:
   virtual bool Open();
   virtual bool CommitTransaction();
 
-  int AddMovie(const std::string& strFilenameAndPath);
-  int AddEpisode(int idShow, const std::string& strFilenameAndPath);
+  int AddMovie(const std::string& strFilenameAndPathh, const CDateTime& dateAdded = CDateTime());
+  int AddEpisode(int idShow, const std::string& strFilenameAndPathh, const CDateTime& dateAdded = CDateTime());
 
   // editing functions
   /*! \brief Set the playcount of an item
@@ -731,7 +731,7 @@ public:
    \param idFile id of the file in the files table
    \param strFileNameAndPath path to the file
    */
-  void UpdateFileDateAdded(int idFile, const std::string& strFileNameAndPath);
+  void UpdateFileDateAdded(int idFile, const std::string& strFileNameAndPathh, const CDateTime& dateAdded = CDateTime());
 
   void ExportToXML(const std::string &path, bool singleFile = true, bool images=false, bool actorThumbs=false, bool overwrite=false);
   void ExportActorThumbs(const std::string &path, const CVideoInfoTag& tag, bool singleFiles, bool overwrite=false);
@@ -836,9 +836,10 @@ protected:
    \param idShow the id of the show.
    \param path the path to add.
    \param parentPath the parent path of the path to add.
+   \param dateAdded date/time when the path was added
    \return true if successfully added, false otherwise.
    */
-  bool AddPathToTvShow(int idShow, const std::string &path, const std::string &parentPath);
+  bool AddPathToTvShow(int idShow, const std::string &path, const std::string &parentPath, const CDateTime& dateAdded = CDateTime());
 
   /*! \brief Check whether a show is already in the library.
    Matches on unique identifier or matching title and premiered date.
