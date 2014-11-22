@@ -194,6 +194,7 @@
 #include <cdio/logging.h>
 #endif
 
+#include "media/import/MediaImportManager.h"
 #include "storage/MediaManager.h"
 #include "utils/JobManager.h"
 #include "utils/SaveFileStateJob.h"
@@ -2944,6 +2945,8 @@ void CApplication::Stop(int exitCode)
     m_AppFocused = false;
     m_ExitCode = exitCode;
     CLog::Log(LOGNOTICE, "stop all");
+
+    CMediaImportManager::GetInstance().Uninitialize();
 
     // cancel any jobs from the jobmanager
     CJobManager::GetInstance().CancelJobs();
