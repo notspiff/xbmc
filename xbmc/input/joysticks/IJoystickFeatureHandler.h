@@ -21,8 +21,6 @@
 
 #include "JoystickTypes.h"
 
-#include <vector>
-
 /*!
  * \ingroup joysticks
  * \brief Interface for handling events for physical joystick features like
@@ -34,22 +32,14 @@ public:
   virtual ~IJoystickFeatureHandler(void) { }
 
   /*!
-   * \brief A digital button has been pressed
+   * \brief A digital button has been pressed or released
    *
    * \param id        The ID of the button or trigger
+   * \param bPressed  True if pressed, false if released
    *
    * \return True if the event was handled otherwise false
    */
-  virtual bool OnButtonPress(JoystickFeatureID id) { return false; }
-
-  /*!
-   * \brief A digital button has been released
-   *
-   * \param id        The ID of the button or trigger
-   *
-   * \return True if the event was handled otherwise false
-   */
-  virtual bool OnButtonRelease(JoystickFeatureID id) { return false; }
+  virtual bool OnButtonPress(JoystickFeatureID id, bool bPressed) { return false; }
 
   /*!
    * \brief An analog button has changed state
