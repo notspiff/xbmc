@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2015 Team XBMC
+ *      Copyright (C) 2014 Team XBMC
  *      http://xbmc.org
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,18 +19,23 @@
  */
 #pragma once
 
-#include <memory>
-#include <vector>
+#include "GUIImage.h"
+#include "games/GameTypes.h"
+#include "threads/CriticalSection.h"
 
-namespace GAME
+class CGUIControllerLayout : public CGUIImage
 {
+public:
+  CGUIControllerLayout(int parentID, int controlID, float posX, float posY, float width, float height);
+  CGUIControllerLayout(const CGUIControllerLayout &from);
+  virtual ~CGUIControllerLayout(void) { }
+  virtual CGUIControllerLayout *Clone() const { return new CGUIControllerLayout(*this); }
 
-class CControllerLayout;
-typedef std::shared_ptr<CControllerLayout> ControllerLayoutPtr;
-typedef std::vector<ControllerLayoutPtr>   ControllerLayoutVector;
+  virtual void Render();
 
-class CGameClient;
-typedef std::shared_ptr<CGameClient> GameClientPtr;
-typedef std::vector<GameClientPtr>   GameClientVector;
+  void ActivateLayout(const GAME::ControllerLayoutPtr& layout);
 
-}
+private:
+  GAME::ControllerLayoutPtr m_currentLayout;
+  CCriticalSection          m_mutex;
+};

@@ -1,4 +1,5 @@
-SRCS=GameFileAutoLauncher.cpp \
+SRCS=ControllerLayout.cpp \
+     GameFileAutoLauncher.cpp \
      GameManager.cpp \
      GameSettings.cpp \
      SerialState.cpp
