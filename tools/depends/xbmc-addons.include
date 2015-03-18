@@ -92,4 +92,5 @@ linux-system-libs:
 	[ -f $(ADDON_DEPS_DIR)/lib/libGL.so ] || \
           (ln -s /usr/lib/$(HOST)/mesa $(ADDON_DEPS_DIR)/lib/mesa && ln -s $(ADDON_DEPS_DIR)/lib/mesa/libGL.so $(ADDON_DEPS_DIR)/lib/libGL.so)
 	[ -f $(ADDON_DEPS_DIR)/include/GL ] || ln -s /usr/include/GL $(ADDON_DEPS_DIR)/include/GL
+	[ -f $(ADDON_DEPS_DIR)/lib/libm.so ] || ln -s /usr/lib/$(HOST)/libm.so $(ADDON_DEPS_DIR)/lib/
 
