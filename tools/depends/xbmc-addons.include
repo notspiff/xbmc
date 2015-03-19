@@ -23,6 +23,7 @@ CMAKE_EXTRA =
 ifeq (darwin, $(findstring darwin, $(HOST)))
     INSTALL_PREFIX = ../../../../../addons/
     CMAKE_EXTRA = -DPACKAGE_ZIP=1
+    DEPS += fake-pc-files
 endif
 
 ifneq ($(PREFIX),)
@@ -94,3 +95,5 @@ linux-system-libs:
 	[ -f $(ADDON_DEPS_DIR)/include/GL ] || ln -s /usr/include/GL $(ADDON_DEPS_DIR)/include/GL
 	[ -f $(ADDON_DEPS_DIR)/lib/libm.so ] || ln -s /usr/lib/$(HOST)/libm.so $(ADDON_DEPS_DIR)/lib/
 
+fake-pc-files:
+	[ -f $(ADDONS_DEPS_DIR)/lib/pkgconfig/x11darwin.pc ] || ln -s $(BUILDDIR)/../x11darwin.pc $(ADDON_DEPS_DIR)/lib/pkgconfig/x11darwin.pc
