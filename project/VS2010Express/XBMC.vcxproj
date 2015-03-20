@@ -527,6 +527,7 @@
     <ClCompile Include="..\..\xbmc\input\KeyboardLayoutManager.cpp" />
     <ClCompile Include="..\..\xbmc\input\KeyboardStat.cpp" />
     <ClCompile Include="..\..\xbmc\input\MouseStat.cpp" />
+    <ClCompile Include="..\..\xbmc\input\PortManager.cpp" />
     <ClCompile Include="..\..\xbmc\input\touch\generic\GenericTouchActionHandler.cpp" />
     <ClCompile Include="..\..\xbmc\input\touch\generic\GenericTouchSwipeDetector.cpp" />
     <ClCompile Include="..\..\xbmc\input\touch\ITouchInputHandling.cpp" />
@@ -963,6 +964,7 @@
     <ClInclude Include="..\..\xbmc\input\joysticks\JoystickTypes.h" />
     <ClInclude Include="..\..\xbmc\input\Key.h" />
     <ClInclude Include="..\..\xbmc\input\KeyboardLayoutManager.h" />
+    <ClInclude Include="..\..\xbmc\input\PortManager.h" />
     <ClInclude Include="..\..\xbmc\input\touch\generic\GenericTouchActionHandler.h" />
     <ClInclude Include="..\..\xbmc\input\touch\generic\GenericTouchSwipeDetector.h" />
     <ClInclude Include="..\..\xbmc\input\touch\generic\IGenericTouchGestureDetector.h" />

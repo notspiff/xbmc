@@ -3263,6 +3263,9 @@
     <ClCompile Include="..\..\xbmc\guilib\GUIControllerLayout.cpp">
       <Filter>guilib</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\xbmc\input\PortManager.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\xbmc\win32\pch.h">
@@ -6335,6 +6338,9 @@
     </ClInclude>
     <ClInclude Include="..\..\xbmc\guilib\GUIControllerLayout.h">
       <Filter>guilib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\input\PortManager.h">
+      <Filter>input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
