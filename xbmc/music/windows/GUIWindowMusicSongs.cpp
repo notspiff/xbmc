@@ -53,7 +53,6 @@
 #define CONTROL_BTNPLAYLISTS       7
 #define CONTROL_BTNSCAN            9
 #define CONTROL_BTNREC            10
-#define CONTROL_BTNRIP            11
 
 #ifdef HAS_DVD_DRIVE
 using namespace MEDIA_DETECT;
@@ -133,10 +132,6 @@ bool CGUIWindowMusicSongs::OnMessage(CGUIMessage& message)
             UpdateButtons();
           }
         }
-      }
-      else if (iControl == CONTROL_BTNRIP)
-      {
-        OnRipCD();
       }
     }
     break;
@@ -244,16 +239,6 @@ void CGUIWindowMusicSongs::UpdateButtons()
   {
     SET_CONTROL_LABEL(CONTROL_BTNREC, 264); //Record
     CONTROL_DISABLE(CONTROL_BTNREC);
-  }
-
-  // Update CDDA Rip button
-  if (g_mediaManager.IsAudio())
-  {
-    CONTROL_ENABLE(CONTROL_BTNRIP);
-  }
-  else
-  {
-    CONTROL_DISABLE(CONTROL_BTNRIP);
   }
 
   // Disable scan button if shoutcast
