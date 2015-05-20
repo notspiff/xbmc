@@ -877,5 +877,8 @@ std::string CGUIWindowMusicNav::GetStartFolder(const std::string &dir)
     return "musicdb://compilations/";
   else if (lower == "years")
     return "musicdb://years/";
+  else if (lower == "files")
+    return "sources://music/";
+
   return CGUIWindowMusicBase::GetStartFolder(dir);
 }
