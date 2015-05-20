@@ -82,7 +82,6 @@ CGUIWindowMusicNav::CGUIWindowMusicNav(void)
 {
   m_vecItems->SetPath("?");
   m_bDisplayEmptyDatabaseMessage = false;
-  m_thumbLoader.SetObserver(this);
   m_searchWithEdit = false;
 }
 
@@ -96,10 +95,6 @@ bool CGUIWindowMusicNav::OnMessage(CGUIMessage& message)
   {
   case GUI_MSG_WINDOW_RESET:
     m_vecItems->SetPath("?");
-    break;
-  case GUI_MSG_WINDOW_DEINIT:
-    if (m_thumbLoader.IsLoading())
-      m_thumbLoader.StopThread();
     break;
   case GUI_MSG_WINDOW_INIT:
     {
