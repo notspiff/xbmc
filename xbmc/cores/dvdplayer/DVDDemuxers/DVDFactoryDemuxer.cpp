@@ -27,6 +27,9 @@
 
 #include "DVDDemuxFFmpeg.h"
 #include "DVDDemuxShoutcast.h"
+#ifdef HAS_FILESYSTEM_HTSP
+#include "DVDDemuxHTSP.h"
+#endif
 #include "DVDDemuxBXA.h"
 #include "DVDDemuxCDDA.h"
 #include "DVDDemuxPVRClient.h"
@@ -84,6 +87,17 @@ CDVDDemux* CDVDFactoryDemuxer::CreateDemuxer(CDVDInputStream* pInputStream, bool
         return NULL;
     }
   }
+
+#ifdef HAS_FILESYSTEM_HTSP
+  if (pInputStream->IsStreamType(DVDSTREAM_TYPE_HTSP))
+  {
+    unique_ptr<CDVDDemuxHTSP> demuxer(new CDVDDemuxHTSP());
+    if(demuxer->Open(pInputStream))
+      return demuxer.release();
+    else
+      return NULL;
+  }
+#endif
 
   bool streaminfo = true; /* Look for streams before playback */
   if (pInputStream->IsStreamType(DVDSTREAM_TYPE_PVRMANAGER))

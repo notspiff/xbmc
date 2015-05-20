@@ -30,6 +30,9 @@
 #ifdef HAVE_LIBBLURAY
 #include "DVDInputStreamBluray.h"
 #endif
+#ifdef HAS_FILESYSTEM_HTSP
+#include "DVDInputStreamHTSP.h"
+#endif
 #ifdef ENABLE_DVDINPUTSTREAM_STACK
 #include "DVDInputStreamStack.h"
 #endif
@@ -99,6 +102,10 @@ CDVDInputStream* CDVDFactoryInputStream::CreateInputStream(IDVDPlayer* pPlayer, 
        || file.substr(0, 9) == "rtmpte://"
        || file.substr(0, 8) == "rtmps://")
     return new CDVDInputStreamRTMP();
+#endif
+#ifdef HAS_FILESYSTEM_HTSP
+  else if(file.substr(0, 7) == "htsp://")
+    return new CDVDInputStreamHTSP();
 #endif
   else if (item.IsInternetStream())
   {

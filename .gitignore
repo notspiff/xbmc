@@ -906,6 +906,10 @@ lib/cpluff/stamp-h1
 
 /lib/libhdhomerun/Makefile
 
+# /lib/libhts/Win32
+/lib/libhts/Win32/Debug
+/lib/libhts/Win32/Release
+
 /lib/libsquish/Makefile
 /lib/libsquish/lib/squishd.lib
 /lib/libsquish/lib/squish.lib
