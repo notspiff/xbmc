@@ -49,6 +49,7 @@ public:
 
   void OnInfo(CFileItem *pItem, bool bShowInfo = false);
 
+  void DoScan(const std::string &strPath);
 protected:
   virtual void OnInitWindow();
   /*!
@@ -66,9 +67,10 @@ protected:
   virtual bool GetDirectory(const std::string &strDirectory, CFileItemList &items);
   virtual void OnRetrieveMusicInfo(CFileItemList& items);
   void AddItemToPlayList(const CFileItemPtr &pItem, CFileItemList &queuedItems);
-  virtual void OnScan(int iItem) {};
   void OnRipCD();
   virtual std::string GetStartFolder(const std::string &dir);
+
+  virtual void OnScan(int iItem);
 
   virtual bool CheckFilterAdvanced(CFileItemList &items) const;
   virtual bool CanContainFilter(const std::string &strDirectory) const;
