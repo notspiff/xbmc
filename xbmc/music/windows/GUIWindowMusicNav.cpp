@@ -599,6 +599,12 @@ void CGUIWindowMusicNav::GetContextButtons(int itemNumber, CContextButtons &butt
 
       if (item->IsPlugin() || item->IsScript() || m_vecItems->IsPlugin())
         buttons.Add(CONTEXT_BUTTON_PLUGIN_SETTINGS, 1045);
+
+      if (!item->IsReadOnly() && CSettings::Get().GetBool("filelists.allowfiledeletion"))
+      {
+        buttons.Add(CONTEXT_BUTTON_DELETE, 117);
+        buttons.Add(CONTEXT_BUTTON_RENAME, 118);
+      }
     }
   }
   // noncontextual buttons
@@ -704,6 +710,9 @@ bool CGUIWindowMusicNav::OnContextButton(int itemNumber, CONTEXT_BUTTON button)
     }
 
   case CONTEXT_BUTTON_RENAME:
+    if (!item->IsVideoDb() && !item->IsReadOnly())
+      OnRenameItem(itemNumber);
+
     CGUIDialogVideoInfo::UpdateVideoItemTitle(item);
     CUtil::DeleteVideoDatabaseDirectoryCache();
     Refresh();
@@ -715,6 +724,8 @@ bool CGUIWindowMusicNav::OnContextButton(int itemNumber, CONTEXT_BUTTON button)
       item->m_bIsFolder = false;
       CFileUtils::DeleteItem(item);
     }
+    else if (!item->IsVideoDb())
+      OnDeleteItem(itemNumber);
     else
     {
       CGUIDialogVideoInfo::DeleteVideoItemFromDatabase(item);
