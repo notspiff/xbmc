@@ -1296,52 +1296,52 @@ bool CGUIWindowMusicBase::GetDirectory(const std::string &strDirectory, CFileIte
   {
     CMusicThumbLoader loader;
     loader.FillThumb(items);
+
+    CQueryParams params;
+    CDirectoryNode::GetDatabaseInfo(items.GetPath(), params);
+
+    if (params.GetAlbumId())
+    {
+      map<string, string> artistArt;
+      if (m_musicdatabase.GetArtistArtForItem(params.GetAlbumId(), MediaTypeAlbum, artistArt))
+        items.AppendArt(artistArt, MediaTypeArtist);
+
+      map<string, string> albumArt;
+      if (m_musicdatabase.GetArtForItem(params.GetAlbumId(), MediaTypeAlbum, albumArt))
+        items.AppendArt(albumArt, MediaTypeAlbum);
+    }
+
+    // add in the "New Playlist" item if we're in the playlists folder
+    if ((items.GetPath() == "special://musicplaylists/") && !items.Contains("newplaylist://"))
+    {
+      CFileItemPtr newPlaylist(new CFileItem(CProfilesManager::Get().GetUserDataItem("PartyMode.xsp"),false));
+      newPlaylist->SetLabel(g_localizeStrings.Get(16035));
+      newPlaylist->SetLabelPreformated(true);
+      newPlaylist->m_bIsFolder = true;
+      items.Add(newPlaylist);
+
+      newPlaylist.reset(new CFileItem("newplaylist://", false));
+      newPlaylist->SetLabel(g_localizeStrings.Get(525));
+      newPlaylist->SetLabelPreformated(true);
+      newPlaylist->SetSpecialSort(SortSpecialOnBottom);
+      newPlaylist->SetCanQueue(false);
+      items.Add(newPlaylist);
+
+      newPlaylist.reset(new CFileItem("newsmartplaylist://music", false));
+      newPlaylist->SetLabel(g_localizeStrings.Get(21437));
+      newPlaylist->SetLabelPreformated(true);
+      newPlaylist->SetSpecialSort(SortSpecialOnBottom);
+      newPlaylist->SetCanQueue(false);
+      items.Add(newPlaylist);
+    }
+
+    // check for .CUE files here.
+    items.FilterCueItems();
+
+    std::string label;
+    if (items.GetLabel().empty() && m_rootDir.IsSource(items.GetPath(), CMediaSourceSettings::Get().GetSources("music"), &label)) 
+      items.SetLabel(label);
   }
-
-  CQueryParams params;
-  CDirectoryNode::GetDatabaseInfo(items.GetPath(), params);
-
-  if (params.GetAlbumId())
-  {
-    map<string, string> artistArt;
-    if (m_musicdatabase.GetArtistArtForItem(params.GetAlbumId(), MediaTypeAlbum, artistArt))
-      items.AppendArt(artistArt, MediaTypeArtist);
-
-    map<string, string> albumArt;
-    if (m_musicdatabase.GetArtForItem(params.GetAlbumId(), MediaTypeAlbum, albumArt))
-      items.AppendArt(albumArt, MediaTypeAlbum);
-  }
-
-  // add in the "New Playlist" item if we're in the playlists folder
-  if ((items.GetPath() == "special://musicplaylists/") && !items.Contains("newplaylist://"))
-  {
-    CFileItemPtr newPlaylist(new CFileItem(CProfilesManager::Get().GetUserDataItem("PartyMode.xsp"),false));
-    newPlaylist->SetLabel(g_localizeStrings.Get(16035));
-    newPlaylist->SetLabelPreformated(true);
-    newPlaylist->m_bIsFolder = true;
-    items.Add(newPlaylist);
-
-    newPlaylist.reset(new CFileItem("newplaylist://", false));
-    newPlaylist->SetLabel(g_localizeStrings.Get(525));
-    newPlaylist->SetLabelPreformated(true);
-    newPlaylist->SetSpecialSort(SortSpecialOnBottom);
-    newPlaylist->SetCanQueue(false);
-    items.Add(newPlaylist);
-
-    newPlaylist.reset(new CFileItem("newsmartplaylist://music", false));
-    newPlaylist->SetLabel(g_localizeStrings.Get(21437));
-    newPlaylist->SetLabelPreformated(true);
-    newPlaylist->SetSpecialSort(SortSpecialOnBottom);
-    newPlaylist->SetCanQueue(false);
-    items.Add(newPlaylist);
-  }
-
-  // check for .CUE files here.
-  items.FilterCueItems();
-
-  std::string label;
-  if (items.GetLabel().empty() && m_rootDir.IsSource(items.GetPath(), CMediaSourceSettings::Get().GetSources("music"), &label)) 
-    items.SetLabel(label);
 
   return bResult;
 }
