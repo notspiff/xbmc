@@ -5987,7 +5987,7 @@ bool CVideoDatabase::GetSortedVideos(const MediaType &mediaType, const std::stri
   else
     return false;
 
-  items.SetContent(MediaTypes::ToPlural(mediaType));
+  items.SetContent(CMediaTypes::ToPlural(mediaType));
   return success;
 }
 
