@@ -2236,7 +2236,7 @@ CGUIAddonRenderingControl::CGUIAddonRenderingControl(CGUIRenderingControl *pCont
   m_refCount{1}
 { }
 
-bool CGUIAddonRenderingControl::Create(int x, int y, int w, int h, void *device)
+bool CGUIAddonRenderingControl::Create(int x, int y, int w, int h, void* device, float ratio)
 {
   if (CBCreate)
   {

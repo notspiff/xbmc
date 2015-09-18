@@ -253,7 +253,7 @@ friend class CAddonCallbacksGUI;
 public:
   CGUIAddonRenderingControl(CGUIRenderingControl *pControl);
   virtual ~CGUIAddonRenderingControl() {}
-  virtual bool Create(int x, int y, int w, int h, void *device);
+  virtual bool Create(int x, int y, int w, int h, void* device, float ratio);
   virtual void Render();
   virtual void Stop();
   virtual bool IsDirty();

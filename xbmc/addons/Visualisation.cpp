@@ -62,20 +62,9 @@ void CAudioBuffer::Set(const float* psBuffer, int iSize)
   for (int i = iSize; i < m_iLen; ++i) m_pBuffer[i] = 0;
 }
 
-bool CVisualisation::Create(int x, int y, int w, int h, void *device)
+bool CVisualisation::Create()
 {
   m_pInfo = new VIS_PROPS;
-#ifdef HAS_DX
-  m_pInfo->device     = g_Windowing.Get3D11Context();
-#else
-  m_pInfo->device     = NULL;
-#endif
-  m_pInfo->x = x;
-  m_pInfo->y = y;
-  m_pInfo->width = w;
-  m_pInfo->height = h;
-  m_pInfo->pixelRatio = g_graphicsContext.GetResInfo().fPixelRatio;
-
   m_pInfo->name = strdup(Name().c_str());
   m_pInfo->presets = strdup(CSpecialProtocol::TranslatePath(Path()).c_str());
   m_pInfo->profile = strdup(CSpecialProtocol::TranslatePath(Profile()).c_str());
@@ -83,19 +72,6 @@ bool CVisualisation::Create(int x, int y, int w, int h, void *device)
 
   if (CAddonDll<DllVisualisation, Visualisation, VIS_PROPS>::Create() == ADDON_STATUS_OK)
   {
-    // Start the visualisation
-    std::string strFile = URIUtils::GetFileName(g_application.CurrentFile());
-    CLog::Log(LOGDEBUG, "Visualisation::Start()\n");
-    try
-    {
-      m_pStruct->Start(m_iChannels, m_iSamplesPerSec, m_iBitsPerSample, strFile.c_str());
-    }
-    catch (std::exception e)
-    {
-      HandleException(e, "m_pStruct->Start() (CVisualisation::Create)");
-      return false;
-    }
-
     m_hasPresets = GetPresets();
 
     if (GetSubModules())
@@ -105,22 +81,38 @@ bool CVisualisation::Create(int x, int y, int w, int h, void *device)
 
     CreateBuffers();
 
-    CAEFactory::RegisterAudioCallback(this);
-
     return true;
   }
   return false;
 }
 
-void CVisualisation::Start(int iChannels, int iSamplesPerSec, int iBitsPerSample, const std::string &strSongName)
+bool CVisualisation::Create(int x, int y, int width, int height, void* device,
+                            float fPixelRatio)
+{
+  std::string strFile = URIUtils::GetFileName(g_application.CurrentFile());
+  Start(x, y, width, height, device, fPixelRatio, m_iChannels,
+        m_iSamplesPerSec, m_iBitsPerSample, strFile);
+
+  return true;
+}
+
+void CVisualisation::Start(int x, int y, int width, int height, void* device,
+                           float pixelRatio, int iChannels, int iSamplesPerSec,
+                           int iBitsPerSample, const std::string &strSongName)
 {
   // notify visz. that new song has been started
   // pass it the nr of audio channels, sample rate, bits/sample and offcourse the songname
+  // and the screen info
+
+  // Start the visualisation
   if (Initialized())
   {
+    CAEFactory::RegisterAudioCallback(this);
+
     try
     {
-      m_pStruct->Start(iChannels, iSamplesPerSec, iBitsPerSample, strSongName.c_str());
+      m_pStruct->Start(x, y, width, height, device, pixelRatio,
+                       iChannels, iSamplesPerSec, iBitsPerSample, strSongName.c_str());
     }
     catch (std::exception e)
     {
