@@ -473,3 +473,53 @@ std::string CVisualisation::GetPresetName()
     return "";
 }
 
+
+CVisualisationManager::CVisualisationManager()
+{
+}
+
+CVisualisationManager& CVisualisationManager::GetInstance()
+{
+  static CVisualisationManager instance;
+
+  return instance;
+}
+
+VisualisationPtr CVisualisationManager::GetAddon(const std::string& id, int slot)
+{
+  if (m_addons.find(slot) == m_addons.end() ||
+      m_addons[slot].first->ID() != id)
+  {
+    AddonPtr addon;
+    CAddonMgr::GetInstance().GetAddon(id, addon, ADDON_VIZ);
+    if (addon)
+      m_addons[slot].first = std::static_pointer_cast<CVisualisation>(addon);
+    else
+      return VisualisationPtr();
+    m_addons[slot].first->Create();
+  }
+
+  m_addons[slot].second.Stop();
+  return m_addons[slot].first;
+}
+
+void CVisualisationManager::Release(int slot)
+{
+  m_addons[slot].second.StartZero();
+}
+
+void CVisualisationManager::ClearOutIdle()
+{
+  std::vector<int> remove;
+  for (auto& it : m_addons)
+  {
+    if (it.second.second.GetElapsedSeconds() > 30)
+      remove.push_back(it.first);
+  }
+
+  for (auto& i : remove)
+  {
+    CLog::Log(LOGDEBUG, "Visualization %s in slot %i has been IDLE for 30 secs, stopping..", m_addons[i].first->ID().c_str(), i);
+    m_addons.erase(i);
+  }
+}

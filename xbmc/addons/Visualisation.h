@@ -24,6 +24,7 @@
 #include "include/xbmc_vis_types.h"
 #include "guilib/IRenderingCallback.h"
 #include "utils/rfft.h"
+#include "utils/Stopwatch.h"
 
 #include <algorithm>
 #include <map>
@@ -112,5 +113,33 @@ namespace ADDON
 
     // track information
     std::string m_AlbumThumb;
+  };
+
+  typedef std::shared_ptr<CVisualisation> VisualisationPtr;
+
+  //! \brief Class managing visualisation instances.
+  class CVisualisationManager
+  {
+  public:
+    //! \brief Singleton accessor
+    static CVisualisationManager& GetInstance();
+
+    //! \brief Obtain an addon instance.
+    //! \param id ID of the addon to obtain.
+    //! \param slot Slot to put addon in.
+    VisualisationPtr GetAddon(const std::string& id, int slot=0);
+
+    //! \brief Release an addon.
+    //! \param slot Slot to release.
+    void Release(int slot);
+
+    //! \brief Clear out instances which have been idle for more than 30 secs.
+    void ClearOutIdle();
+  protected:
+    //! \brief Protected construction. Use singleton accessor.
+    CVisualisationManager();
+
+    //! \brief Maps slot -> (addon, idle timer).
+    std::map<int, std::pair<VisualisationPtr, CStopWatch>> m_addons;
   };
 }
