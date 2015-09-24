@@ -385,6 +385,9 @@
     <Filter Include="media\import\dialogs">
       <UniqueIdentifier>{4e8910ed-dab9-4501-838f-16ce5099ade7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="media\import\importer">
+      <UniqueIdentifier>{e000cf93-c956-4ced-b6b6-b0c43c5d3e60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\xbmc\win32\pch.cpp">
@@ -3319,6 +3322,9 @@
     </ClCompile>
     <ClCompile Include="..\..\xbmc\events\MediaImportEvent.cpp">
       <Filter>events</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\xbmc\media\import\importer\FilesystemMediaImporter.cpp">
+      <Filter>media\import\importer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -6453,6 +6459,9 @@
     </ClInclude>
     <ClInclude Include="..\..\xbmc\media\import\IMediaImportHandlerManager.h">
       <Filter>media\import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\media\import\importer\FilesystemMediaImporter.h">
+      <Filter>media\import\importer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

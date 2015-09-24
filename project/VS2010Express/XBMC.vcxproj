@@ -649,6 +649,7 @@
     <ClCompile Include="..\..\xbmc\media\import\dialogs\GUIDialogMediaImportInfo.cpp" />
     <ClCompile Include="..\..\xbmc\media\import\handler\MusicVideoImportHandler.cpp" />
     <ClCompile Include="..\..\xbmc\media\import\handler\SeasonImportHandler.cpp" />
+    <ClCompile Include="..\..\xbmc\media\import\importer\FilesystemMediaImporter.cpp" />
     <ClCompile Include="..\..\xbmc\media\import\MediaImport.cpp" />
     <ClCompile Include="..\..\xbmc\media\import\MediaImportTaskProcessorJob.cpp" />
     <ClCompile Include="..\..\xbmc\media\import\repositories\GenericMediaImportRepository.cpp" />
@@ -1115,6 +1116,7 @@
     <ClInclude Include="..\..\xbmc\media\import\IMediaImportHandlerManager.h" />
     <ClInclude Include="..\..\xbmc\media\import\IMediaImportRepository.h" />
     <ClInclude Include="..\..\xbmc\media\import\IMediaImportTask.h" />
+    <ClInclude Include="..\..\xbmc\media\import\importer\FilesystemMediaImporter.h" />
     <ClInclude Include="..\..\xbmc\media\import\MediaImport.h" />
     <ClInclude Include="..\..\xbmc\media\import\MediaImportChangesetTypes.h" />
     <ClInclude Include="..\..\xbmc\media\import\MediaImportSource.h" />
