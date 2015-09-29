@@ -3326,6 +3326,9 @@
     <ClCompile Include="..\..\xbmc\media\import\importer\FilesystemMediaImporter.cpp">
       <Filter>media\import\importer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\xbmc\media\import\importer\PluginMediaImporter.cpp">
+      <Filter>media\import\importer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\xbmc\win32\pch.h">
@@ -6461,6 +6464,9 @@
       <Filter>media\import</Filter>
     </ClInclude>
     <ClInclude Include="..\..\xbmc\media\import\importer\FilesystemMediaImporter.h">
+      <Filter>media\import\importer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\media\import\importer\PluginMediaImporter.h">
       <Filter>media\import\importer</Filter>
     </ClInclude>
   </ItemGroup>
