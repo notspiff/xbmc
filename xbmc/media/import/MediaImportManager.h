@@ -333,6 +333,13 @@ public:
   bool GetImport(const std::string &path, const GroupedMediaTypes &mediaTypes, CMediaImport &import) const;
 
   /*!
+   * \brief Checks if the given path can be imported
+   *
+   * \return True if the given path can be imported, false otherwise
+   */
+  bool CanImport(const std::string& path) const;
+
+  /*!
    * \brief Import media items from all registered sources and imports
    *
    * \return True if the import of media items has been started, false otherwise

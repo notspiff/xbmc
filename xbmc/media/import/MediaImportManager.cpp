@@ -985,6 +985,19 @@ bool CMediaImportManager::GetImport(const std::string &path, const GroupedMediaT
   return FindImport(path, mediaTypes, import);
 }
 
+bool CMediaImportManager::CanImport(const std::string& path) const
+{
+  if (path.empty())
+    return false;
+
+  // try to get an importer that can import the given path
+  const auto& importer = GetImporter(path);
+  if (importer == nullptr)
+    return false;
+
+  return true;
+}
+
 bool CMediaImportManager::Import()
 {
   bool result = false;
