@@ -989,7 +989,12 @@ void CGUIWindowVideoNav::GetContextButtons(int itemNumber, CContextButtons &butt
         }
       }
       if (item->IsPlugin() || item->IsScript() || m_vecItems->IsPlugin())
+      {
+        if (CMediaImportManager::GetInstance().CanImport(item->GetPath()))
+          buttons.Add(CONTEXT_BUTTON_IMPORT, 39400);
+
         buttons.Add(CONTEXT_BUTTON_PLUGIN_SETTINGS, 1045);
+      }
     }
     CContextMenuManager::GetInstance().AddVisibleItems(item, buttons);
   }
@@ -1079,6 +1084,10 @@ bool CGUIWindowVideoNav::OnContextButton(int itemNumber, CONTEXT_BUTTON button)
         CApplicationMessenger::GetInstance().PostMsg(TMSG_MEDIA_PLAY, 0, 0, static_cast<void*>(new CFileItem(song)));
       }
       return true;
+    }
+  case CONTEXT_BUTTON_IMPORT:
+    {
+
     }
 
   default:

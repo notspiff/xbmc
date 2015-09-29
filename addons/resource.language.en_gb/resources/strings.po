@@ -18428,3 +18428,8 @@ msgid "Manually"
 msgstr ""
 
 # strings from id 39306 to 39399 reserved for media import settings
+
+#: xbmc/video/windows/GUIWindowsVideoNav.cpp
+msgctxt "#39400"
+msgid "Import ..."
+msgstr ""
