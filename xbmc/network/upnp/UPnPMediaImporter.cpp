@@ -287,10 +287,10 @@ bool CUPnPMediaImporter::UpdateOnSource(CMediaImportUpdateTask* task) const
 
 bool CUPnPMediaImporter::validatePath(const std::string& path, PLT_DeviceDataReference &device)
 {
-  CURL url(path);
-  if (path.empty() || url.GetProtocol() != "upnp")
+  if (path.empty() || !URIUtils::IsUPnP(path))
     return false;
 
+  CURL url(path);
   std::string deviceUUID = url.GetHostName();
   return FindServer(deviceUUID, device);
 }
