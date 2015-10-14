@@ -21,12 +21,17 @@
 #include "FFmpegImage.h"
 #include "utils/log.h"
 #include "cores/FFmpeg.h"
+#include "guilib/Texture.h"
 
 #include <algorithm>
 
 extern "C"
 {
 #include <libavutil/imgutils.h>
+#include "libavformat/avformat.h"
+#include "libavcodec/avcodec.h"
+#include "libavutil/avutil.h"
+#include "libswscale/swscale.h"
 }
 
 struct MemBuffer
@@ -114,7 +119,40 @@ bool CFFmpegImage::LoadImageFromMemory(unsigned char* buffer, unsigned int bufSi
   AVPacket pkt;
   av_read_frame(fctx, &pkt);
   int frame_decoded;
-  avcodec_decode_video2(codec_ctx, m_frame, &frame_decoded, &pkt);
+  int ret = avcodec_decode_video2(codec_ctx, m_frame, &frame_decoded, &pkt);
+  if (ret < 0)
+    CLog::Log(LOGDEBUG, "Error [%d] while decoding frame: %s\n", ret, strerror(AVERROR(ret)));
+
+  if (frame_decoded)
+  {
+    CLog::Log(LOGDEBUG, "Frame decoded");
+  }
+
+  //int size = av_image_get_buffer_size((AVPixelFormat)m_frame->format, m_frame->width, m_frame->height, pitch);
+
+  // Allocate the conversion frame and relevant picture
+  m_pFrameRGB = (AVPicture*)av_mallocz(sizeof(AVPicture));
+
+  if (!m_pFrameRGB)
+    return false;
+
+  m_height = m_frame->height;
+  m_width = m_frame->width;
+
+  // Due to a bug in swsscale we need to allocate one extra line of data
+  if (avpicture_alloc(m_pFrameRGB, PIX_FMT_RGB32, m_width, m_height + 1) < 0)
+    return false;
+
+  // We got the video frame, render it into the picture buffer
+  struct SwsContext * context = sws_getContext(codec_ctx->width, codec_ctx->height, codec_ctx->pix_fmt,
+    m_width, m_height, PIX_FMT_RGB32, SWS_SPLINE, NULL, NULL, NULL);
+
+  sws_scale(context, m_frame->data, m_frame->linesize, 0, codec_ctx->height,
+    m_pFrameRGB->data, m_pFrameRGB->linesize);
+  sws_freeContext(context);
+
+  m_pitch = m_pFrameRGB->linesize[0];
+
   av_free_packet(&pkt);
   avcodec_close(codec_ctx);
   avformat_close_input(&fctx);
@@ -127,7 +165,26 @@ bool CFFmpegImage::LoadImageFromMemory(unsigned char* buffer, unsigned int bufSi
 bool CFFmpegImage::Decode(unsigned char * const pixels, unsigned int pitch,
                           unsigned int format)
 {
-  av_image_copy_to_buffer(const_cast<uint8_t*>(pixels), pitch,
+  if (m_width == 0 || m_height == 0 || format != XB_FMT_A8R8G8B8)
+    return false;
+
+  const unsigned char *src = m_pFrameRGB->data[0];
+  unsigned char* dst = pixels;
+
+  if (pitch == m_pitch)
+    memcpy(dst, src, m_height * m_pitch);
+  else
+  {
+    for (unsigned int y = 0; y < m_height; y++)
+    {
+      memcpy(dst, src, m_pitch);
+      src += m_pitch;
+      dst += pitch;
+    }
+  }
+  return true;
+
+  av_image_copy_to_buffer(const_cast<uint8_t*>(pixels), pitch*m_height,
                           m_frame->data, m_frame->linesize,
                           (AVPixelFormat)m_frame->format,
                           m_frame->width, m_frame->height, pitch);

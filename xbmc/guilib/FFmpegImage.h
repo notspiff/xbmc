@@ -22,6 +22,7 @@
 #include "iimage.h"
 
 struct AVFrame;
+struct AVPicture;
 
 class CFFmpegImage : public IImage
 {
@@ -41,4 +42,6 @@ public:
   virtual void ReleaseThumbnailBuffer();
 private:
   AVFrame* m_frame;
+  AVPicture* m_pFrameRGB;
+  int m_pitch;
 };
