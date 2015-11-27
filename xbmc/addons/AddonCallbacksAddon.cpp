@@ -31,6 +31,7 @@
 #include "utils/CharsetConverter.h"
 #include "utils/StringUtils.h"
 #include "utils/XMLUtils.h"
+#include "kodi_vfs_types.h"
 
 using namespace XFILE;
 
@@ -530,6 +531,48 @@ bool CAddonCallbacksAddon::RemoveDirectory(const void* addonData, const char *st
     CFile::Delete(fileItems.Get(i)->GetPath());
 
   return CDirectory::Remove(strPath);
+}
+
+static void CFileItemListToVFSDirEntries(VFSDirEntry* entries,
+                                         const CFileItemList& items)
+{
+  for (int i=0;i<items.Size();++i)
+  {
+    entries[i].label = strdup(items[i]->GetLabel().c_str());
+    entries[i].path = strdup(items[i]->GetPath().c_str());
+    entries[i].size = items[i]->m_dwSize;
+    entries[i].folder = items[i]->m_bIsFolder;
+  }
+}
+
+bool CAddonCallbacksAddon::GetDirectory(const void* addonData, const char *strPath, const char* mask, VFSDirEntry** items, int* num_items)
+{
+  CAddonCallbacks* helper = (CAddonCallbacks*) addonData;
+  if (!helper)
+    return false;
+
+  CFileItemList fileItems;
+  if (!CDirectory::GetDirectory(strPath, fileItems, mask, DIR_FLAG_NO_FILE_DIRS))
+    return false;
+
+  *num_items = fileItems.Size();
+  *items = new VFSDirEntry[fileItems.Size()];
+  CFileItemListToVFSDirEntries(*items, fileItems);
+  return true;
+}
+
+void CAddonCallbacksAddon::FreeDirectory(const void* addonData, VFSDirEntry* items, int num_items)
+{
+  CAddonCallbacks* helper = (CAddonCallbacks*) addonData;
+  if (!helper)
+    return;
+
+  for (int i=0;i<num_items;++i)
+  {
+    free(items[i].label);
+    free(items[i].path);
+  }
+  delete[] items;
 }
 
 }; /* namespace ADDON */
