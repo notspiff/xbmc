@@ -22,19 +22,10 @@
 
 extern "C"
 {
-  struct VFSProperty
-  {
-    char* name;
-    char* val;
-  };
-
   struct VFSDirEntry
   {
     char* label;             //!< item label
-    char* title;             //!< item title
     char* path;              //!< item path
-    int num_props;           //!< Number of properties attached to item
-    VFSProperty* properties; //!< Properties
     bool folder;             //!< Item is a folder
     uint64_t size;           //!< Size of file represented by item
   };
