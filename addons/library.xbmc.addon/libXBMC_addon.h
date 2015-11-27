@@ -268,11 +268,11 @@ namespace ADDON
 
       XBMC_get_directory = (bool (*)(void* HANDLE, void* CB, const char* strPath, const char* mask, VFSDirEntry** items, int* num_items))
         dlsym(m_libXBMC_addon, "XBMC_get_directory");
-      if (XBMC_remove_directory == NULL) { fprintf(stderr, "Unable to assign function %s\n", dlerror()); return false; }
+      if (XBMC_get_directory == NULL) { fprintf(stderr, "Unable to assign function %s\n", dlerror()); return false; }
 
       XBMC_free_directory = (void (*)(void* HANDLE, void* CB, VFSDirEntry* items, int num_items))
         dlsym(m_libXBMC_addon, "XBMC_free_directory");
-      if (XBMC_remove_directory == NULL) { fprintf(stderr, "Unable to assign function %s\n", dlerror()); return false; }
+      if (XBMC_free_directory == NULL) { fprintf(stderr, "Unable to assign function %s\n", dlerror()); return false; }
 
       m_Callbacks = XBMC_register_me(m_Handle);
       return m_Callbacks != NULL;
