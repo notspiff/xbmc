@@ -266,11 +266,11 @@ namespace ADDON
         dlsym(m_libXBMC_addon, "XBMC_remove_directory");
       if (XBMC_remove_directory == NULL) { fprintf(stderr, "Unable to assign function %s\n", dlerror()); return false; }
 
-      XBMC_get_directory = (bool (*)(void* HANDLE, void* CB, const char* strPath, const char* mask, VFSDirEntry** items, int* num_items))
+      XBMC_get_directory = (bool (*)(void* HANDLE, void* CB, const char* strPath, const char* mask, VFSDirEntry** items, unsigned int* num_items))
         dlsym(m_libXBMC_addon, "XBMC_get_directory");
       if (XBMC_get_directory == NULL) { fprintf(stderr, "Unable to assign function %s\n", dlerror()); return false; }
 
-      XBMC_free_directory = (void (*)(void* HANDLE, void* CB, VFSDirEntry* items, int num_items))
+      XBMC_free_directory = (void (*)(void* HANDLE, void* CB, VFSDirEntry* items, unsigned int num_items))
         dlsym(m_libXBMC_addon, "XBMC_free_directory");
       if (XBMC_free_directory == NULL) { fprintf(stderr, "Unable to assign function %s\n", dlerror()); return false; }
 
@@ -581,7 +581,7 @@ namespace ADDON
      * @param num_items Number of entries in directory
      * @return True if listing was successful, false otherwise.
      */
-    bool GetDirectory(const char *strPath, const char* mask, VFSDirEntry** items, int* num_items)
+    bool GetDirectory(const char *strPath, const char* mask, VFSDirEntry** items, unsigned int* num_items)
     {
       return XBMC_get_directory(m_Handle, m_Callbacks, strPath, mask, items, num_items);
     }
@@ -591,7 +591,7 @@ namespace ADDON
      * @param items The directory entries
      * @param num_items Number of entries in directory
      */
-    void FreeDirectory(VFSDirEntry* items, int num_items)
+    void FreeDirectory(VFSDirEntry* items, unsigned int num_items)
     {
       return XBMC_free_directory(m_Handle, m_Callbacks, items, num_items);
     }
@@ -626,8 +626,8 @@ namespace ADDON
     bool (*XBMC_create_directory)(void *HANDLE, void* CB, const char* strPath);
     bool (*XBMC_directory_exists)(void *HANDLE, void* CB, const char* strPath);
     bool (*XBMC_remove_directory)(void *HANDLE, void* CB, const char* strPath);
-    bool (*XBMC_get_directory)(void *HANDLE, void* CB, const char* strPath, const char* mask, VFSDirEntry** items, int* num_items);
-    void (*XBMC_free_directory)(void *HANDLE, void* CB, VFSDirEntry* items, int num_items);
+    bool (*XBMC_get_directory)(void *HANDLE, void* CB, const char* strPath, const char* mask, VFSDirEntry** items, unsigned int* num_items);
+    void (*XBMC_free_directory)(void *HANDLE, void* CB, VFSDirEntry* items, unsigned int num_items);
   private:
     void *m_libXBMC_addon;
     void *m_Handle;

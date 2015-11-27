@@ -67,8 +67,8 @@ typedef bool (*AddOnCanOpenDirectory)(const void* addonData, const char* strURL)
 typedef bool (*AddOnCreateDirectory)(const void* addonData, const char *strPath);
 typedef bool (*AddOnDirectoryExists)(const void* addonData, const char *strPath);
 typedef bool (*AddOnRemoveDirectory)(const void* addonData, const char *strPath);
-typedef bool (*AddOnGetDirectory)(const void* addonData, const char *strPath, const char* mask, VFSDirEntry** items, int* num_items);
-typedef bool (*AddOnFreeDirectory)(const void* addonData, VFSDirEntry* items, int num_items);
+typedef bool (*AddOnGetDirectory)(const void* addonData, const char *strPath, const char* mask, VFSDirEntry** items, unsigned int* num_items);
+typedef bool (*AddOnFreeDirectory)(const void* addonData, VFSDirEntry* items, unsigned int num_items);
 
 typedef struct CB_AddOn
 {

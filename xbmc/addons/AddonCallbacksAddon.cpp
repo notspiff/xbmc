@@ -545,7 +545,7 @@ static void CFileItemListToVFSDirEntries(VFSDirEntry* entries,
   }
 }
 
-bool CAddonCallbacksAddon::GetDirectory(const void* addonData, const char *strPath, const char* mask, VFSDirEntry** items, int* num_items)
+bool CAddonCallbacksAddon::GetDirectory(const void* addonData, const char *strPath, const char* mask, VFSDirEntry** items, unsigned int* num_items)
 {
   CAddonCallbacks* helper = (CAddonCallbacks*) addonData;
   if (!helper)
@@ -555,19 +555,28 @@ bool CAddonCallbacksAddon::GetDirectory(const void* addonData, const char *strPa
   if (!CDirectory::GetDirectory(strPath, fileItems, mask, DIR_FLAG_NO_FILE_DIRS))
     return false;
 
-  *num_items = fileItems.Size();
-  *items = new VFSDirEntry[fileItems.Size()];
+  if (fileItems.Size() > 0)
+  {
+    *num_items = static_cast<unsigned int>(fileItems.Size());
+    *items = new VFSDirEntry[fileItems.Size()];
+  }
+  else
+  {
+    *num_items = 0;
+    *items = nullptr;
+  }
+
   CFileItemListToVFSDirEntries(*items, fileItems);
   return true;
 }
 
-void CAddonCallbacksAddon::FreeDirectory(const void* addonData, VFSDirEntry* items, int num_items)
+void CAddonCallbacksAddon::FreeDirectory(const void* addonData, VFSDirEntry* items, unsigned int num_items)
 {
   CAddonCallbacks* helper = (CAddonCallbacks*) addonData;
   if (!helper)
     return;
 
-  for (int i=0;i<num_items;++i)
+  for (unsigned int i=0;i<num_items;++i)
   {
     free(items[i].label);
     free(items[i].path);
