@@ -73,6 +73,8 @@ CAddonCallbacksAddon::CAddonCallbacksAddon(CAddon* addon)
   m_callbacks->CreateDirectory    = CreateDirectory;
   m_callbacks->DirectoryExists    = DirectoryExists;
   m_callbacks->RemoveDirectory    = RemoveDirectory;
+  m_callbacks->GetDirectory       = GetDirectory;
+  m_callbacks->FreeDirectory      = FreeDirectory;
 }
 
 CAddonCallbacksAddon::~CAddonCallbacksAddon()
