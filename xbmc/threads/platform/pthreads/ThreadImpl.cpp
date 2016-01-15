@@ -276,9 +276,32 @@ float CThread::GetRelativeUsage()
   return m_fLastUsage;
 }
 
-void term_handler (int signum)
+void term_handler(int signum, siginfo_t* si, void *)
 {
   XbmcCommons::ILogger* logger = CThread::GetLogger();
+
+  if (logger)
+    logger->Log(LOGERROR,"thread 0x%lx (%lu) got signal %d. calling throw to handle them", (long unsigned int)pthread_self(), (long unsigned int)pthread_self(), signum);
+
+  CThread* curThread = CThread::GetCurrentThread();
+  if (curThread)
+  {
+    if (logger)
+      logger->Log(LOGERROR, "Calling threads 'OnException'");
+    curThread->OnException();
+  }
+
+  // unmask current signal
+  sigset_t newset;
+  sigemptyset(&newset);
+  sigaddset(&newset, signum);
+  sigprocmask(SIG_UNBLOCK, &newset, NULL);
+
+  if (CThread::HasCrashProtection())
+    throw XbmcThreads::SegFaultException(signum, CThread::CrashProtection(), "Handle segmention fault with crash protection");
+
+  throw XbmcCommons::UncheckedException("Fatal segmention fault exception occoured, trying to exit");
+/*
   if (logger)
     logger->Log(LOGERROR,"thread 0x%lx (%lu) got signal %d. calling OnException and terminating thread abnormally.", (long unsigned int)pthread_self(), (long unsigned int)pthread_self(), signum);
   CThread* curThread = CThread::GetCurrentThread();
@@ -289,16 +312,16 @@ void term_handler (int signum)
     if( curThread->IsAutoDelete() )
       delete curThread;
   }
-  pthread_exit(NULL);
+  pthread_exit(NULL);*/
 }
 
 void CThread::SetSignalHandlers()
 {
   struct sigaction action;
-  action.sa_handler = term_handler;
+  action.sa_sigaction = term_handler;
   sigemptyset (&action.sa_mask);
-  action.sa_flags = 0;
+  action.sa_flags = SA_SIGINFO;
   //sigaction (SIGABRT, &action, NULL);
-  //sigaction (SIGSEGV, &action, NULL);
+  sigaction (SIGSEGV, &action, NULL);
 }
 

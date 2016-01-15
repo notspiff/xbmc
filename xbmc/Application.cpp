@@ -219,6 +219,8 @@
 #include "pictures/GUIWindowSlideShow.h"
 #include "windows/GUIWindowLoginScreen.h"
 
+#include "addons/binary/BinaryAddonManager.h"
+
 using namespace ADDON;
 using namespace XFILE;
 #ifdef HAS_DVD_DRIVE
@@ -261,6 +263,7 @@ CApplication::CApplication(void)
   , m_progressTrackingItem(new CFileItem)
   , m_musicInfoScanner(new CMusicInfoScanner)
   , m_fallbackLanguageLoaded(false)
+  , m_crashProtection(NULL)
 {
   m_network = NULL;
   TiXmlBase::SetCondenseWhiteSpace(false);
@@ -3593,6 +3596,7 @@ void CApplication::OnPlayBackEnded()
   if(m_bPlaybackStarting)
     return;
 
+  CBinaryAddonManager::GetInstance().OnPlayBackEnded();
   // informs python script currently running playback has ended
   // (does nothing if python is not loaded)
 #ifdef HAS_PYTHON
@@ -3618,6 +3622,7 @@ void CApplication::OnPlayBackStarted()
   if(m_bPlaybackStarting)
     return;
 
+  CBinaryAddonManager::GetInstance().OnPlayBackStarted();
 #ifdef HAS_PYTHON
   // informs python script currently running playback has started
   // (does nothing if python is not loaded)
@@ -3637,6 +3642,8 @@ void CApplication::OnQueueNextItem()
   CLog::LogF(LOGDEBUG,"play state was %d, starting %d", m_ePlayState, m_bPlaybackStarting);
   if(m_bPlaybackStarting)
     return;
+
+  CBinaryAddonManager::GetInstance().OnQueueNextItem();
   // informs python script currently running that we are requesting the next track
   // (does nothing if python is not loaded)
 #ifdef HAS_PYTHON
@@ -3655,6 +3662,7 @@ void CApplication::OnPlayBackStopped()
   if(m_bPlaybackStarting)
     return;
 
+  CBinaryAddonManager::GetInstance().OnPlayBackStopped();
   // informs python script currently running playback has ended
   // (does nothing if python is not loaded)
 #ifdef HAS_PYTHON
@@ -3674,6 +3682,7 @@ void CApplication::OnPlayBackStopped()
 
 void CApplication::OnPlayBackPaused()
 {
+  CBinaryAddonManager::GetInstance().OnPlayBackPaused();
 #ifdef HAS_PYTHON
   g_pythonParser.OnPlayBackPaused();
 #endif
@@ -3689,6 +3698,7 @@ void CApplication::OnPlayBackPaused()
 
 void CApplication::OnPlayBackResumed()
 {
+  CBinaryAddonManager::GetInstance().OnPlayBackResumed();
 #ifdef HAS_PYTHON
   g_pythonParser.OnPlayBackResumed();
 #endif
@@ -3704,6 +3714,7 @@ void CApplication::OnPlayBackResumed()
 
 void CApplication::OnPlayBackSpeedChanged(int iSpeed)
 {
+  CBinaryAddonManager::GetInstance().OnPlayBackSpeedChanged(iSpeed);
 #ifdef HAS_PYTHON
   g_pythonParser.OnPlayBackSpeedChanged(iSpeed);
 #endif
@@ -3716,6 +3727,7 @@ void CApplication::OnPlayBackSpeedChanged(int iSpeed)
 
 void CApplication::OnPlayBackSeek(int iTime, int seekOffset)
 {
+  CBinaryAddonManager::GetInstance().OnPlayBackSeek(iTime, seekOffset);
 #ifdef HAS_PYTHON
   g_pythonParser.OnPlayBackSeek(iTime, seekOffset);
 #endif
@@ -3731,6 +3743,7 @@ void CApplication::OnPlayBackSeek(int iTime, int seekOffset)
 
 void CApplication::OnPlayBackSeekChapter(int iChapter)
 {
+  CBinaryAddonManager::GetInstance().OnPlayBackSeekChapter(iChapter);
 #ifdef HAS_PYTHON
   g_pythonParser.OnPlayBackSeekChapter(iChapter);
 #endif
@@ -5256,4 +5269,19 @@ bool CApplication::NotifyActionListeners(const CAction &action) const
   }
   
   return false;
+}
+
+void CApplication::SetCrashProtection(IThreadCrashProtection* crashProtection)
+{
+  m_crashProtection = crashProtection;
+}
+
+bool CApplication::HasCrashProtection()
+{
+  return m_crashProtection != nullptr;
+}
+
+IThreadCrashProtection* CApplication::CrashProtection()
+{
+  return m_crashProtection;
 }

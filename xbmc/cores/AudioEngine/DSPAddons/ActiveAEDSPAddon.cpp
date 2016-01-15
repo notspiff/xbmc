@@ -22,6 +22,7 @@
 #include "Application.h"
 #include "ActiveAEDSPAddon.h"
 #include "ActiveAEDSP.h"
+#include "addons/binary/ExceptionHandling.h"
 #include "commons/Exception.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/Settings.h"
@@ -153,15 +154,12 @@ ADDON_STATUS CActiveAEDSPAddon::Create(int iClientId)
   CLog::Log(LOGDEBUG, "ActiveAE DSP - %s - creating audio dsp add-on instance '%s'", __FUNCTION__, Name().c_str());
   try
   {
+    CThread::SetCrashProtection(this);
     if ((status = CAddonDll<DllAudioDSP, AudioDSP, AE_DSP_PROPERTIES>::Create()) == ADDON_STATUS_OK)
       bReadyToUse = GetAddonProperties();
+    CThread::SetCrashProtection(nullptr);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   m_bReadyToUse = bReadyToUse;
 
@@ -174,11 +172,7 @@ bool CActiveAEDSPAddon::DllLoaded(void) const
   {
     return CAddonDll<DllAudioDSP, AudioDSP, AE_DSP_PROPERTIES>::DllLoaded();
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return false;
 }
@@ -195,14 +189,11 @@ void CActiveAEDSPAddon::Destroy(void)
   /* destroy the add-on */
   try
   {
+    CThread::SetCrashProtection(this);
     CAddonDll<DllAudioDSP, AudioDSP, AE_DSP_PROPERTIES>::Destroy();
+    CThread::SetCrashProtection(nullptr);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   /* reset all properties to defaults */
   ResetProperties();
@@ -234,32 +225,29 @@ bool CActiveAEDSPAddon::IsInUse() const
 
 bool CActiveAEDSPAddon::IsCompatibleAPIVersion(const ADDON::AddonVersion &minVersion, const ADDON::AddonVersion &version)
 {
-  AddonVersion myMinVersion = AddonVersion(KODI_AE_DSP_MIN_API_VERSION);
-  AddonVersion myVersion = AddonVersion(KODI_AE_DSP_API_VERSION);
+  AddonVersion myMinVersion = AddonVersion(CAddonCallbacks::AudioEngineLib_MinVersion());
+  AddonVersion myVersion = AddonVersion(CAddonCallbacks::AudioEngineLib_Version());
   return (version >= myMinVersion && minVersion <= myVersion);
 }
 
 bool CActiveAEDSPAddon::IsCompatibleGUIAPIVersion(const ADDON::AddonVersion &minVersion, const ADDON::AddonVersion &version)
 {
-  AddonVersion myMinVersion = AddonVersion(KODI_GUILIB_MIN_API_VERSION);
-  AddonVersion myVersion = AddonVersion(KODI_GUILIB_API_VERSION);
+  AddonVersion myMinVersion = AddonVersion(CAddonCallbacks::GUILib_MinVersion());
+  AddonVersion myVersion = AddonVersion(CAddonCallbacks::GUILib_Version());
   return (version >= myMinVersion && minVersion <= myVersion);
 }
 
 bool CActiveAEDSPAddon::CheckAPIVersion(void)
 {
   /* check the API version */
-  AddonVersion minVersion = AddonVersion(KODI_AE_DSP_MIN_API_VERSION);
+  AddonVersion minVersion = AddonVersion(CAddonCallbacks::PVRLib_MinVersion());
   try
   {
+    CThread::SetCrashProtection(this);
     m_apiVersion = AddonVersion(m_pStruct->GetAudioDSPAPIVersion());
+    CThread::SetCrashProtection(nullptr);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException("GetAudioDSPAPIVersion()");
-    return false;
-  }
+  HANDLE_ADDON_EXCEPTION
 
   if (!IsCompatibleAPIVersion(minVersion, m_apiVersion))
   {
@@ -269,17 +257,14 @@ bool CActiveAEDSPAddon::CheckAPIVersion(void)
 
   /* check the GUI API version */
   AddonVersion guiVersion = AddonVersion("0.0.0");
-  minVersion = AddonVersion(KODI_GUILIB_MIN_API_VERSION);
+  minVersion = AddonVersion(CAddonCallbacks::GUILib_MinVersion());
   try
   {
+    CThread::SetCrashProtection(this);
     guiVersion = AddonVersion(m_pStruct->GetGUIAPIVersion());
+    CThread::SetCrashProtection(nullptr);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException("GetGUIAPIVersion()");
-    return false;
-  }
+  HANDLE_ADDON_EXCEPTION
 
   if (!IsCompatibleGUIAPIVersion(minVersion, guiVersion))
   {
@@ -299,31 +284,27 @@ bool CActiveAEDSPAddon::GetAddonProperties(void)
   try
   {
     memset(&addonCapabilities, 0, sizeof(addonCapabilities));
+
+    CThread::SetCrashProtection(this);
     AE_DSP_ERROR retVal = m_pStruct->GetAddonCapabilities(&addonCapabilities);
+    CThread::SetCrashProtection(nullptr);
+
     if (retVal != AE_DSP_ERROR_NO_ERROR)
     {
       CLog::Log(LOGERROR, "ActiveAE DSP - couldn't get the capabilities for add-on '%s'. Please contact the developer of this add-on: %s", GetFriendlyName().c_str(), Author().c_str());
       return false;
     }
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException("GetAddonCapabilities()");
-    return false;
-  }
+  HANDLE_ADDON_EXCEPTION
 
   /* get the name of the dsp addon */
   try
   {
+    CThread::SetCrashProtection(this);
     strDSPName = m_pStruct->GetDSPName();
+    CThread::SetCrashProtection(nullptr);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException("GetDSPName()");
-    return false;
-  }
+  HANDLE_ADDON_EXCEPTION
 
   /* display name = backend name string */
   strFriendlyName = StringUtils::Format("%s", strDSPName.c_str());
@@ -331,14 +312,11 @@ bool CActiveAEDSPAddon::GetAddonProperties(void)
   /* backend version number */
   try
   {
+    CThread::SetCrashProtection(this);
     strAudioDSPVersion = m_pStruct->GetDSPVersion();
+    CThread::SetCrashProtection(nullptr);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException("GetDSPVersion()");
-    return false;
-  }
+  HANDLE_ADDON_EXCEPTION
 
   /* update the members */
   m_strAudioDSPName     = strDSPName;
@@ -395,14 +373,11 @@ void CActiveAEDSPAddon::CallMenuHook(const AE_DSP_MENUHOOK &hook, AE_DSP_MENUHOO
 
   try
   {
+    CThread::SetCrashProtection(this);
     m_pStruct->MenuHook(hook, hookData);
+    CThread::SetCrashProtection(nullptr);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 }
 
 AE_DSP_ERROR CActiveAEDSPAddon::StreamCreate(const AE_DSP_SETTINGS *addonSettings, const AE_DSP_STREAM_PROPERTIES* pProperties, ADDON_HANDLE handle)
@@ -411,17 +386,14 @@ AE_DSP_ERROR CActiveAEDSPAddon::StreamCreate(const AE_DSP_SETTINGS *addonSetting
 
   try
   {
+    CThread::SetCrashProtection(this);
     retVal = m_pStruct->StreamCreate(addonSettings, pProperties, handle);
+    CThread::SetCrashProtection(nullptr);
     if (retVal == AE_DSP_ERROR_NO_ERROR)
       m_isInUse = true;
     LogError(retVal, __FUNCTION__);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return retVal;
 }
@@ -430,14 +402,11 @@ void CActiveAEDSPAddon::StreamDestroy(const ADDON_HANDLE handle)
 {
   try
   {
+    CThread::SetCrashProtection(this);
     m_pStruct->StreamDestroy(handle);
+    CThread::SetCrashProtection(nullptr);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   m_isInUse = false;
 }
@@ -446,18 +415,15 @@ bool CActiveAEDSPAddon::StreamIsModeSupported(const ADDON_HANDLE handle, AE_DSP_
 {
   try
   {
+    CThread::SetCrashProtection(this);
     AE_DSP_ERROR retVal = m_pStruct->StreamIsModeSupported(handle, type, addon_mode_id, unique_db_mode_id);
+    CThread::SetCrashProtection(nullptr);
     if (retVal == AE_DSP_ERROR_NO_ERROR)
       return true;
     else if (retVal != AE_DSP_ERROR_IGNORE_ME)
       LogError(retVal, __FUNCTION__);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return false;
 }
@@ -468,15 +434,12 @@ AE_DSP_ERROR CActiveAEDSPAddon::StreamInitialize(const ADDON_HANDLE handle, cons
 
   try
   {
+    CThread::SetCrashProtection(this);
     retVal = m_pStruct->StreamInitialize(handle, addonSettings);
+    CThread::SetCrashProtection(nullptr);
     LogError(retVal, __FUNCTION__);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return retVal;
 }
@@ -485,14 +448,12 @@ bool CActiveAEDSPAddon::InputProcess(const ADDON_HANDLE handle, const float **ar
 {
   try
   {
-    return m_pStruct->InputProcess(handle, array_in, samples);
+    CThread::SetCrashProtection(this);
+    bool ret = m_pStruct->InputProcess(handle, array_in, samples);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -501,14 +462,12 @@ unsigned int CActiveAEDSPAddon::InputResampleProcessNeededSamplesize(const ADDON
 {
   try
   {
-    return m_pStruct->InputResampleProcessNeededSamplesize(handle);
+    CThread::SetCrashProtection(this);
+    unsigned int ret = m_pStruct->InputResampleProcessNeededSamplesize(handle);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -517,14 +476,12 @@ unsigned int CActiveAEDSPAddon::InputResampleProcess(const ADDON_HANDLE handle, 
 {
   try
   {
-    return m_pStruct->InputResampleProcess(handle, array_in, array_out, samples);
+    CThread::SetCrashProtection(this);
+    unsigned int ret = m_pStruct->InputResampleProcess(handle, array_in, array_out, samples);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -533,14 +490,12 @@ int CActiveAEDSPAddon::InputResampleSampleRate(const ADDON_HANDLE handle)
 {
   try
   {
-    return m_pStruct->InputResampleSampleRate(handle);
+    CThread::SetCrashProtection(this);
+    int ret = m_pStruct->InputResampleSampleRate(handle);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return -1;
 }
@@ -549,14 +504,12 @@ float CActiveAEDSPAddon::InputResampleGetDelay(const ADDON_HANDLE handle)
 {
   try
   {
-    return m_pStruct->InputResampleGetDelay(handle);
+    CThread::SetCrashProtection(this);
+    float ret = m_pStruct->InputResampleGetDelay(handle);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0.0f;
 }
@@ -565,14 +518,12 @@ unsigned int CActiveAEDSPAddon::PreProcessNeededSamplesize(const ADDON_HANDLE ha
 {
   try
   {
-    return m_pStruct->PreProcessNeededSamplesize(handle, mode_id);
+    CThread::SetCrashProtection(this);
+    unsigned int ret = m_pStruct->PreProcessNeededSamplesize(handle, mode_id);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -581,14 +532,12 @@ float CActiveAEDSPAddon::PreProcessGetDelay(const ADDON_HANDLE handle, unsigned 
 {
   try
   {
-    return m_pStruct->PreProcessGetDelay(handle, mode_id);
+    CThread::SetCrashProtection(this);
+    float ret = m_pStruct->PreProcessGetDelay(handle, mode_id);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0.0f;
 }
@@ -597,14 +546,12 @@ unsigned int CActiveAEDSPAddon::PreProcess(const ADDON_HANDLE handle, unsigned i
 {
   try
   {
-    return m_pStruct->PostProcess(handle, mode_id, array_in, array_out, samples);
+    CThread::SetCrashProtection(this);
+    unsigned int ret = m_pStruct->PostProcess(handle, mode_id, array_in, array_out, samples);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -615,15 +562,13 @@ AE_DSP_ERROR CActiveAEDSPAddon::MasterProcessSetMode(const ADDON_HANDLE handle, 
 
   try
   {
+    CThread::SetCrashProtection(this);
     retVal = m_pStruct->MasterProcessSetMode(handle, type, mode_id, unique_db_mode_id);
+    CThread::SetCrashProtection(nullptr);
+
     LogError(retVal, __FUNCTION__);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return retVal;
 }
@@ -632,14 +577,12 @@ unsigned int CActiveAEDSPAddon::MasterProcessNeededSamplesize(const ADDON_HANDLE
 {
   try
   {
-    return m_pStruct->MasterProcessNeededSamplesize(handle);
+    CThread::SetCrashProtection(this);
+    unsigned int ret = m_pStruct->MasterProcessNeededSamplesize(handle);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -648,14 +591,12 @@ float CActiveAEDSPAddon::MasterProcessGetDelay(const ADDON_HANDLE handle)
 {
   try
   {
-    return m_pStruct->MasterProcessGetDelay(handle);
+    CThread::SetCrashProtection(this);
+    float ret = m_pStruct->MasterProcessGetDelay(handle);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0.0f;
 }
@@ -664,14 +605,12 @@ int CActiveAEDSPAddon::MasterProcessGetOutChannels(const ADDON_HANDLE handle, un
 {
   try
   {
-    return m_pStruct->MasterProcessGetOutChannels(handle, out_channel_present_flags);
+    CThread::SetCrashProtection(this);
+    int ret = m_pStruct->MasterProcessGetOutChannels(handle, out_channel_present_flags);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return -1;
 }
@@ -680,14 +619,12 @@ unsigned int CActiveAEDSPAddon::MasterProcess(const ADDON_HANDLE handle, float *
 {
   try
   {
-    return m_pStruct->MasterProcess(handle, array_in, array_out, samples);
+    CThread::SetCrashProtection(this);
+    unsigned int ret = m_pStruct->MasterProcess(handle, array_in, array_out, samples);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -701,14 +638,11 @@ std::string CActiveAEDSPAddon::MasterProcessGetStreamInfoString(const ADDON_HAND
 
   try
   {
+    CThread::SetCrashProtection(this);
     strReturn = m_pStruct->MasterProcessGetStreamInfoString(handle);
+    CThread::SetCrashProtection(nullptr);
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return strReturn;
 }
@@ -717,14 +651,12 @@ unsigned int CActiveAEDSPAddon::PostProcessNeededSamplesize(const ADDON_HANDLE h
 {
   try
   {
-    return m_pStruct->PostProcessNeededSamplesize(handle, mode_id);
+    CThread::SetCrashProtection(this);
+    unsigned int ret = m_pStruct->PostProcessNeededSamplesize(handle, mode_id);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -733,14 +665,12 @@ float CActiveAEDSPAddon::PostProcessGetDelay(const ADDON_HANDLE handle, unsigned
 {
   try
   {
-    return m_pStruct->PostProcessGetDelay(handle, mode_id);
+    CThread::SetCrashProtection(this);
+    float ret = m_pStruct->PostProcessGetDelay(handle, mode_id);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0.0f;
 }
@@ -749,14 +679,12 @@ unsigned int CActiveAEDSPAddon::PostProcess(const ADDON_HANDLE handle, unsigned 
 {
   try
   {
-    return m_pStruct->PostProcess(handle, mode_id, array_in, array_out, samples);
+    CThread::SetCrashProtection(this);
+    unsigned int ret = m_pStruct->PostProcess(handle, mode_id, array_in, array_out, samples);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -765,14 +693,12 @@ unsigned int CActiveAEDSPAddon::OutputResampleProcessNeededSamplesize(const ADDO
 {
   try
   {
-    return m_pStruct->OutputResampleProcessNeededSamplesize(handle);
+    CThread::SetCrashProtection(this);
+    unsigned int ret = m_pStruct->OutputResampleProcessNeededSamplesize(handle);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -781,14 +707,12 @@ unsigned int CActiveAEDSPAddon::OutputResampleProcess(const ADDON_HANDLE handle,
 {
   try
   {
-    return m_pStruct->OutputResampleProcess(handle, array_in, array_out, samples);
+    CThread::SetCrashProtection(this);
+    unsigned int ret = m_pStruct->OutputResampleProcess(handle, array_in, array_out, samples);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0;
 }
@@ -797,14 +721,12 @@ int CActiveAEDSPAddon::OutputResampleSampleRate(const ADDON_HANDLE handle)
 {
   try
   {
-    return m_pStruct->OutputResampleSampleRate(handle);
+    CThread::SetCrashProtection(this);
+    int ret = m_pStruct->OutputResampleSampleRate(handle);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return -1;
 }
@@ -813,14 +735,12 @@ float CActiveAEDSPAddon::OutputResampleGetDelay(const ADDON_HANDLE handle)
 {
   try
   {
-    return m_pStruct->OutputResampleGetDelay(handle);
+    CThread::SetCrashProtection(this);
+    float ret = m_pStruct->OutputResampleGetDelay(handle);
+    CThread::SetCrashProtection(nullptr);
+    return ret;
   }
-  XBMCCOMMONS_HANDLE_UNCHECKED
-  catch (...)
-  {
-    LogUnhandledException(__FUNCTION__);
-    Destroy();
-  }
+  HANDLE_ADDON_EXCEPTION
 
   return 0.0f;
 }

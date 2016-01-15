@@ -1,0 +1,9 @@
+INCLUDES+=-I@abs_top_srcdir@/addons/library.kodi.pvr \
+          -I@abs_top_srcdir@/addons/library.kodi.addon
+
+SRCS=AddonCallbacksPVRBase.cpp \
+
+LIB=addon-callbacks-pvr-base.a
+
+include @abs_top_srcdir@/Makefile.include
+-include $(patsubst %.cpp,%.P,$(patsubst %.c,%.P,$(SRCS)))

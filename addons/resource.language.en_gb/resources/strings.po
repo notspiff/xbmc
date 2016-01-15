@@ -5418,7 +5418,17 @@ msgctxt "#13005"
 msgid "Shutdown"
 msgstr ""
 
-#empty strings from id 13006 to 13007
+#.
+#:
+msgctxt "#13006"
+msgid "Fatal error"
+msgstr ""
+
+#.
+#:
+msgctxt "#13007"
+msgid "The add-on '%s' has triggered a crash and is now switched off. Please contact the developer of him."
+msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13008"

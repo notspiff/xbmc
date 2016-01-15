@@ -2395,6 +2395,18 @@ OUTPUT_FILES="Makefile \
     lib/addons/library.xbmc.codec/Makefile \
     lib/addons/library.kodi.guilib/Makefile \
     lib/addons/library.xbmc.pvr/Makefile \
+    xbmc/addons/binary/Makefile \
+    xbmc/addons/binary/callbacks/Makefile \
+    xbmc/addons/binary/callbacks/Addon/Makefile \
+    xbmc/addons/binary/callbacks/Addon/api-level-2/Makefile \
+    xbmc/addons/binary/callbacks/AudioEngine/Makefile \
+    xbmc/addons/binary/callbacks/AudioEngine/api-level-2/Makefile \
+    xbmc/addons/binary/callbacks/GUI/Makefile \
+    xbmc/addons/binary/callbacks/GUI/api-level-2/Makefile \
+    xbmc/addons/binary/callbacks/Player/Makefile \
+    xbmc/addons/binary/callbacks/Player/api-level-2/Makefile \
+    xbmc/addons/binary/callbacks/PVR/Makefile \
+    xbmc/addons/binary/callbacks/PVR/api-level-2/Makefile \
     tools/Linux/kodi.sh \
     tools/Linux/kodi-standalone.sh \
     tools/Linux/kodi-xsession.desktop \

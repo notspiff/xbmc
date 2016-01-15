@@ -389,6 +389,10 @@ public:
    */
   void UnregisterActionListener(IActionListener *listener);
 
+  void SetCrashProtection(IThreadCrashProtection* crashProtection);
+  bool HasCrashProtection();
+  IThreadCrashProtection* CrashProtection();
+
 protected:
   virtual bool OnSettingsSaving() const override;
 
@@ -511,6 +515,7 @@ protected:
   
 private:
   CCriticalSection                m_critSection;                 /*!< critical section for all changes to this class, except for changes to triggers */
+  IThreadCrashProtection*         m_crashProtection;
 };
 
 XBMC_GLOBAL_REF(CApplication,g_application);

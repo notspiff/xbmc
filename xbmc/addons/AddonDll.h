@@ -25,7 +25,7 @@
 #include "DllAddon.h"
 #include "AddonManager.h"
 #include "AddonStatusHandler.h"
-#include "AddonCallbacks.h"
+#include "addons/binary/callbacks/AddonCallbacks.h"
 #include "utils/URIUtils.h"
 #include "filesystem/File.h"
 #include "filesystem/SpecialProtocol.h"
@@ -559,4 +559,3 @@ void CAddonDll<TheDll, TheStruct, TheProps>::HandleException(std::exception &e, 
 }
 
 }; /* namespace ADDON */
-

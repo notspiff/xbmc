@@ -231,4 +231,3 @@ int CGUIKeyboardFactory::ShowAndVerifyPassword(std::string& strPassword, const s
     else return 1;
   }
 }
-

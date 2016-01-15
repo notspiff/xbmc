@@ -20,6 +20,7 @@
  *
  */
 
+#include "Application.h"
 #include "threads/SystemClock.h"
 #include "Thread.h"
 #include "threads/ThreadLocal.h"
@@ -60,7 +61,7 @@ CThread::CThread(const char* ThreadName)
 }
 
 CThread::CThread(IRunnable* pRunnable, const char* ThreadName)
-: m_StopEvent(true,true), m_TermEvent(true), m_StartEvent(true)
+: m_StopEvent(true,true), m_TermEvent(true), m_StartEvent(true), m_crashProtection(NULL)
 {
   m_bStop = false;
 
@@ -127,6 +128,13 @@ THREADFUNC CThread::staticThread(void* data)
 
   currentThread.set(pThread);
   pThread->m_StartEvent.Set();
+
+  /*
+   * Currently only set for posix, on windows currently not tested
+   */
+#if (defined TARGET_POSIX)
+  pThread->SetSignalHandlers();
+#endif
 
   pThread->Action();
 
@@ -243,3 +251,56 @@ void CThread::Action()
   }
 }
 
+void CThread::SetCrashProtection(IThreadCrashProtection* crashProtection)
+{
+  if (g_application.IsCurrentThread())
+    g_application.SetCrashProtection(crashProtection);
+  else
+  {
+    CThread* thread = GetCurrentThread();
+    if (thread)
+      thread->SetThreadCrashProtection(crashProtection);
+    else
+      LOG(LOGERROR, "Needed thread for crash protection not found");
+  }
+}
+
+bool CThread::HasCrashProtection()
+{
+  if (g_application.IsCurrentThread())
+    return g_application.HasCrashProtection();
+
+  CThread* thread = GetCurrentThread();
+  if (thread)
+    return thread->HasThreadCrashProtection();
+
+  return false;
+}
+
+IThreadCrashProtection* CThread::CrashProtection()
+{
+  if (g_application.IsCurrentThread())
+    return g_application.CrashProtection();
+
+  CThread* thread = GetCurrentThread();
+  if (thread)
+    return thread->ThreadCrashProtection();
+
+  return nullptr;
+}
+
+
+bool CThread::HasThreadCrashProtection()
+{
+  return m_crashProtection != nullptr;
+}
+
+IThreadCrashProtection* CThread::ThreadCrashProtection()
+{
+  return m_crashProtection;
+}
+
+void CThread::SetThreadCrashProtection(IThreadCrashProtection* crashProtection)
+{
+  m_crashProtection = crashProtection;
+}

@@ -1,0 +1,8 @@
+INCLUDES+=-I@abs_top_srcdir@/addons/library.kodi.addon
+
+SRCS=AddonCallbacksAddonBase.cpp \
+
+LIB=addon-callbacks-addon-base.a
+
+include @abs_top_srcdir@/Makefile.include
+-include $(patsubst %.cpp,%.P,$(patsubst %.c,%.P,$(SRCS)))

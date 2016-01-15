@@ -17,6 +17,7 @@
  *
  */
 #include "AudioEncoder.h"
+#include "addons/binary/ExceptionHandling.h"
 
 namespace ADDON
 {

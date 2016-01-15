@@ -35,6 +35,7 @@
 #include <dlfcn.h>
 #include "filesystem/SpecialProtocol.h"
 #endif
+#include "addons/binary/ExceptionHandling.h"
 
 using namespace MUSIC_INFO;
 using namespace ADDON;

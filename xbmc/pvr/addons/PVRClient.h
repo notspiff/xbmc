@@ -468,12 +468,12 @@ namespace PVR
     /*!
      * @brief Check whether PVR backend supports pausing the currently playing stream
      */
-    bool CanPauseStream(void) const;
+    const bool CanPauseStream(void);
 
     /*!
      * @brief Check whether PVR backend supports seeking for the currently playing stream
      */
-    bool CanSeekStream(void) const;
+    const bool CanSeekStream(void);
 
     /*!
      * Notify the pvr addon/demuxer that XBMC wishes to seek the stream by time
@@ -559,22 +559,22 @@ namespace PVR
     /*!
      * @brief is timeshift active?
      */
-    bool IsTimeshifting() const;
+    const bool IsTimeshifting();
 
     /*!
      * @brief actual playing time
      */
-    time_t GetPlayingTime() const;
+    const time_t GetPlayingTime();
 
     /*!
      * @brief time of oldest packet in timeshift buffer
      */
-    time_t GetBufferTimeStart() const;
+    const time_t GetBufferTimeStart();
 
     /*!
      * @brief time of latest packet in timeshift buffer
      */
-    time_t GetBufferTimeEnd() const;
+    const time_t GetBufferTimeEnd();
 
     /*!
      * @return True if this add-on can be auto-configured via avahi, false otherwise

@@ -23,6 +23,7 @@
 #include "addons/AddonVersion.h"
 #include "utils/XBMCTinyXML.h"
 #include "guilib/LocalizeStrings.h"
+#include "threads/IThreadCrashProtection.h"
 #include "utils/ISerializable.h"
 #include <vector>
 
@@ -102,7 +103,7 @@ private:
 
 typedef std::vector<class AddonProps> VECADDONPROPS;
 
-class CAddon : public IAddon
+class CAddon : public IAddon, public IThreadCrashProtection
 {
 public:
   CAddon(const AddonProps &addonprops);

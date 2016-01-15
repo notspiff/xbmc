@@ -27,6 +27,7 @@
 #include <string>
 #include <stdint.h>
 #include "Event.h"
+#include "threads/IThreadCrashProtection.h"
 #include "threads/ThreadImpl.h"
 #include "threads/ThreadLocal.h"
 #include "commons/ilog.h"
@@ -85,7 +86,14 @@ public:
   static inline void SetLogger(XbmcCommons::ILogger* logger_) { CThread::logger = logger_; }
   static inline XbmcCommons::ILogger* GetLogger() { return CThread::logger; }
 
+  // -----------------------------------------------------------------------------------
+
+  static void SetCrashProtection(IThreadCrashProtection* crashProtection);
+  static bool HasCrashProtection();
+  static IThreadCrashProtection* CrashProtection();
+
   virtual void OnException(){} // signal termination handler
+
 protected:
   virtual void OnStartup(){};
   virtual void OnExit(){};
@@ -111,6 +119,9 @@ protected:
 private:
   static THREADFUNC staticThread(void *data);
   void Action();
+  void SetThreadCrashProtection(IThreadCrashProtection* crashProtection);
+  bool HasThreadCrashProtection();
+  IThreadCrashProtection* ThreadCrashProtection();
 
   // -----------------------------------------------------------------------------------
   // These are platform specific and can be found in ./platform/[platform]/ThreadImpl.cpp
@@ -135,4 +146,5 @@ private:
   float m_fLastUsage;
 
   std::string m_ThreadName;
+  IThreadCrashProtection* m_crashProtection;
 };

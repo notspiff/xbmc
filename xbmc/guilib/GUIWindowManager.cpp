@@ -141,7 +141,7 @@
 #include "settings/dialogs/GUIDialogAudioDSPSettings.h"
 
 #include "peripherals/dialogs/GUIDialogPeripheralSettings.h"
-#include "addons/AddonCallbacksGUI.h"
+#include "addons/binary/callbacks/GUI/AddonCallbacksGUIBase.h"
 
 using namespace PVR;
 using namespace PERIPHERALS;
@@ -862,10 +862,7 @@ void CGUIWindowManager::OnApplicationMessage(ThreadMessage* pMsg)
 
   case TMSG_GUI_ADDON_DIALOG:
   {
-    if (pMsg->lpVoid)
-    { // TODO: This is ugly - really these python dialogs should just be normal XBMC dialogs
-      static_cast<ADDON::CGUIAddonWindowDialog *>(pMsg->lpVoid)->Show_Internal(pMsg->param2 > 0);
-    }
+    ADDON::CAddonCallbacksGUIBase::OnApplicationMessage(pMsg);
   }
   break;
 
@@ -1020,7 +1017,7 @@ void CGUIWindowManager::RenderPass() const
   // we render the dialogs based on their render order.
   std::vector<CGUIWindow *> renderList = m_activeDialogs;
   stable_sort(renderList.begin(), renderList.end(), RenderOrderSortFunction);
-  
+
   for (iDialog it = renderList.begin(); it != renderList.end(); ++it)
   {
     if ((*it)->IsDialogRunning())

@@ -26,9 +26,17 @@
 #include "AEChannelData.h"
 
 class CHelper_libKODI_audioengine;
+namespace AudioEngineLIB
+{
+namespace V2
+{
+  class CAudioEngineLib_Internal;
+}
+}
 
 class CAEChannelInfo {
   friend class CHelper_libKODI_audioengine;
+  friend class AudioEngineLIB::V2::CAudioEngineLib_Internal;
 
 public:
   CAEChannelInfo();

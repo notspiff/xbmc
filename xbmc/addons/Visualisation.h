@@ -20,8 +20,8 @@
 #pragma once
 
 #include "AddonDll.h"
+#include "addons/kodi-addon-dev-kit/kodi/xbmc_vis_types.h"
 #include "cores/AudioEngine/Interfaces/IAudioCallback.h"
-#include "include/xbmc_vis_types.h"
 #include "guilib/IRenderingCallback.h"
 #include "utils/rfft.h"
 

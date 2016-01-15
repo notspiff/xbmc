@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string>
-#include "../../../addons/library.xbmc.codec/libXBMC_codec.h"
-#include "addons/AddonCallbacks.h"
+#include "addons/kodi-addon-dev-kit/kodi/libXBMC_codec.h"
+#include "addons/binary/callbacks/Codec/api-level-1/AddonCallbacksCodec.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -32,19 +32,24 @@
 #define DLLEXPORT
 #endif
 
+using namespace ADDON;
 using namespace std;
 
+namespace CodecLib
+{
+namespace V1
+{
 extern "C"
 {
 
 DLLEXPORT void* CODEC_register_me(void *hdl)
 {
-  CB_CODECLib *cb = NULL;
+  CB_CodecLib *cb = NULL;
   if (!hdl)
     fprintf(stderr, "libXBMC_codec-ERROR: %s is called with NULL handle\n", __FUNCTION__);
   else
   {
-    cb = ((AddonCB*)hdl)->CODECLib_RegisterMe(((AddonCB*)hdl)->addonData);
+    cb = (CodecLib::V1::CB_CODEC*)((AddonCB*)hdl)->CodecLib_RegisterMe(((AddonCB*)hdl)->addonData);
     if (!cb)
       fprintf(stderr, "libXBMC_codec-ERROR: %s can't get callback table from XBMC\n", __FUNCTION__);
   }
@@ -54,7 +59,7 @@ DLLEXPORT void* CODEC_register_me(void *hdl)
 DLLEXPORT void CODEC_unregister_me(void *hdl, void* cb)
 {
   if (hdl && cb)
-    ((AddonCB*)hdl)->CODECLib_UnRegisterMe(((AddonCB*)hdl)->addonData, (CB_CODECLib*)cb);
+    ((AddonCB*)hdl)->CodecLib_UnRegisterMe(((AddonCB*)hdl)->addonData, (CB_CodecLib*)cb);
 }
 
 DLLEXPORT xbmc_codec_t CODEC_get_codec_by_name(void *hdl, void* cb, const char* strCodecName)
@@ -64,9 +69,11 @@ DLLEXPORT xbmc_codec_t CODEC_get_codec_by_name(void *hdl, void* cb, const char* 
   retVal.codec_type = XBMC_CODEC_TYPE_UNKNOWN;
 
   if (cb != NULL)
-    retVal = ((CB_CODECLib*)cb)->GetCodecByName(((AddonCB*)hdl)->addonData, strCodecName);
+    retVal = ((CB_CodecLib*)cb)->GetCodecByName(((AddonCB*)hdl)->addonData, strCodecName);
 
   return retVal;
 }
 
 };
+}; /* namespace V1 */
+}; /* namespace CodecLib */

@@ -20,7 +20,7 @@
  */
 
 #include "DllAddon.h"
-#include "include/kodi_adsp_types.h"
+#include "addons/kodi-addon-dev-kit/kodi/kodi_adsp_types.h"
 
 class DllAudioDSP : public DllAddon<AudioDSP, AE_DSP_PROPERTIES>
 {

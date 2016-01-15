@@ -17,6 +17,7 @@
  *
  */
 #include "AudioDecoder.h"
+#include "addons/binary/ExceptionHandling.h"
 #include "music/tags/MusicInfoTag.h"
 #include "music/tags/TagLoaderTagLib.h"
 #include "cores/AudioEngine/Utils/AEUtil.h"
