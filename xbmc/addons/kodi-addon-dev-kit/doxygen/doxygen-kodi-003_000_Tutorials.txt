@@ -1,5 +1,7 @@
 /*!
 \page Tutorials Tutorials
 
-\subpage Doxygen_On_Addon
+- \subpage Python_HelloWorld_addon
+- \subpage Doxygen_On_Addon
+
 */

@@ -33,6 +33,8 @@ namespace V2
   /// @{
   /// @brief <b>Selectable window list item</b>
   ///
+  /// The list item control is used for creating item lists in Kodi
+  ///
   /// The with \ref GUIListItem.h "#include <kodi/addon.api2/GUIListItem.h>" given
   /// class is used to create a item entry for a list on window and to support it's
   /// control.

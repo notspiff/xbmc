@@ -116,19 +116,19 @@ so the distinction is more theoretical than practical.
 
 @{
 \ingroup python
-\defgroup python_xbmc xbmc
+\defgroup python_xbmc Library - xbmc
 
 \ingroup python
-\defgroup python_xbmcgui xbmcgui
+\defgroup python_xbmcgui Library - xbmcgui
 
 \ingroup python
-\defgroup python_xbmcplugin xbmcplugin
+\defgroup python_xbmcplugin Library - xbmcplugin
 
 \ingroup python
-\defgroup python_xbmcaddon xbmcaddon
+\defgroup python_xbmcaddon Library - xbmcaddon
 
 \ingroup python
-\defgroup python_xbmcvfs xbmcvfs
+\defgroup python_xbmcvfs Library - xbmcvfs
 @}
 
 */

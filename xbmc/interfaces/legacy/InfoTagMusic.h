@@ -27,7 +27,7 @@ namespace XBMCAddon
 {
   namespace xbmc
   {
-    ///
+    //
     /// \defgroup python_InfoTagMusic InfoTagMusic
     /// \ingroup python_xbmc
     /// @{
@@ -49,7 +49,7 @@ namespace XBMCAddon
     /// url   = tag.getURL()
     /// ...
     /// ~~~~~~~~~~~~~
-    ///
+    //
     class InfoTagMusic : public AddonClass
     {
     private:

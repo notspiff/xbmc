@@ -796,15 +796,15 @@ namespace XBMCAddon
       /// The next controls can be added to a window atm
       ///   | Control class       | Description                                                |
       ///   |---------------------|------------------------------------------------------------|
-      ///   | ControlLabel        | Label control to show text
-      ///   | ControlFadeLabel    | The fadelabel has multiple labels which it cycles through.
-      ///   | ControlTextBox      | To show bigger text field
-      ///   | ControlButton       | Brings a button to do some actions
-      ///   | ControlList         | Add a list for something like files
-      ///   | ControlGroup        | Is for a group which brings the others together
-      ///   | ControlImage        | Controls a image on skin
-      ///   | ControlRadioButton  | For a radio button which handle boolean values
-      ///   | ControlProgress     | Progress bar for a performed work or something else
+      ///   | \ref python_xbmcgui_control_label       "ControlLabel"        | Label control to show text
+      ///   | \ref python_xbmcgui_control_fadelabel   "ControlFadeLabel"    | The fadelabel has multiple labels which it cycles through.
+      ///   | \ref python_xbmcgui_control_textbox     "ControlTextBox"      | To show bigger text field
+      ///   | \ref python_xbmcgui_control_button      "ControlButton"       | Brings a button to do some actions
+      ///   | \ref python_xbmcgui_control_list        "ControlList"         | Add a list for something like files
+      ///   | \ref python_xbmcgui_control_group       "ControlGroup"        | Is for a group which brings the others together
+      ///   | \ref python_xbmcgui_control_image       "ControlImage"        | Controls a image on skin
+      ///   | \ref python_xbmcgui_control_radiobutton "ControlRadioButton"  | For a radio button which handle boolean values
+      ///   | \ref python_xbmcgui_control_progress    "ControlProgress"     | Progress bar for a performed work or something else
       ///
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
       SWIGHIDDENVIRTUAL

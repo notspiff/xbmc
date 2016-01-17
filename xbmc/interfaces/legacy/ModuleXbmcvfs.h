@@ -32,7 +32,7 @@ namespace XBMCAddon
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
     //
-    /// \defgroup python_xbmcvfs
+    /// \defgroup python_xbmcvfs Library - xbmcvfs
     /// @{
     /// @brief <b>Virtual file system functions on Kodi.</b>
     ///
