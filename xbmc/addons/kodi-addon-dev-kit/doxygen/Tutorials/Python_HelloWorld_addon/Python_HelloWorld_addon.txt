@@ -2,7 +2,7 @@
 
 \tableofcontents
 
-\section section1 Introduction
+\section Python_HelloWorld_section1 Introduction
 This tutorial will explain how to write your first Kodi/XBMC script add-on!
 
 In case you want to write a plugin addon, please use this tutorial: http://kodi.wiki/view/Audio-video_add-on_tutorial
@@ -10,7 +10,7 @@ In case you want to write a plugin addon, please use this tutorial: http://kodi.
 
 ---------------------------------------------------------------------------------
 
-\section section2 Tools
+\section Python_HelloWorld_section2 Tools
 
 I'd advise using a text editor for your first add-on, something like notepad++ or
 sublime are good due to their text syntaxing. Also make sure you have a version
@@ -23,9 +23,9 @@ of Kodi installed on your development environment.
 
 ---------------------------------------------------------------------------------
 
-\section section3 Installing
+\section Python_HelloWorld_section3 Installing
 
-For this example we use the official "Hello World" add-on. You can find the 
+For this example we use the official "Hello World" add-on. You can find the
 source-code here:
 - https://github.com/zag2me/script.hello.world
 
@@ -35,7 +35,7 @@ source-code here:
 
 ---------------------------------------------------------------------------------
 
-\section section4 Testing
+\section Python_HelloWorld_section4 Testing
 
 You can first give the add-on a test run by going to:
 `System >> Add-Ons >> Enabled Add-Ons >> Program Add-Ons >> Hello World`.
@@ -45,9 +45,10 @@ You should now see a popup with 3 lines of text.
 |-----------------------------|
 | \image html Helloworld3.jpg |
 
+
 ---------------------------------------------------------------------------------
 
-\section section5 Modifying the Add-On
+\section Python_HelloWorld_section5 Modifying the Add-On
 
 Each time we want to change the add-on you can simply go to the appdata folder
 and live edit it! No need to even close Kodi. This will allow you to quickly
@@ -61,7 +62,7 @@ test your add-on modifications. On windows this will be in:
 
 ---------------------------------------------------------------------------------
 
-\section section6 Structure
+\section Python_HelloWorld_section6 Structure
 
 | File          | Description                                                   |
 |---------------|---------------------------------------------------------------|
@@ -78,7 +79,7 @@ test your add-on modifications. On windows this will be in:
 
 ---------------------------------------------------------------------------------
 
-\section section7 Metadata
+\section Python_HelloWorld_section7 Metadata
 
 As we can see from the screenshot below the `addon.xml` is pretty simple. The main
 things you want to look at are on the first line of the XML. It's all pretty
@@ -104,7 +105,7 @@ users who need support for your Add-On.
 
 ---------------------------------------------------------------------------------
 
-\section section8 The Code
+\section Python_HelloWorld_section8 The Code
 
 So now we come to the actual Add-On code, this is where most of your Add-on is
 written and is a simple text file containing python code. It's contained in a
@@ -133,7 +134,7 @@ name in the Popup boxs title and has an OK button.
 
 ---------------------------------------------------------------------------------
 
-\section section9 Changing the code
+\section Python_HelloWorld_section9 Changing the code
 
 Hopefully by now you have managed to run the Add-On, understand the structure and
 can see what the code can do. Now lets trying changing it a little!
@@ -160,7 +161,7 @@ Congratulations! you are now an XBMC/Kodi developer!!
 
 ---------------------------------------------------------------------------------
 
-\section section10 Final Thoughts
+\section Python_HelloWorld_section10 Final Thoughts
 
 Obviously this is just a simple Add-On tutorial and you can do much, much more as
 most Kodi commands are accessible from this python interface. You can also extend
@@ -172,7 +173,7 @@ forums here: http://forum.kodi.tv/showthread.php?tid=209948
 
 ---------------------------------------------------------------------------------
 
-\section section11 Extra info
+\section Python_HelloWorld_section11 Extra info
 
 You can find a little extra info on this page for different methods of using the
 GUI Hello World.

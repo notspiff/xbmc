@@ -1482,7 +1482,7 @@ namespace XBMCAddon
     /// @brief **Used to show multiple pieces of text in the same position, by
     /// fading from one to the other.**
     ///
-    /// <b><c>ControlFadeLabel(x, y, width, height[, font, textColor, alignment])</b></c>
+    /// <b><c>ControlFadeLabel(x, y, width, height[, font, textColor, alignment])</c></b>
     ///
     /// The fade label control is used for displaying multiple pieces of text
     /// in the same space in Kodi. You can choose the font, size, colour,
@@ -1788,7 +1788,7 @@ namespace XBMCAddon
     /// @{
     /// @brief **Used to show an image.**
     ///
-    /// <b><c>ControlImage(x, y, width, height, filename[, aspectRatio, colorDiffuse])</b></c>
+    /// <b><c>ControlImage(x, y, width, height, filename[, aspectRatio, colorDiffuse])</c></b>
     ///
     /// The image control is used for displaying images in Kodi. You can choose
     /// the position, size, transparency and contents of the image to be

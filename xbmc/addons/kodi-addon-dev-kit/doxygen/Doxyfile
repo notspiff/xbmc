@@ -237,8 +237,19 @@ TAB_SIZE               = 4
 # documentation, which will result in a user-defined paragraph with heading
 # "Side Effects:". You can put \n's in the value part of an alias to insert
 # newlines.
-
-ALIASES                = 
+# "table_start=<table width="100%" style="border:1px solid yellowgreen" border="1">"
+ALIASES                = "table_start=<table width="100%" style="border" bgcolor="576f9f" border="0">" \
+                         "table_start_b{1}=<table width="100%"><caption align= bottom>\1</caption>" \
+                         "table_start_t{1}=<table width="100%"><caption align= top>\1</caption>" \
+                         "table_end=</table>" \
+                         "table_h2_l{2}=<tr bgcolor="576f9f"><th width="40%" align=left>\1</th><th width="60%" align=left>\2</th></tr>" \
+                         "table_row2_l{2}=<tr bgcolor=white><td width="40%" align=left>\1</td><td width="60%" align=left>\2</td></tr>" \
+                         "table_h2_c{2}=<tr bgcolor=white><th width="40%" align=center>\1</th><th width="60%" align=center>\2</th></tr>" \
+                         "table_row2_c{2}=<tr><td width="40%" align=center>\1</td><td align=center>\2</td></tr>" \
+                         "table_h2_r{2}=<tr><th width="40%" align=right>\1</th><th>\2</th width="60%" align=right></tr>" \
+                         "table_row__r{2}=<tr><td width="40%" align=right>\1</td><td width="60%" align=right>\2</td></tr>" \
+                         "table_h3_l{3}=<tr><th>\1</th><th>\2</th><th>\3</th></tr>" \
+                         "table_row3_l{3}=<tr><td align=left>\1</td><td align= left>\2</td><td align=left>\3</td></tr>" \
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"
@@ -769,13 +780,6 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ./main.txt \
-                         doxygen-kodi-dev-config.txt \
-                         doxygen-kodi-001_000_Getting_started.txt \
-                         doxygen-kodi-002_000_Add-On_Types.txt \
-                         doxygen-kodi-003_000_Tutorials.txt \
-                         doxygen-kodi-004_000_Examples.txt \
-                         doxygen-kodi-101_000_modules_cpp.txt \
-                         doxygen-kodi-102_000_modules_python.txt \
                          ../kodi/addon.api2 \
                          ../kodi/audioengine.api2 \
                          ../kodi/gui.api2 \
@@ -796,7 +800,6 @@ INPUT                  = ./main.txt \
                          ../../../interfaces/legacy/Window.h \
                          ../../../input/Key.h \
                          doxygen-kodi-xml-control-id-desc.txt \
-                         doxygen-kodi-003_010_DoxygenOnAddon.txt \
                          ../../../interfaces/legacy/WindowDialog.h \
                          ../../../interfaces/legacy/WindowXML.h \
                          ../../../SortFileItem.h \
@@ -809,7 +812,38 @@ INPUT                  = ./main.txt \
                          ../../../interfaces/legacy/ListItem.h \
                          ../../../guilib/GUIListItem.h \
                          ../../../pictures/PictureInfoTag.cpp \
-                         doxygen-kodi-003_002_Python_HelloWorld_addon.txt
+                         Getting_Started/Getting_started.txt \
+                         Add-On_Types/Add-On_Types.txt \
+                         Examples/Examples.txt \
+                         Tutorials/Tutorials.txt \
+                         Tutorials/Python_HelloWorld_addon/Python_HelloWorld_addon.txt \
+                         Tutorials/Python_General_addon/Python_General_addon.txt \
+                         Tutorials/Python_Video_addon/Python_Video_addon.txt \
+                         Tutorials/Python_Audio_addon/Python_Audio_addon.txt \
+                         Tutorials/Python_Visualisation_addon/Python_Visualisation_addon.txt \
+                         Tutorials/Python_3rd_Party_Tutorials/Python_3rd_Party_Tutorials.txt \
+                         Tutorials/DoxygenOnAddon/DoxygenOnAddon.txt \
+                         Advanced/Advanced.txt \
+                         Advanced/List_of_built-in_functions/List_of_built-in_functions.txt \
+                         Modules/cpp/modules_cpp.txt \
+                         Modules/python/modules_python.txt \
+                         Modules/skin/modules_skin.txt \
+                         ../../../interfaces/builtins/AddonBuiltins.cpp \
+                         ../../../interfaces/builtins/AndroidBuiltins.cpp \
+                         ../../../interfaces/builtins/ApplicationBuiltins.cpp \
+                         ../../../interfaces/builtins/CECBuiltins.cpp \
+                         ../../../interfaces/builtins/GUIBuiltins.cpp \
+                         ../../../interfaces/builtins/GUIContainerBuiltins.cpp \
+                         ../../../interfaces/builtins/GUIControlBuiltins.cpp \
+                         ../../../interfaces/builtins/LibraryBuiltins.cpp \
+                         ../../../interfaces/builtins/OpticalBuiltins.cpp \
+                         ../../../interfaces/builtins/PictureBuiltins.cpp \
+                         ../../../interfaces/builtins/PlayerBuiltins.cpp \
+                         ../../../interfaces/builtins/ProfileBuiltins.cpp \
+                         ../../../interfaces/builtins/PVRBuiltins.cpp \
+                         ../../../interfaces/builtins/SkinBuiltins.cpp \
+                         ../../../interfaces/builtins/SystemBuiltins.cpp \
+                         ../../../interfaces/builtins/WeatherBuiltins.cpp \
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

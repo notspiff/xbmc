@@ -192,13 +192,16 @@ namespace V2
     /// @param[in] format The format of the message to pass to KODI.
     /// @param[in] ... Added string values
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::Log(LOG_FATAL, "Oh my goddess, I'm so fatal ;)");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void Log(const addon_log loglevel, const char* format, ... );
     /// @cond checked OK @endcond
@@ -287,14 +290,17 @@ namespace V2
     ///        <setting id="quality" type="labelenum" label="$LOCALIZE[622]" values="720p|480p" default="720p" />
     ///        \endcode
     ///
+    ///
+    /// ------------------------------------------------------------------------
+    ///
     /// <b>Code example:</b>
-    /// @code
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     ///
     /// std::string bitrate = "Max";
     /// if (!CAddonLib_General::GetSettingString("bitrate", bitrate))
     ///   CAddonLib_General::Log(LOG_ERROR, "Couldn't get 'bitrate' setting, falling back to default");
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static bool GetSettingString(const std::string& settingName, std::string& settingValue, bool global = false);
 
@@ -347,14 +353,17 @@ namespace V2
     ///         integers, floating point numbers or a percentage.
     ///       - <b><em><tt>default="value"</tt></em></b> (optional) - the default value.
     ///
+    ///
+    /// ------------------------------------------------------------------------
+    ///
     /// <b>Code example:</b>
-    /// @code
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     ///
     /// int cachesize = 5;
     /// if (!CAddonLib_General::GetSettingInt("kodion.cache.size", bitrate))
     ///   CAddonLib_General::Log(LOG_ERROR, "Couldn't get 'kodion.cache.size' setting, falling back to default");
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static bool GetSettingInt(const std::string& settingName, int& settingValue, bool global = false);
 
@@ -377,14 +386,17 @@ namespace V2
     ///       - <b><em><tt>label="id"</tt></em></b> (required) - an id from the language file that indicates which text to display.
     ///       - <b><em><tt>default="true"|"false"</tt></em></b> (optional) - the default value.
     ///
+    ///
+    /// ------------------------------------------------------------------------
+    ///
     /// <b>Code example:</b>
-    /// @code
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     ///
     /// bool show_notifications = true;
     /// if (!CAddonLib_General::GetSettingBoolean("show-notifications", show_notifications))
     ///   CAddonLib_General::Log(LOG_ERROR, "Couldn't get 'show-notifications' setting, falling back to default");
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static bool GetSettingBoolean(const std::string& settingName, bool& settingValue, bool global = false);
 
@@ -403,14 +415,17 @@ namespace V2
     ///        <setting id="kodi.amplication.volume" type="slider" label="30024" default="1.0" range="0.0,0.1,2.0" option="float"/>
     ///        \endcode
     ///
+    ///
+    /// ------------------------------------------------------------------------
+    ///
     /// <b>Code example:</b>
-    /// @code
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     ///
     /// float volume = 1.0;
     /// if (!CAddonLib_General::GetSettingFloat("kodi.amplication.volume", volume))
     ///   CAddonLib_General::Log(LOG_ERROR, "Couldn't get 'kodi.amplication.volume' setting, falling back to default");
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static bool GetSettingFloat(const std::string& settingName, float& settingValue, bool global = false);
 
@@ -418,14 +433,15 @@ namespace V2
     /// \ingroup CAddonLib_General
     /// @brief Opens this Add-Ons settings dialog.
     ///
+    ///
     /// --------------------------------------------------------------------------
     ///
-    ///  <b>Example:</b>
-    ///  @code{.cpp}
+    ///  **Example:**
+    ///  ~~~~~~~~~~~~~{.cpp}
     ///  ..
     ///  CAddonLib_General::OpenSettings();
     ///  ..
-    ///  @endcode
+    ///  ~~~~~~~~~~~~~
     ///
     static void OpenSettings();
 
@@ -494,13 +510,16 @@ namespace V2
     ///            There should be at least as many of these arguments as the number of values specified
     ///            in the format specifiers. Additional arguments are ignored by the function.
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::QueueNotification(QUEUE_WARNING, "I'm want to inform you, here with a test call to show '%s'", "this");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void QueueFormattedNotification(const queue_msg type, const char* format, ... );
 
@@ -519,13 +538,16 @@ namespace V2
     /// @param[in] withSound     [opt] if true also warning sound becomes played <b>(default with sound)</b>
     /// @param[in] messageTime   [opt] how many milli seconds start show of notification <b>(default 1 sec)</b>
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::QueueNotification(QUEUE_INFO, "I'm want to inform you", "Here with a test call", 3000, false, 1000);
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void QueueNotification(const queue_msg type, const std::string& aCaption, const std::string& aDescription, unsigned int displayTime = 5000, bool withSound = true, unsigned int messageTime = 1000);
 
@@ -535,13 +557,16 @@ namespace V2
     /// @param[in] aCaption      Header Name
     /// @param[in] aDescription  Message to display on Kodi
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::QueueNotification("I'm want to inform you", "Here with a test call");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void QueueNotification(const std::string& aCaption, const std::string& aDescription);
 
@@ -555,13 +580,16 @@ namespace V2
     /// @param[in] withSound     [opt] true also warning sound becomes played <b>(default with sound)</b>
     /// @param[in] messageTime   [opt] in how many milli seconds start show of notification in ms <b>(default 1 sec)</b>
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::QueueNotification("./myImage.png", "I'm want to inform you", "Here with a test call", 3000, true, 1000);
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void QueueNotification(const std::string& aImageFile, const std::string& aCaption, const std::string& aDescription, unsigned int displayTime = 5000, bool withSound = true, unsigned int  messageTime = 1000);
 
@@ -572,15 +600,18 @@ namespace V2
     /// @param[in]  text  text to compute the MD5 for
     /// @param[out] md5   Returned MD5 digest
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// std::string md5;
     /// CAddonLib_General::GetMD5("Make me as md5", md5);
     /// fprintf(stderr, "My md5 digest is: '%s'", md5.c_str());
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void GetMD5(const std::string& text, std::string& md5);
 
@@ -593,15 +624,18 @@ namespace V2
     /// @param[in]  failOnBadChar   [opt] return failed if bad character is inside <em>(default is <b><c>false</c></b>)</em>
     /// @return                     true if OK
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// std::string ret;
     /// if (!CAddonLib_General::UnknownToUTF8("test string", ret, true))
     ///   fprintf(stderr, "Translation to UTF8 failed!\n");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static bool UnknownToUTF8(const std::string& stringSrc, std::string& utf8StringDst, bool failOnBadChar = false);
 
@@ -616,13 +650,16 @@ namespace V2
     /// strings inside <b>./resources/language/resource.language.??_??/strings.po</b>
     /// all others are from Kodi itself.
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// std::string str = CAddonLib_General::GetLocalizedString(30005, "Use me as default");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static std::string GetLocalizedString(uint32_t labelId, const std::string& strDefault = "");
     /// @cond checked OK @endcond
@@ -639,13 +676,16 @@ namespace V2
     /// @param[in] region [opt] append the region delimited by "-" of the language (setting) to the returned language string <em>(default is <b><c>false</c></b>)</em>
     /// @return active language
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// std::string language = CAddonLib_General::GetLanguage(LANG_FMT_ISO_639_1, false);
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static std::string GetLanguage(lang_formats format = LANG_FMT_ENGLISH_NAME, bool region = false);
     /// @cond checked OK @endcond
@@ -675,14 +715,17 @@ namespace V2
     /// @param[in] wait [opt] wait on stop before returning (not supported by all servers) <em>(default is <b><c>false</c></b>)</em>
     /// @return true if successfull done
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// if (!CAddonLib_General::StartServer(ADDON_ES_WEBSERVER, true))
     ///   CAddonLib_General::Log(LOG_ERROR, "Start of web server failed!");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
    ///
     static bool StartServer(eservers typ, bool start, bool wait = false);
     /// @cond checked partly OK @endcond
@@ -691,13 +734,16 @@ namespace V2
     /// \ingroup CAddonLib_General
     /// @brief Suspend Audio engine
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::AudioSuspend();
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void AudioSuspend();
     /// @cond checked OK @endcond
@@ -706,13 +752,16 @@ namespace V2
     /// \ingroup CAddonLib_General
     /// @brief Resume Audio engine
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::AudioResume();
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void AudioResume();
     /// @cond checked OK @endcond
@@ -723,14 +772,17 @@ namespace V2
     /// @param[in] percentage [opt] if set to false becomes amplication level returned
     /// @return The volume value
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// float percent = CAddonLib_General::GetVolume(true);
     /// fprintf(stderr, "Current volume is set to %02f %%\n");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static float GetVolume(bool percentage = true);
     /// @cond checked OK @endcond
@@ -741,20 +793,23 @@ namespace V2
     /// @param[in] value the volume to use
     /// @param[in] isPercentage [opt] if set to false becomes amplication level use
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::SetVolume(0.45, false);
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     /// @b or
-    /// @code
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::SetVolume(75.0, true);
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void SetVolume(float value, bool isPercentage = true);
     /// @cond checked OK @endcond
@@ -764,13 +819,16 @@ namespace V2
     /// @brief Ask if Kodi audio is muted
     /// @return true if audio is muted
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// bool muted = CAddonLib_General::IsMuted();
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static bool IsMuted();
     /// @cond checked OK @endcond
@@ -779,13 +837,16 @@ namespace V2
     /// \ingroup CAddonLib_General
     /// @brief Toggle the audio volume between on and off
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::ToggleMute();
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void ToggleMute(void);
     /// @cond checked OK @endcond
@@ -795,13 +856,16 @@ namespace V2
     /// @brief Set Kodi's mute
     /// @param[in] mute with set to true becomes it muted otherwise audio is present
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::SetMute(true); // Enable muted audio
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void SetMute(bool mute);
     /// @cond checked OK @endcond
@@ -822,14 +886,17 @@ namespace V2
     /// @brief Send eject signal to optical drive
     /// @return true if successfull done
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// if (!CAddonLib_General::EjectOpticalDrive())
     ///   CAddonLib_General::Log(LOG_ERROR, "Eject of drive failed!");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static bool EjectOpticalDrive();
     /// @cond checked, not returned on chroot system (not sure if OK)!!! @endcond
@@ -839,19 +906,22 @@ namespace V2
     /// @brief Get current Kodi informations and versions, returned data from the following
     /// <b><tt>kodi_version_t version; CAddonLib_General::KodiVersion(version);</tt></b>
     /// is e.g.:
-    /// @code
+    /// ~~~~~~~~~~~~~{.cpp}
     /// version.compile_name = Kodi
     /// version.major        = 16
     /// version.minor        = 0
     /// version.revision     = 2015-11-30-74edffb-dirty
     /// version.tag          = beta
     /// version.tag_revision = 1
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     /// @param[out] version structure to store data from kodi
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// kodi_version_t version;
@@ -868,7 +938,7 @@ namespace V2
     ///             version.compile_name.c_str(), version.major, version.minor,
     ///             version.revision.c_str(), version.tag.c_str(), version.tag_revision.c_str());
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void KodiVersion(kodi_version& version);
 
@@ -877,13 +947,16 @@ namespace V2
     /// @brief Tell Kodi to stop work, go to exit and stop his work.
     /// \warning Kodi is really quited!
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::KodiQuit();
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void KodiQuit();
 
@@ -891,13 +964,16 @@ namespace V2
     /// \ingroup CAddonLib_General
     /// @brief Shutdown the htpc
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::HTPCShutdown();
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void HTPCShutdown();
 
@@ -905,13 +981,16 @@ namespace V2
     /// \ingroup CAddonLib_General
     /// @brief Restart the htpc
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::HTPCRestart();
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void HTPCRestart();
 
@@ -920,29 +999,39 @@ namespace V2
     /// @brief Execute a python script
     /// @param[in] script filename to execute
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::ExecuteScript("special://home/scripts/update.py");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void ExecuteScript(const std::string& script);
 
     ///
     /// \ingroup CAddonLib_General
     /// @brief Execute a built in Kodi function
+    ///
     /// @param[in] function builtin function to execute
     /// @param[in] wait [opt] if true wait until finished
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// See list of \ref list_of_build_in_functions_section1 "build in functions"
+    ///
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// CAddonLib_General::ExecuteBuiltin("RunXBE(c:\\avalaunch.xbe)");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static void ExecuteBuiltin(const std::string& function, bool wait = false);
 
@@ -952,13 +1041,16 @@ namespace V2
     /// @param[in] jsonrpccommand jsonrpc command to execute
     /// @return  From jsonrpc returned string for command
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// std::string response = CAddonLib_General::ExecuteJSONRPC('{ \"jsonrpc\": \"2.0\", \"method\": \"JSONRPC.Introspect\", \"id\": 1 }');
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static std::string ExecuteJSONRPC(const std::string& jsonrpccommand);
 
@@ -975,13 +1067,16 @@ namespace V2
     ///
     /// @warning Throws exception on wrong string value!
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// std::string timeFormat = CAddonLib_General::GetRegion("time");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static std::string GetRegion(const std::string& id);
     /// @cond checked OK @endcond
@@ -991,13 +1086,16 @@ namespace V2
     /// @brief Returns the amount of free memory in MB as an integer
     /// @return free memory
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// long freeMem = CAddonLib_General::GetFreeMem();
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static long GetFreeMem();
     /// @cond checked OK @endcond
@@ -1007,13 +1105,16 @@ namespace V2
     /// @brief Returns the elapsed idle time in seconds as an integer
     /// @return idle time
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// int time = CAddonLib_General::GetGlobalIdleTime();
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static int GetGlobalIdleTime();
     /// @cond checked OK @endcond
@@ -1034,13 +1135,16 @@ namespace V2
     ///
     /// @warning Throws exception on wrong string value!
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// std::string addonName = CAddonLib_General::GetAddonInfo("name");
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static std::string GetAddonInfo(std::string id);
     /// @cond checked OK @endcond
@@ -1056,21 +1160,24 @@ namespace V2
     ///              e.g. Converts 'special://masterprofile/script_data' -> '/home/user/.kodi/UserData/script_data'
     ///              on Linux.
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// std::string path = CAddonLib_General::TranslatePath("special://masterprofile/script_data");
     /// fprintf(stderr, "Translated path is: %s\n", path.c_str());
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     /// or
-    /// @code
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// fprintf(stderr, "Directory 'special://temp' is '%s'\n", CAddonLib_General::TranslatePath("special://temp").c_str());
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static std::string TranslatePath(const std::string& path);
     /// @cond checked OK @endcond
@@ -1081,14 +1188,17 @@ namespace V2
     /// @param[in] status The return code
     /// @return A human-readable string suitable for logging
     ///
-    /// @b Example:
-    /// @code
+    ///
+    /// ------------------------------------------------------------------------
+    ///
+    /// **Example:**
+    /// ~~~~~~~~~~~~~{.cpp}
     /// #include <kodi/addon.api2/General.h>
     /// ...
     /// std::string error = CAddonLib_General::TranslateAddonStatus(ADDON_STATUS_PERMANENT_FAILURE);
     /// fprintf(stderr, "Error is: %s\n", error.c_str());
     /// ...
-    /// @endcode
+    /// ~~~~~~~~~~~~~
     ///
     static std::string TranslateAddonStatus(ADDON_STATUS status);
     /// @cond checked OK @endcond

@@ -38,7 +38,7 @@ namespace XBMCAddon
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
     //
-    /// \defgroup python_xbmc Library - python_xbmc
+    /// \defgroup python_xbmc Library - xbmc
     /// @{
     /// @brief **General functions on Kodi.**
     ///

@@ -1,0 +1,22 @@
+
+
+
+/*!
+\page kodi_external_values Ways to access Kodi
+\ingroup Advanced
+@{
+
+
+@}*/
+
+
+
+/*! @page Advanced Advanced
+
+
+
+\tableofcontents
+
+\subpage List_of_built_in_functions
+
+*/

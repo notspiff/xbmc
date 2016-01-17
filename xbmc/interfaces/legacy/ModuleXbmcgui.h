@@ -28,7 +28,7 @@ namespace XBMCAddon
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
     //
-    /// \defgroup python_xbmcgui Kodi's GUI
+    /// \defgroup python_xbmcgui Library - xbmcgui
     /// @{
     /// @brief **GUI functions on Kodi.**
     ///
