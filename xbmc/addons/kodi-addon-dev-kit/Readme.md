@@ -3,8 +3,16 @@
 *<p align="center">[![Home](http://kodi.wiki/images/c/c9/Logo.png)](http://kodi.tv/)
 [<img src="http://kodi.wiki/images/5/52/Zappy.png" alt="Home" width="100" height="100">](http://kodi.tv/)</p>*
 
-#### *<p align="center">Binary add-on</p>*
+#### *<p align="center">Add-On Development</p>*
 -------------
+
+
+# Kodi Development  17.0 
+**- - -**
+#### *for Binary (API Level 2) and Script based Add-Ons*
+
+
+###### [_Open Development website_](http://alwinesch.github.io/) to become needed information.
 
 Add-on systems
 -------------
@@ -19,8 +27,22 @@ Add-on systems
 Libraries
 -------------
 ##### Binary library access for add-on
-1. [AddOnLIB](addon.api2/Readme.md) - Primary add-on helper library with general functions
-2. [AudioEngineLIB](audioengine.api2/Readme.md) - Help functions for audio engine and DSP systems
-3. [GUILIB](gui.api2/Readme.md) - Graphical functions for Windows and Dialogs to show
-4. [PlayerLIB](player.api2/Readme.md) - Auxiliary functions for playback and control of files       
-5. [PVRLIB](pvr.api2/Readme.md) - PVR add-on related functions to pass data on Kodi
+1. **Library - AddOnLIB** - Primary add-on helper library with general functions
+2. **Library - AudioEngineLIB** - Help functions for audio engine and DSP systems
+3. **Library - GUILIB** - Graphical functions for Windows and Dialogs to show
+4. **Library - PlayerLIB** - Auxiliary functions for playback and control of files
+5. **Library - PVRLIB** - PVR add-on related functions to pass data on Kodi
+
+Python
+-------------
+##### Python to Kodi Interface
+1. **Library - xbmc** - General functions on Kodi.
+2. **Library - xbmcaddon** - Kodi's addon class.
+3. **Library - xbmcgui** - 	Graphical functions for Windows and Dialogs to show
+4. **Library - xbmcplugin** - Plugin functions on Kodi.
+5. **Library - xbmcvfs** - Virtual file system functions on Kodi.
+
+
+**- - -**
+### License of Kodi
+- [GNU GENERAL PUBLIC LICENSE Version 2, June 1991](https://github.com/xbmc/xbmc/raw/master/LICENSE.GPL)
