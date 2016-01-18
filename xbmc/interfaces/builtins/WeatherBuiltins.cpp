@@ -53,8 +53,8 @@ static int SwitchLocation(const std::vector<std::string>& params)
 // Note: For new Texts with komma add a "\" before!!! Is used for table text.
 // field change and brings conflicts is not unseted on text!
 //
-/// \page List_of_built_in_functions
-/// \subsection built_in_functions_16 Weather built-in's
+/// \page page_List_of_built_in_functions
+/// \section built_in_functions_16 Weather built-in's
 ///
 /// -----------------------------------------------------------------------------
 ///
@@ -84,6 +84,7 @@ static int SwitchLocation(const std::vector<std::string>& params)
 ///     @param[in] parameter             1-3
 ///   }
 /// \table_end
+///
 
 CBuiltins::CommandMap CWeatherBuiltins::GetOperations() const
 {

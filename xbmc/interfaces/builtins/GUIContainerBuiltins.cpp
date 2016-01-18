@@ -122,8 +122,8 @@ static int Update(const std::vector<std::string>& params)
 // Note: For new Texts with komma add a "\" before!!! Is used for table text.
 // field change and brings conflicts is not unseted on text!
 //
-/// \page List_of_built_in_functions
-/// \subsection built_in_functions_6 GUI container built-in's
+/// \page page_List_of_built_in_functions
+/// \section built_in_functions_6 GUI container built-in's
 ///
 /// -----------------------------------------------------------------------------
 ///
@@ -160,7 +160,7 @@ static int Update(const std::vector<std::string>& params)
 ///   \table_row2_l{
 ///     <b>`Container.SetSortMethod(id)`</b>
 ///     ,
-///     Change to the specified sort method. (For list of ID's see List of sort methods below)
+///     Change to the specified sort method. (For list of ID's \ref SortBy "see List" of sort methods below)
 ///     @param[in] id                    ID of sort method.
 ///   }
 ///   \table_row2_l{

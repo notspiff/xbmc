@@ -780,6 +780,10 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ./main.txt \
+                         Advanced/Built-in_scripting/Built-in_scripting.txt \
+                         Getting_Started/Add-on_Rules.txt \
+                         Tutorials/Git_usage/Git_usage.txt \
+                         Tutorials/Submit_a_patch/Submit_a_patch.txt \
                          ../kodi/addon.api2 \
                          ../kodi/audioengine.api2 \
                          ../kodi/gui.api2 \
@@ -825,6 +829,8 @@ INPUT                  = ./main.txt \
                          Tutorials/DoxygenOnAddon/DoxygenOnAddon.txt \
                          Advanced/Advanced.txt \
                          Advanced/List_of_built-in_functions/List_of_built-in_functions.txt \
+                         Advanced/List_of_sort_methods/List_of_sort_methods.txt \
+                         Modules/general/modules_general.txt \
                          Modules/cpp/modules_cpp.txt \
                          Modules/python/modules_python.txt \
                          Modules/skin/modules_skin.txt \
@@ -844,6 +850,8 @@ INPUT                  = ./main.txt \
                          ../../../interfaces/builtins/SkinBuiltins.cpp \
                          ../../../interfaces/builtins/SystemBuiltins.cpp \
                          ../../../interfaces/builtins/WeatherBuiltins.cpp \
+                         ../../../utils/SortUtils.cpp \
+                         ../../../utils/SortUtils.h \
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

@@ -414,8 +414,8 @@ static int ToggleDirty(const std::vector<std::string>&)
 // Note: For new Texts with komma add a "\" before!!! Is used for table text.
 // field change and brings conflicts is not unseted on text!
 //
-/// \page List_of_built_in_functions
-/// \subsection built_in_functions_5 GUI built-in's
+/// \page page_List_of_built_in_functions
+/// \section built_in_functions_5 GUI built-in's
 ///
 /// -----------------------------------------------------------------------------
 ///

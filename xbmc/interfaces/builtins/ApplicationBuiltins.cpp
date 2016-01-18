@@ -152,8 +152,8 @@ static int WakeOnLAN(const std::vector<std::string>& params)
 // Note: For new Texts with komma add a "\" before!!! Is used for table text.
 // field change and brings conflicts is not unseted on text!
 //
-/// \page List_of_built_in_functions
-/// \subsection built_in_functions_3 Application built-in's
+/// \page page_List_of_built_in_functions
+/// \section built_in_functions_3 Application built-in's
 ///
 /// -----------------------------------------------------------------------------
 ///
@@ -167,7 +167,7 @@ static int WakeOnLAN(const std::vector<std::string>& params)
 ///     Extracts a specified archive to an optionally specified 'absolute' path.
 ///     @param[in] url                   The archive URL.
 ///     @param[in] dest                  Destination path (optional).
-///      - @note If not given\, extracts to folder with archive.
+///             @note If not given\, extracts to folder with archive.
 ///   }
 ///   \table_row2_l{
 ///     <b>`Mute`</b>

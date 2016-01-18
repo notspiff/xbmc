@@ -40,6 +40,8 @@
 
 \tableofcontents
 
+- \subpage Git_usage
+- \subpage Submit_a_patch
 - \subpage Doxygen_On_Addon
 
 

@@ -557,8 +557,7 @@ int CPictureInfoTag::TranslateString(const std::string &info)
 {
   // todo: dind a better way to include this, without extra list here of strings.
   ///
-  /// @ingroup python_xbmcgui_listitem
-  /// @defgroup kodi_pictures_infotag Picture info labels
+  /// @addtogroup kodi_pictures_infotag
   /// \memberof python_xbmcgui_listitem
   /// Picture info labels
   /// @{

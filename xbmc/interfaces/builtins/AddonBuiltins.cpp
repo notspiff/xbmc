@@ -310,8 +310,8 @@ static int UpdateLocals(const std::vector<std::string>& params)
 // Note: For new Texts with komma add a "\" before!!! Is used for table text.
 // field change and brings conflicts is not unseted on text!
 //
-/// \page List_of_built_in_functions
-/// \subsection built_in_functions_1 Add-on built-in's
+/// \page page_List_of_built_in_functions
+/// \section built_in_functions_1 Add-on built-in's
 ///
 /// -----------------------------------------------------------------------------
 ///
@@ -350,9 +350,9 @@ static int UpdateLocals(const std::vector<std::string>& params)
 ///     ,
 ///     Runs the specified plugin/script
 ///     @param[in] id                    The add-on id.
-///     @param[in] opt                   is blank for no add-on parameters
+///     @param[in] opt                   is blank for no add-on parameters\n
 ///     or
-///     @param[in] opt                   Add-on parameters in url format
+///     @param[in] opt                   Add-on parameters in url format\n
 ///     or
 ///     @param[in] opt[\,...]            Additional parameters in format param=value.
 ///   }
@@ -360,9 +360,9 @@ static int UpdateLocals(const std::vector<std::string>& params)
 ///     <b>`RunAppleScript(script[\,args]*)`</b>
 ///     ,
 ///     Run the specified AppleScript command
-///     @param[in] script                Is the URL to the apple script
+///     @param[in] script                Is the URL to the apple script\n
 ///     or
-///     @param[in] script                Is the addon-ID to the script add-on
+///     @param[in] script                Is the addon-ID to the script add-on\n
 ///     or
 ///     @param[in] script                Is the URL to the python script.
 ///
@@ -383,7 +383,7 @@ static int UpdateLocals(const std::vector<std::string>& params)
 ///     the script is an add-on\, you can also execute it using its add-on id. As
 ///     of 2007/02/24\, all extra parameters are passed to the script as arguments
 ///     and can be accessed by python using sys.argv
-///     @param[in] script                Is the addon-ID to the script add-on
+///     @param[in] script                Is the addon-ID to the script add-on\n
 ///     or
 ///     @param[in] script                Is the URL to the python script.
 ///   }
@@ -391,7 +391,7 @@ static int UpdateLocals(const std::vector<std::string>& params)
 ///     <b>`StopScript(id)`</b>
 ///     ,
 ///     Stop the script by ID or path\, if running
-///     @param[in] id                    The add-on ID of the script to stop
+///     @param[in] id                    The add-on ID of the script to stop\n
 ///     or
 ///     @param[in] id                    The URL of the script to stop.
 ///   }

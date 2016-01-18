@@ -1,6 +1,7 @@
 /*!
-\page List_of_built_in_functions List of build in functions
-@{
+\page page_List_of_built_in_functions Built-in functions
+
+\tableofcontents
 
 Skins can use built-in functions with the <onclick> or <onfocus> tag. Scripts
 can call built-in functions with xbmc.executebuiltin(function, block).
@@ -21,8 +22,4 @@ You can use parameters with all media windows, as can be seen here:
 
 - [Opening Windows and Dialogs](http://kodi.wiki/view/Opening_Windows_and_Dialogs)
 
-\section list_of_build_in_functions_section1 List of functions
-
-
-@}
 */
