@@ -184,7 +184,7 @@ void CAddonCB_Directory::free_vfs_directory(
       free(items[i].path);
       if (items[i].properties != nullptr)
       {
-        for (unsigned int j = 0; j < items[i].num_props; ++j)
+        for (int j = 0; j < items[i].num_props; ++j)
         {
           free(items[i].properties[j].name);
           free(items[i].properties[j].val);
