@@ -594,6 +594,8 @@ inline bool CAddonPlayerControl::PlayFile(std::string item, bool windowed)
   // set fullscreen or windowed
   CMediaSettings::GetInstance().SetVideoStartWindowed(windowed);
   CApplicationMessenger::GetInstance().PostMsg(TMSG_MEDIA_PLAY, 0, 0, static_cast<void*>(new CFileItem(item, false)));
+
+  return true;
 }
 
 inline bool CAddonPlayerControl::PlayFileItem(const CFileItem* item, bool windowed)
@@ -601,6 +603,8 @@ inline bool CAddonPlayerControl::PlayFileItem(const CFileItem* item, bool window
   // set fullscreen or windowed
   CMediaSettings::GetInstance().SetVideoStartWindowed(windowed);
   CApplicationMessenger::GetInstance().PostMsg(TMSG_MEDIA_PLAY, 0, 0, static_cast<void*>(new CFileItem(*item)));
+
+  return true;
 }
 
 inline bool CAddonPlayerControl::PlayList(const PLAYLIST::CPlayList* playlist, int playListId, bool windowed, int startpos)
