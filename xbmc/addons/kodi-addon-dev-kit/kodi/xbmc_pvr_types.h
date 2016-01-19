@@ -35,7 +35,7 @@
 
 #include "xbmc_addon_types.h"
 #ifdef PVR_API_LEVELS_ACTIVE // Used to prevent old epg header on new libraries
-  #include "kodi/addon.api2/definations.h"
+  #include "kodi/addon.api2/definitions.h"
 #else
   #include "xbmc_epg_types.h"
   #include "xbmc_codec_types.h"

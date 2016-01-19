@@ -27,7 +27,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 
-#include "../definations.h"
+#include "../definitions.h"
 #include "libKODI_addon_GeneralHead.h"
 #include "libKODI_addon_AudioHead.h"
 #include "libKODI_addon_CodecHead.h"

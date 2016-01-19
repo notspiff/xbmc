@@ -22,7 +22,7 @@
 #include "DVDInputStreams/DVDInputStream.h"
 #include "DVDDemuxPVRClient.h"
 #include "DVDDemuxUtils.h"
-#include "addons/kodi-addon-dev-kit/kodi/addon.api2/definations.h"
+#include "addons/kodi-addon-dev-kit/kodi/addon.api2/definitions.h"
 #include "utils/log.h"
 #include "pvr/PVRManager.h"
 #include "pvr/addons/PVRClients.h"
