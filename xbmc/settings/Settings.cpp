@@ -33,6 +33,7 @@
 #include "cores/playercorefactory/PlayerCoreFactory.h"
 #include "cores/VideoPlayer/VideoRenderers/BaseRenderer.h"
 #include "filesystem/File.h"
+#include "games/GameSettings.h"
 #include "guilib/GraphicContext.h"
 #include "guilib/GUIAudioManager.h"
 #include "guilib/GUIFontManager.h"
@@ -366,9 +367,6 @@ const std::string CSettings::SETTING_AUDIOOUTPUT_DTSHDPASSTHROUGH = "audiooutput
 const std::string CSettings::SETTING_AUDIOOUTPUT_VOLUMESTEPS = "audiooutput.volumesteps";
 const std::string CSettings::SETTING_INPUT_PERIPHERALS = "input.peripherals";
 const std::string CSettings::SETTING_INPUT_ENABLEMOUSE = "input.enablemouse";
-const std::string CSettings::SETTING_INPUT_CONTROLLERCONFIG = "input.controllerconfig";
-const std::string CSettings::SETTING_INPUT_TESTRUMBLE = "input.testrumble";
-const std::string CSettings::SETTING_INPUT_CONTROLLERPOWEROFF = "input.controllerpoweroff";
 const std::string CSettings::SETTING_INPUT_APPLEREMOTEMODE = "input.appleremotemode";
 const std::string CSettings::SETTING_INPUT_APPLEREMOTEALWAYSON = "input.appleremotealwayson";
 const std::string CSettings::SETTING_INPUT_APPLEREMOTESEQUENCETIME = "input.appleremotesequencetime";
@@ -411,6 +409,9 @@ const std::string CSettings::SETTING_ADDONS_ALLOW_UNKNOWN_SOURCES = "addons.unkn
 const std::string CSettings::SETTING_ADDONS_MANAGE_DEPENDENCIES = "addons.managedependencies";
 const std::string CSettings::SETTING_GENERAL_ADDONFOREIGNFILTER = "general.addonforeignfilter";
 const std::string CSettings::SETTING_GENERAL_ADDONBROKENFILTER = "general.addonbrokenfilter";
+const std::string CSettings::SETTING_GAMES_CONTROLLERCONFIG = "gamesinput.controllerconfig";
+const std::string CSettings::SETTING_GAMES_TESTRUMBLE = "gamesinput.testrumble";
+const std::string CSettings::SETTING_GAMES_CONTROLLERPOWEROFF = "gamesinput.controllerpoweroff";
 
 CSettings::CSettings()
   : m_initialized(false)
@@ -609,6 +610,7 @@ void CSettings::Uninitialize()
   m_settingsManager->UnregisterCallback(&g_passwordManager);
   m_settingsManager->UnregisterCallback(&CRssManager::GetInstance());
   m_settingsManager->UnregisterCallback(&ADDON::CRepositoryUpdater::GetInstance());
+  m_settingsManager->UnregisterCallback(&GAME::CGameSettings::GetInstance());
 #if defined(TARGET_LINUX)
   m_settingsManager->UnregisterCallback(&g_timezone);
 #endif // defined(TARGET_LINUX)
@@ -1159,8 +1161,6 @@ void CSettings::InitializeISettingCallbacks()
 
   settingSet.clear();
   settingSet.insert(CSettings::SETTING_INPUT_PERIPHERALS);
-  settingSet.insert(CSettings::SETTING_INPUT_CONTROLLERCONFIG);
-  settingSet.insert(CSettings::SETTING_INPUT_TESTRUMBLE);
   settingSet.insert(CSettings::SETTING_LOCALE_LANGUAGE);
   m_settingsManager->RegisterCallback(&PERIPHERALS::CPeripherals::GetInstance(), settingSet);
 
@@ -1184,6 +1184,11 @@ void CSettings::InitializeISettingCallbacks()
   settingSet.clear();
   settingSet.insert(CSettings::SETTING_POWERMANAGEMENT_WAKEONACCESS);
   m_settingsManager->RegisterCallback(&CWakeOnAccess::GetInstance(), settingSet);
+
+  settingSet.clear();
+  settingSet.insert(CSettings::SETTING_GAMES_CONTROLLERCONFIG);
+  settingSet.insert(CSettings::SETTING_GAMES_TESTRUMBLE);
+  m_settingsManager->RegisterCallback(&GAME::CGameSettings::GetInstance(), settingSet);
 }
 
 bool CSettings::Reset()
