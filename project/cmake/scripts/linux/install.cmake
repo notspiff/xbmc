@@ -19,6 +19,18 @@ configure_file(${CORE_SOURCE_DIR}/tools/Linux/kodi.sh.in
 configure_file(${CORE_SOURCE_DIR}/tools/Linux/kodi-standalone.sh.in
                 ${CORE_BUILD_DIR}/scripts/${APP_NAME_LC}-standalone @ONLY)
 
+# cmake config
+set(APP_NAME_UC KODI)
+set(APP_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib/kodi)
+set(APP_PREFIX ${CMAKE_INSTALL_PREFIX})
+set(APP_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/kodi)
+string_join(APP_ARCH_DEFINES " " ${ARCH_DEFINES})
+configure_file(${PROJECT_SOURCE_DIR}/kodi-config.cmake.in
+               kodi-config.cmake @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/kodi-config.cmake
+              ${PROJECT_SOURCE_DIR}/scripts/common/addoptions.cmake
+              ${PROJECT_SOURCE_DIR}/scripts/common/addon-helpers.cmake DESTINATION lib/kodi)
+
 install(TARGETS ${APP_NAME_LC} DESTINATION ${libdir}/kodi)
 if(ENABLE_X11 AND XRANDR_FOUND)
   install(TARGETS ${APP_NAME_LC}-xrandr DESTINATION ${libdir}/${APP_NAME_LC})
