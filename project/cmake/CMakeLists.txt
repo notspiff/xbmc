@@ -357,6 +357,22 @@ endif()
 
 include(scripts/${CORE_SYSTEM_NAME}/install.cmake)
 
+# Prepare add-on build env
+foreach(binding ${addon_bindings})
+  get_filename_component(file ${binding} NAME)
+  set(BINDING_TARGET ${CORE_BUILD_DIR}/include/kodi/${file})
+  configure_file(${binding} ${BINDING_TARGET} COPYONLY)
+endforeach()
+string_join(APP_ARCH_DEFINES " " ${ARCH_DEFINES})
+set(APP_LIB_DIR ${CMAKE_BINARY_DIR}/${CORE_BUILD_DIR}/lib/kodi)
+set(APP_INCLUDE_DIR ${CMAKE_BINARY_DIR}/${CORE_BUILD_DIR}/include/kodi)
+configure_file(${PROJECT_SOURCE_DIR}/kodi-config.cmake.in
+               ${CORE_BUILD_DIR}/lib/kodi/kodi-config.cmake @ONLY)
+configure_file(${PROJECT_SOURCE_DIR}/scripts/common/addon-helpers.cmake
+               ${CORE_BUILD_DIR}/lib/kodi/addon-helpers.cmake COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/scripts/common/addoptions.cmake
+               ${CORE_BUILD_DIR}/lib/kodi/addoptions.cmake COPYONLY)
+
 # Status
 message(STATUS "#---- CONFIGURATION ----#")
 foreach(msg ${final_message})
