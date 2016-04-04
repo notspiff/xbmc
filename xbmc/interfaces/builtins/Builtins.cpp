@@ -50,6 +50,10 @@
 #include "linux/PlatformDefs.h"
 #endif
 
+#if defined(HAS_LIRC) || defined(HAS_IRSERVERSUITE)
+#include "LIRCBuiltins.h"
+#endif
+
 CBuiltins::CBuiltins()
 {
   RegisterCommands<CAddonBuiltins>();
@@ -69,6 +73,10 @@ CBuiltins::CBuiltins()
 
 #if defined(TARGET_ANDROID)
   RegisterCommands<CAndroidBuiltins>();
+#endif
+
+#if defined(HAS_LIRC) || defined(HAS_IRSERVERSUITE)
+  RegisterCommands<CLIRCBuiltins>();
 #endif
 }
 

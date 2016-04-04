@@ -6,6 +6,7 @@ set(SOURCES AddonBuiltins.cpp
             GUIControlBuiltins.cpp
             GUIContainerBuiltins.cpp
             LibraryBuiltins.cpp
+            LIRCBuiltins.cpp
             OpticalBuiltins.cpp
             PictureBuiltins.cpp
             PlayerBuiltins.cpp
@@ -24,6 +25,7 @@ set(HEADERS AddonBuiltins.h
             GUIContainerBuiltins.h
             GUIControlBuiltins.h
             LibraryBuiltins.h
+            LIRCBuiltins.h
             OpticalBuiltins.h
             PictureBuiltins.h
             PlayerBuiltins.h
