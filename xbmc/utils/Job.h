@@ -164,6 +164,20 @@ public:
    \sa IJobCallback::OnJobProgress()
    */
   virtual bool ShouldCancel(unsigned int progress, unsigned int total) const;
+
+  /*!
+   \brief Function for a job to request re-scheduling.
+  */
+  virtual bool ShouldReschedule() const { return m_reschedule; }
+
+  /*!
+   \brief Reset rescheduling flag.
+  */
+  void ResetReschedule() { m_reschedule = false; }
+
+protected:
+  bool m_reschedule = false;
+
 private:
   friend class CJobManager;
   CJobManager *m_callback;

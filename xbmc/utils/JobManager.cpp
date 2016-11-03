@@ -99,6 +99,11 @@ void CJobQueue::OnJobComplete(unsigned int jobID, bool success, CJob *job)
   Processing::iterator i = find(m_processing.begin(), m_processing.end(), job);
   if (i != m_processing.end())
     m_processing.erase(i);
+  if (job->ShouldReschedule())
+  {
+    job->ResetReschedule();
+    AddJob(job);
+  }
   // request a new job be queued
   QueueNextJob();
 }

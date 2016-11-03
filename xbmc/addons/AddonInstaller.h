@@ -172,6 +172,8 @@ public:
    */
   static bool GetAddonWithHash(const std::string& addonID, const std::string &repoID, ADDON::AddonPtr& addon, std::string& hash);
 
+  virtual bool ShouldReschedule() const { return m_reschedule; }
+
 private:
   void OnPreInstall();
   void OnPostInstall();

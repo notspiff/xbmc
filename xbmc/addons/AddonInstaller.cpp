@@ -725,8 +725,11 @@ bool CAddonInstallJob::Install(const std::string &installFrom, const AddonPtr& r
         // recall install on purpose in case prior installation failed
         if (CAddonInstaller::GetInstance().HasJob(addonID))
         {
-          while (CAddonInstaller::GetInstance().HasJob(addonID))
-            Sleep(50);
+          if (CAddonInstaller::GetInstance().HasJob(addonID))
+          {
+            m_reschedule = true;
+            return true;
+          }
 
           if (!CAddonMgr::GetInstance().IsAddonInstalled(addonID))
           {
