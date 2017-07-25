@@ -80,11 +80,11 @@ function(sca_add_tests)
   find_program(CPPCHECK_COMMAND cppcheck)
   if(CLANGCHECK_COMMAND AND CMAKE_EXPORT_COMPILE_COMMANDS)
     configure_file(${PROJECT_SOURCE_DIR}/cmake/scripts/linux/clang-check-test.sh.in
-                   ${CORE_BUILD_DIR}/clang-check-test.sh)
+                   ${CORE_BUILD_DIR}/clang-check-test.sh @ONLY)
   endif()
   if(CPPCHECK_COMMAND)
     configure_file(${PROJECT_SOURCE_DIR}/cmake/scripts/linux/cppcheck-test.sh.in
-                   ${CORE_BUILD_DIR}/cppcheck-test.sh)
+                   ${CORE_BUILD_DIR}/cppcheck-test.sh @ONLY)
     set(CPPCHECK_INCLUDES)
     foreach(inc ${INCLUDES})
       list(APPEND CPPCHECK_INCLUDES -I ${inc})

@@ -14,15 +14,24 @@ shift 2
 
 tmpfil=`mktemp`
 $cppcheck_cmd $@ --force --enable=all --suppress=unusedFunction $source_file &> $tmpfil
-nmatch=`cat $tmpfil | grep "\[.*\]" | wc -l`
-nnone=`cat $tmpfil | grep "\[\\*]" | wc -l`
-let "nval=$nmatch-$nnone"
-if test $nval -gt 0
-then
-  cat $tmpfil
-  rm $tmpfil
-  exit 1
-fi
 
+declare -a ignorere
+ignorere=(\\[.*/threads/Event.h.*\\]:.*CEventGroup.*not.explicit
+          \\[.*/utils/Variant.h.*\\]:.*CVariant.*not.explicit
+          \\[.*\\]:.*Skipping.configuration.*
+          \\[.*win/ThreadLocal.h.*\\]:.*Class.ThreadLocal.is.not.safe
+          \\[.*/AEChannelInfo.h.*\\]:.*CAEChannelInfo.*not.explicit.
+          \\[\\*\\]:)
+
+
+nmatch=`cat $tmpfil | grep "\[.*\]" | wc -l`
+for RE in ${ignorere[*]}
+do
+  echo "RE=$RE"
+  nign=`cat $tmpfil | grep "$RE" | wc -l`
+  echo "ignoring $nign"
+  let "nmatch=$nmatch-$nign"
+done
+cat $tmpfil
 rm $tmpfil
-exit 0
+test $nmatch -eq 0 || exit 1
