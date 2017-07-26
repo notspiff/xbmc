@@ -23,7 +23,8 @@
 #include "utils/TimeUtils.h"
 #include "windowing/WindowingFactory.h"
 
-CMouseStat::CMouseStat()
+CMouseStat::CMouseStat() : bClick{}, bDoubleClick{},
+                           bHold{}, bLongClick{}
 {
   m_pointerState = MOUSE_STATE_NORMAL;
   SetEnabled();

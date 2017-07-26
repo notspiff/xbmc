@@ -116,7 +116,7 @@ class CArtistCredit
 
 public:
   CArtistCredit() : idArtist(-1), m_bScrapedMBID(false) { }
-  CArtistCredit(std::string strArtist) : m_strArtist(strArtist) { }
+  explicit CArtistCredit(std::string strArtist) : m_strArtist(strArtist) { }
   CArtistCredit(std::string strArtist, std::string strMusicBrainzArtistID)
     : m_strArtist(strArtist), m_strMusicBrainzArtistID(strMusicBrainzArtistID) {  }
   CArtistCredit(std::string strArtist, std::string strSortName, std::string strMusicBrainzArtistID)
@@ -148,11 +148,11 @@ public:
   void SetScrapedMBID(bool scrapedMBID) { this->m_bScrapedMBID = scrapedMBID; }
 
 private:
-  long idArtist;
+  long idArtist = -1;
   std::string m_strArtist;
   std::string m_strSortName;
   std::string m_strMusicBrainzArtistID;
-  bool m_bScrapedMBID; // Flag that mbid is from album merge of scarper results not derived from tags
+  bool m_bScrapedMBID = false; // Flag that mbid is from album merge of scarper results not derived from tags
 };
 
 typedef std::vector<CArtist> VECARTISTS;

@@ -43,10 +43,9 @@ XbmcCommons::ILogger* CThread::logger = NULL;
 #define LOG if(logger) logger->Log
 
 CThread::CThread(const char* ThreadName)
-: m_StopEvent(true,true), m_TermEvent(true), m_StartEvent(true)
+: m_StopEvent(true,true), m_TermEvent(true), m_StartEvent(true),
+  m_bStop(false)
 {
-  m_bStop = false;
-
   m_bAutoDelete = false;
   m_ThreadId = 0;
   m_iLastTime = 0;
@@ -60,10 +59,9 @@ CThread::CThread(const char* ThreadName)
 }
 
 CThread::CThread(IRunnable* pRunnable, const char* ThreadName)
-: m_StopEvent(true,true), m_TermEvent(true), m_StartEvent(true)
+: m_StopEvent(true,true), m_TermEvent(true), m_StartEvent(true),
+  m_bStop(false)
 {
-  m_bStop = false;
-
   m_bAutoDelete = false;
   m_ThreadId = 0;
   m_iLastTime = 0;
@@ -107,7 +105,7 @@ bool CThread::IsRunning() const
 
 THREADFUNC CThread::staticThread(void* data)
 {
-  CThread* pThread = (CThread*)(data);
+  CThread* pThread = static_cast<CThread*>(data);
   std::string name;
   ThreadIdentifier id;
   bool autodelete;

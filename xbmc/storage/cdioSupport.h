@@ -112,7 +112,7 @@ trackinfo;
 class CCdInfo
 {
 public:
-  CCdInfo()
+  CCdInfo() : m_ti{}, m_ulCddbDiscId(0)
   {
     m_bHasCDDBInfo = true;
     m_nLength = m_nFirstTrack = m_nNumTrack = m_nNumAudio = m_nFirstAudio = m_nNumData = m_nFirstData = 0;

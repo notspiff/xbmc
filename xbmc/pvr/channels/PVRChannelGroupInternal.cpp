@@ -239,7 +239,7 @@ int CPVRChannelGroupInternal::LoadFromDb(bool bCompress /* = false */)
         __FUNCTION__);
   }
 
-  SortByChannelNumber();
+  SortByChannelNumbers();
 
   return Size() - iChannelCount;
 }

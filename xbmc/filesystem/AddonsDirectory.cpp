@@ -781,7 +781,7 @@ bool CAddonsDirectory::IsRepoDirectory(const CURL& url)
 }
 
 void CAddonsDirectory::GenerateAddonListing(const CURL &path,
-    const VECADDONS& addons, CFileItemList &items, const std::string label)
+    const VECADDONS& addons, CFileItemList &items, const std::string& label)
 {
   std::set<std::string> outdated;
   for (const auto& addon : CAddonMgr::GetInstance().GetAvailableUpdates())

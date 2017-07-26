@@ -439,7 +439,7 @@ struct iso_dirtree *iso9660::ReadRecursiveDirFromSector( DWORD sector, const cha
   return NULL;
 }
 //******************************************************************************************************************
-iso9660::iso9660( )
+iso9660::iso9660( ) : m_openfileinfo {}
 {
   memset(m_isoFiles, 0, sizeof(m_isoFiles));
   m_hCDROM = NULL;
@@ -577,7 +577,7 @@ void iso9660::Reset()
 
   for (intptr_t i = 0; i < MAX_ISO_FILES;++i)
   {
-    FreeFileContext( (HANDLE)i);
+    FreeFileContext( reinterpret_cast<HANDLE>(i));
   }
 
   if (m_hCDROM)
@@ -914,7 +914,6 @@ void iso9660::ReleaseSectorFromCache(iso9660::isofile* pContext, DWORD sector)
 //************************************************************************************
 long iso9660::ReadFile(HANDLE hFile, uint8_t *pBuffer, long lSize)
 {
-  bool bError;
   long iBytesRead = 0;
   DWORD sectorSize = 2048;
   iso9660::isofile* pContext = GetFileContext(hFile);
@@ -932,7 +931,7 @@ long iso9660::ReadFile(HANDLE hFile, uint8_t *pBuffer, long lSize)
     // CLog::Log(LOGDEBUG, "pos:%li cblk:%li sblk:%li off:%li",(long)pContext->m_dwFilePos, (long)pContext->m_dwCurrentBlock,(long)pContext->m_dwStartBlock,(long)iOffsetInBuffer);
 
     uint8_t* pSector;
-    bError = !ReadSectorFromCache(pContext, pContext->m_dwCurrentBlock, &pSector);
+    bool bError = !ReadSectorFromCache(pContext, pContext->m_dwCurrentBlock, &pSector);
     if (!bError)
     {
       DWORD iBytes2Copy = lSize;
@@ -1033,7 +1032,7 @@ HANDLE iso9660::AllocFileContext()
     if (m_isoFiles[i] == NULL)
     {
       m_isoFiles[i] = new isofile;
-      return (HANDLE)i;
+      return reinterpret_cast<HANDLE>(i);
     }
   }
   return INVALID_HANDLE_VALUE;

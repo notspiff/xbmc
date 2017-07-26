@@ -941,7 +941,7 @@ void CPVRManager::ChannelPreviewDown()
   }
 }
 
-void CPVRManager::ChannelPreview(const CFileItemPtr item)
+void CPVRManager::ChannelPreview(const CFileItemPtr& item)
 {
   CSingleLock lock(m_critSection);
 

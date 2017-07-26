@@ -33,7 +33,7 @@
 
 using namespace XFILE;
 
-CZipFile::CZipFile()
+CZipFile::CZipFile() : m_szBuffer {}
 {
   m_szStringBuffer = NULL;
   m_szStartOfStringBuffer = NULL;

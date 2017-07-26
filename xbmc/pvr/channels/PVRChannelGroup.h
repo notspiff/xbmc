@@ -76,7 +76,7 @@ namespace PVR
      * @brief Create a new channel group instance from a channel group provided by an add-on.
      * @param group The channel group provided by the add-on.
      */
-    CPVRChannelGroup(const PVR_CHANNEL_GROUP &group);
+    explicit CPVRChannelGroup(const PVR_CHANNEL_GROUP &group);
 
     /*!
      * @brief Copy constructor
@@ -487,7 +487,7 @@ namespace PVR
     /*!
      * @brief Sort the current channel list by channel number.
      */
-    void SortByChannelNumber(void);
+    void SortByChannelNumbers(void);
 
     bool             m_bRadio;                      /*!< true if this container holds radio channels, false if it holds TV channels */
     int              m_iGroupType;                  /*!< The type of this group */

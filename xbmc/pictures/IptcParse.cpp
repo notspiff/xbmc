@@ -98,7 +98,6 @@ bool CIptcParse::Process (const unsigned char* const Data, const unsigned short 
   char* pos = (char*)(Data + sizeof(short));  // position data pointer after length field
   char* maxpos = (char*)(Data+itemlen);
   unsigned char headerLen = 0;
-  unsigned char dataLen = 0;
   memset(info, 0, sizeof(IPTCInfo_t));
 
   if (itemlen < 25) return false;
@@ -118,7 +117,7 @@ bool CIptcParse::Process (const unsigned char* const Data, const unsigned short 
 
     pos += 3; // move data pointer to length, assume only one byte, TODO: use all 4 bytes
 
-    dataLen = *pos++;
+    unsigned char dataLen = *pos++;
     pos += dataLen; // skip data section
 
     if (memcmp(pos, IptcSignature2, sizeof(IptcSignature2) - 1) != 0) return false;

@@ -47,8 +47,6 @@ CActiveAEDSPMode::CActiveAEDSPMode()
   m_iModeId                 = -1;
   m_iModePosition           = -1;
   m_bIsEnabled              = false;
-  m_strOwnIconPath          = "";
-  m_strOverrideIconPath     = "";
   m_iStreamTypeFlags        = 0;
   m_iBaseType               = AE_DSP_ABASE_INVALID;
   m_iModeName               = -1;
@@ -63,7 +61,6 @@ CActiveAEDSPMode::CActiveAEDSPMode()
 
   m_iAddonId                = -1;
   m_iAddonModeNumber        = -1;
-  m_strModeName             = "";
 }
 
 CActiveAEDSPMode::CActiveAEDSPMode(int modeId, const AE_DSP_BASETYPE baseType)
@@ -72,8 +69,6 @@ CActiveAEDSPMode::CActiveAEDSPMode(int modeId, const AE_DSP_BASETYPE baseType)
   m_iModeId                 = modeId;
   m_iModePosition           = 0;
   m_bIsEnabled              = true;
-  m_strOwnIconPath          = "";
-  m_strOverrideIconPath     = "";
   m_iStreamTypeFlags        = AE_DSP_PRSNT_ASTREAM_BASIC |
                               AE_DSP_PRSNT_ASTREAM_MUSIC |
                               AE_DSP_PRSNT_ASTREAM_MOVIE/* |
@@ -118,7 +113,11 @@ CActiveAEDSPMode::CActiveAEDSPMode(int modeId, const AE_DSP_BASETYPE baseType)
   m_iAddonModeNumber        = -1;
 }
 
-CActiveAEDSPMode::CActiveAEDSPMode(const AE_DSP_MODES::AE_DSP_MODE &mode, int iAddonId)
+CActiveAEDSPMode::CActiveAEDSPMode(const AE_DSP_MODES::AE_DSP_MODE &mode,
+                                   int iAddonId) :
+  m_strOwnIconPath(mode.strOwnModeImage),
+  m_strOverrideIconPath(mode.strOverrideModeImage),
+  m_strModeName(mode.strModeName)
 {
   m_iModeType               = mode.iModeType;
   m_iModePosition           = -1;
@@ -126,15 +125,12 @@ CActiveAEDSPMode::CActiveAEDSPMode(const AE_DSP_MODES::AE_DSP_MODE &mode, int iA
   m_iAddonId                = iAddonId;
   m_iBaseType               = AE_DSP_ABASE_INVALID;
   m_bIsEnabled              = m_iModeType == AE_DSP_MODE_TYPE_MASTER_PROCESS ? !mode.bIsDisabled : false;
-  m_strOwnIconPath          = mode.strOwnModeImage;
-  m_strOverrideIconPath     = mode.strOverrideModeImage;
   m_iStreamTypeFlags        = mode.iModeSupportTypeFlags;
   m_iModeName               = mode.iModeName;
   m_iModeSetupName          = mode.iModeSetupName;
   m_iModeDescription        = mode.iModeDescription;
   m_iModeHelp               = mode.iModeHelp;
   m_iAddonModeNumber        = mode.iModeNumber;
-  m_strModeName             = mode.strModeName;
   m_bHasSettingsDialog      = mode.bHasSettingsDialog;
   m_bChanged                = false;
   m_bIsInternal             = false;

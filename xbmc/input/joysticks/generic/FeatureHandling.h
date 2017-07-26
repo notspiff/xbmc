@@ -121,7 +121,7 @@ namespace JOYSTICK
 
     // Analog state variables
     float            m_analogState; // The current magnitude
-    float            m_bActivated; // Set to true when first activated (magnitude > 0.0)
+    bool             m_bActivated; // Set to true when first activated (magnitude > 0.0)
     bool             m_bDiscrete; // Set to false when a non-discrete axis is detected
   };
 

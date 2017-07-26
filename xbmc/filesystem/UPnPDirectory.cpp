@@ -70,7 +70,6 @@ static std::string GetContentMapping(NPT_String& objectClass)
         if(objectClass.StartsWith(map->ObjectClass, true))
         {
           return map->Content;
-          break;
         }
     }
     return "unknown";

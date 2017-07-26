@@ -172,7 +172,7 @@ CCPUInfo::CCPUInfo(void)
         CoreInfo cpuCore;
         if (swscanf_s(subKeyName, L"%i", &cpuCore.m_id) != 1)
           cpuCore.m_id = num - 1;
-        wchar_t buf[300]; // more than enough
+        wchar_t buf[300] = {}; // more than enough
         DWORD bufSize = sizeof(buf);
         DWORD valType;
         if (RegQueryValueExW(hCpuKey, L"ProcessorNameString", nullptr, &valType, LPBYTE(buf), &bufSize) == ERROR_SUCCESS &&
@@ -607,7 +607,6 @@ bool CCPUInfo::getTemperature(CTemperature& temperature)
   scale = 'c';
 #else
   int         ret   = 0;
-  FILE        *p    = NULL;
   std::string  cmd   = g_advancedSettings.m_cpuTempCmd;
 
   temperature.SetValid(false);
@@ -617,7 +616,7 @@ bool CCPUInfo::getTemperature(CTemperature& temperature)
 
   if (!cmd.empty())
   {
-    p = popen (cmd.c_str(), "r");
+    FILE* p = popen (cmd.c_str(), "r");
     if (p)
     {
       ret = fscanf(p, "%d %c", &value, &scale);
@@ -750,7 +749,6 @@ bool CCPUInfo::readProcStat(unsigned long long& user, unsigned long long& nice,
   for (i = 0; i < m_cpuCount; i++)
   {
     long coreUser, coreNice, coreSystem, coreIdle, coreIO;
-    double total;
 
     coreUser   = cptimes[i * CPUSTATES + CP_USER];
     coreNice   = cptimes[i * CPUSTATES + CP_NICE];
@@ -767,7 +765,7 @@ bool CCPUInfo::readProcStat(unsigned long long& user, unsigned long long& nice,
       coreIdle -= iter->second.m_idle;
       coreIO -= iter->second.m_io;
 
-      total = (double)(coreUser + coreNice + coreSystem + coreIdle + coreIO);
+      double total = (double)(coreUser + coreNice + coreSystem + coreIdle + coreIO);
       if(total != 0.0f)
         iter->second.m_fPct = ((double)(coreUser + coreNice + coreSystem) * 100.0) / total;
 

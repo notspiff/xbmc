@@ -31,13 +31,12 @@ void Base64::Encode(const char* input, unsigned int length, std::string &output)
   if (input == NULL || length == 0)
     return;
 
-  long l;
   output.clear();
   output.reserve(((length + 2) / 3) * 4);
 
   for (unsigned int i = 0; i < length; i += 3)
   {
-    l  = ((((unsigned long) input[i]) << 16) & 0xFFFFFF) |
+    long l  = ((((unsigned long) input[i]) << 16) & 0xFFFFFF) |
          ((((i + 1) < length) ? (((unsigned long) input[i + 1]) << 8) : 0) & 0xFFFF) |
          ((((i + 2) < length) ? (((unsigned long) input[i + 2]) << 0) : 0) & 0x00FF);
 
@@ -85,7 +84,6 @@ void Base64::Decode(const char* input, unsigned int length, std::string &output)
   if (input == NULL || length == 0)
     return;
 
-  long l;
   output.clear();
 
   for (unsigned int index = 0; index < length; index++)
@@ -101,7 +99,7 @@ void Base64::Decode(const char* input, unsigned int length, std::string &output)
 
   for (unsigned int i = 0; i < length; i += 4)
   {
-    l = ((((unsigned long) m_characters.find(input[i])) & 0x3F) << 18);
+    long l = ((((unsigned long) m_characters.find(input[i])) & 0x3F) << 18);
     l |= (((i + 1) < length) ? ((((unsigned long) m_characters.find(input[i + 1])) & 0x3F) << 12) : 0);
     l |= (((i + 2) < length) ? ((((unsigned long) m_characters.find(input[i + 2])) & 0x3F) <<  6) : 0);
     l |= (((i + 3) < length) ? ((((unsigned long) m_characters.find(input[i + 3])) & 0x3F) <<  0) : 0);

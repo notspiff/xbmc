@@ -130,7 +130,7 @@ namespace EVENTCLIENT
       Initialize();
     }
 
-    CEventClient(SOCKETS::CAddress& addr):
+    explicit CEventClient(SOCKETS::CAddress& addr):
       m_remoteAddr(addr)
     {
       Initialize();
@@ -251,7 +251,7 @@ namespace EVENTCLIENT
 
     SOCKETS::CAddress m_remoteAddr;
 
-    EVENTPACKET::LogoType m_eLogoType;
+    EVENTPACKET::LogoType m_eLogoType = EVENTPACKET::LT_NONE;
     CCriticalSection  m_critSection;
 
     std::map <unsigned int, EVENTPACKET::CEventPacket*>  m_seqPackets;

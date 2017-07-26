@@ -296,7 +296,8 @@ namespace vfs
       m_label(label),
       m_path(path),
       m_folder(folder),
-      m_size(size)
+      m_size(size),
+      m_dateTime{}
     {
     }
     //----------------------------------------------------------------------------
@@ -310,7 +311,7 @@ namespace vfs
     //
     // @param[in] dirEntry pointer to own class type
     //
-    CDirEntry(const VFSDirEntry& dirEntry) :
+    explicit CDirEntry(const VFSDirEntry& dirEntry) :
       m_label(dirEntry.label ? dirEntry.label : ""),
       m_path(dirEntry.path ? dirEntry.path : ""),
       m_folder(dirEntry.folder),

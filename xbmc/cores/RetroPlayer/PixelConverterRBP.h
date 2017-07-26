@@ -56,8 +56,5 @@ protected:
 
   static AVPixelFormat TranslateTargetFormat(AVPixelFormat pixfmt);
 
-  AVPixelFormat m_targetFormat = AV_PIX_FMT_NONE;
-  SwsContext* m_swsContext = nullptr;
   MMAL::CMMALYUVBuffer *m_renderBuffer = nullptr;
-  std::shared_ptr<MMAL::CMMALPool> m_pixelBufferPool;
 };

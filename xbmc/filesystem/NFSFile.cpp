@@ -293,7 +293,6 @@ bool CNfsConnection::splitUrlIntoExportAndPath(const CURL& url,std::string &expo
 bool CNfsConnection::Connect(const CURL& url, std::string &relativePath)
 {
   CSingleLock lock(*this);
-  int nfsRet = 0;
   std::string exportPath;
 
   resolveHost(url);
@@ -314,7 +313,7 @@ bool CNfsConnection::Connect(const CURL& url, std::string &relativePath)
     {
       //we connect to the directory of the path. This will be the "root" path of this connection then.
       //So all fileoperations are relative to this mountpoint...
-      nfsRet = m_pLibNfs->nfs_mount(m_pNfsContext, m_resolvedHostName.c_str(), exportPath.c_str());
+      int nfsRet = m_pLibNfs->nfs_mount(m_pNfsContext, m_resolvedHostName.c_str(), exportPath.c_str());
 
       if(nfsRet != 0) 
       {
@@ -448,7 +447,6 @@ int CNfsConnection::stat(const CURL &url, NFSSTAT *statbuff)
   int nfsRet = 0;
   std::string exportPath;
   std::string relativePath;
-  struct nfs_context *pTmpContext = NULL;
   
   if(!HandleDyLoad())
   {
@@ -459,7 +457,7 @@ int CNfsConnection::stat(const CURL &url, NFSSTAT *statbuff)
   
   if(splitUrlIntoExportAndPath(url, exportPath, relativePath))
   {    
-    pTmpContext = m_pLibNfs->nfs_init_context();
+    struct nfs_context* pTmpContext = m_pLibNfs->nfs_init_context();
     
     if(pTmpContext)
     {  
@@ -734,7 +732,6 @@ void CNFSFile::Close()
 ssize_t CNFSFile::Write(const void* lpBuf, size_t uiBufSize)
 {
   size_t numberOfBytesWritten = 0;
-  int writtenBytes = 0;
   size_t leftBytes = uiBufSize;
   //clamp max write chunksize to 32kb - fixme - this might be superfluous with future libnfs versions
   size_t chunkSize = gNfsConnection.GetMaxWriteChunkSize() > 32768 ? 32768 : (size_t)gNfsConnection.GetMaxWriteChunkSize();
@@ -752,7 +749,7 @@ ssize_t CNFSFile::Write(const void* lpBuf, size_t uiBufSize)
       chunkSize = leftBytes;//write last chunk with correct size
     }
     //write chunk
-    writtenBytes = gNfsConnection.GetImpl()->nfs_write(m_pNfsContext,
+    int writtenBytes = gNfsConnection.GetImpl()->nfs_write(m_pNfsContext,
                                   m_pFileHandle, 
                                   chunkSize, 
                                   (char *)lpBuf + numberOfBytesWritten);

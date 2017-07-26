@@ -567,7 +567,7 @@ namespace PVR
      * @brief Activate preview for a given channel.
      * @param item the channel the preview is to be activated for.
      */
-    void ChannelPreview(const CFileItemPtr item);
+    void ChannelPreview(const CFileItemPtr& item);
 
     /*!
      * @brief Continue playback on the last played channel.

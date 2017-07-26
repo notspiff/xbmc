@@ -9154,13 +9154,13 @@ void CGUIInfoManager::ResetCurrentItem()
   m_currentMovieDuration = "";
 }
 
-void CGUIInfoManager::SetCurrentItem(const CFileItemPtr item)
+void CGUIInfoManager::SetCurrentItem(const CFileItemPtr& item)
 {
   CSetCurrentItemJob *job = new CSetCurrentItemJob(item);
   CJobManager::GetInstance().AddJob(job, NULL);
 }
 
-void CGUIInfoManager::SetCurrentItemJob(const CFileItemPtr item)
+void CGUIInfoManager::SetCurrentItemJob(const CFileItemPtr& item)
 {
   ResetCurrentItem();
 

@@ -269,10 +269,6 @@ INT CIoSupport::ReadSectorMode2(HANDLE hDevice, DWORD dwSector, LPSTR lpczBuffer
       memcpy(lpczBuffer, (char*)m_rawXferBuffer+MODE2_DATA_START, MODE2_DATA_SIZE);
       return MODE2_DATA_SIZE;
     }
-    else
-    {
-      int iErr = GetLastError();
-    }
   }
 #endif
 #endif

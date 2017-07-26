@@ -82,11 +82,10 @@ bool Message::Reply(int sig, void *data /* = NULL*/, int size /* = 0 */)
 
 Protocol::~Protocol()
 {
-  Message *msg;
   Purge();
   while (!freeMessageQueue.empty())
   {
-    msg = freeMessageQueue.front();
+    Message* msg = freeMessageQueue.front();
     freeMessageQueue.pop();
     delete msg;
   }

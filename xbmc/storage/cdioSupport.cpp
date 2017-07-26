@@ -236,9 +236,10 @@ CCdIoSupport::CCdIoSupport()
   j(0),
   cdio(nullptr),
   m_nNumTracks(CDIO_INVALID_TRACK),
-  m_nFirstTrackNum(CDIO_INVALID_TRACK)
+  m_nFirstTrackNum(CDIO_INVALID_TRACK),
+  buffer{},
+  m_cdio(CLibcdio::GetInstance())
 {
-  m_cdio = CLibcdio::GetInstance();
   m_nFirstData = -1;        /* # of first data track */
   m_nNumData = 0;                /* # of data tracks */
   m_nFirstAudio = -1;      /* # of first audio track */
@@ -272,7 +273,7 @@ HANDLE CCdIoSupport::OpenCDROM()
   char* source_name = m_cdio->GetDeviceFileName();
   CdIo* cdio = ::cdio_open(source_name, DRIVER_UNKNOWN);
 
-  return (HANDLE) cdio;
+  return reinterpret_cast<HANDLE>(cdio);
 }
 
 HANDLE CCdIoSupport::OpenIMAGE( std::string& strFilename )
@@ -281,7 +282,7 @@ HANDLE CCdIoSupport::OpenIMAGE( std::string& strFilename )
 
   CdIo* cdio = ::cdio_open(strFilename.c_str(), DRIVER_UNKNOWN);
 
-  return (HANDLE) cdio;
+  return reinterpret_cast<HANDLE>(cdio);
 }
 
 INT CCdIoSupport::ReadSector(HANDLE hDevice, DWORD dwSector, LPSTR lpczBuffer)

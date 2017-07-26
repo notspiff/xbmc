@@ -148,7 +148,8 @@ void CBackgroundPicLoader::LoadPic(int iPic, int iSlideNumber, const std::string
 }
 
 CGUIWindowSlideShow::CGUIWindowSlideShow(void)
-    : CGUIDialog(WINDOW_SLIDESHOW, "SlideShow.xml")
+    : CGUIDialog(WINDOW_SLIDESHOW, "SlideShow.xml"),
+      m_firstGesturePoint{}
 {
   m_Resolution = RES_INVALID;
   m_loadType = KEEP_IN_MEMORY;
@@ -902,7 +903,7 @@ void CGUIWindowSlideShow::RenderErrorMessage()
      return;
   }
 
-  CGUIFont *pFont = ((CGUILabelControl *)control)->GetLabelInfo().font;
+  CGUIFont *pFont = static_cast<const CGUILabelControl*>(control)->GetLabelInfo().font;
   CGUITextLayout::DrawText(pFont, 0.5f*g_graphicsContext.GetWidth(), 0.5f*g_graphicsContext.GetHeight(), 0xffffffff, 0, g_localizeStrings.Get(747), XBFONT_CENTER_X | XBFONT_CENTER_Y);
 }
 

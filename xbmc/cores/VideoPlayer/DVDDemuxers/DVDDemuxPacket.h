@@ -41,15 +41,15 @@ typedef struct DemuxPacket
 
   unsigned char *pData;   // data
   int iSize;     // data size
-  int iStreamId; // integer representing the stream index
-  int64_t demuxerId; // id of the demuxer that created the packet
-  int iGroupId;  // the group this data belongs to, used to group data from different streams together
+  int iStreamId = -1; // integer representing the stream index
+  int64_t demuxerId = -1; // id of the demuxer that created the packet
+  int iGroupId = -1;  // the group this data belongs to, used to group data from different streams together
 
   double pts; // pts in DVD_TIME_BASE
   double dts; // dts in DVD_TIME_BASE
-  double duration; // duration in DVD_TIME_BASE if available
+  double duration = 0.0; // duration in DVD_TIME_BASE if available
 
-  int dispTime;
+  int dispTime = 0;
 
   std::shared_ptr<DemuxCryptoInfo> cryptoInfo;
 } DemuxPacket;

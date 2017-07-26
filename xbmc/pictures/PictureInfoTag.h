@@ -100,7 +100,7 @@ public:
   void Archive(CArchive& ar) override;
   void Serialize(CVariant& value) const override;
   void ToSortable(SortItem& sortable, Field field) const override;
-  const CPictureInfoTag& operator=(const CPictureInfoTag& item);
+  CPictureInfoTag& operator=(const CPictureInfoTag& item);
   const std::string GetInfo(int info) const;
 
   bool Loaded() const { return m_isLoaded; };

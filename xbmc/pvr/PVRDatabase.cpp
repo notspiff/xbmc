@@ -484,7 +484,7 @@ int CPVRDatabase::Get(CPVRChannelGroup &group)
   }
 
   if (iReturn > 0)
-    group.SortByChannelNumber();
+    group.SortByChannelNumbers();
 
   return iReturn;
 }

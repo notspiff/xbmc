@@ -88,7 +88,7 @@ private:
   uint8_t m_pcmInputBuffer[INPUT_SIZE];
   float m_inputBuffer[INPUT_SAMPLES];
 
-  uint8_t *m_rawBuffer;
+  uint8_t *m_rawBuffer = nullptr;
   int m_rawBufferSize;
 
   // status

@@ -655,10 +655,10 @@ int udf25::UDFGetAVDP( struct avdp_t *avdp)
         terminate = 1;
       } else {
         //! @todo Find last sector of the disc (this is optional).
-        if( lastsector )
+        //if( lastsector )
           /* Try #2, backup anchor */
-          lbnum = lastsector - 256;
-        else
+        //  lbnum = lastsector - 256;
+        //else
           /* Unable to find last sector */
           return 0;
       }

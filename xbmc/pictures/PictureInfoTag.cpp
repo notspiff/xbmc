@@ -37,7 +37,7 @@ void CPictureInfoTag::Reset()
   m_dateTimeTaken.Reset();
 }
 
-const CPictureInfoTag& CPictureInfoTag::operator=(const CPictureInfoTag& right)
+CPictureInfoTag& CPictureInfoTag::operator=(const CPictureInfoTag& right)
 {
   if (this == &right) return * this;
   memcpy(&m_exifInfo, &right.m_exifInfo, sizeof(m_exifInfo));

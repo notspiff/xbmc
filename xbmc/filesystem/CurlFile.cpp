@@ -96,7 +96,7 @@ extern "C" int debug_callback(CURL_HANDLE *handle, curl_infotype info, char *out
   while (it != vecLines.end())
   {
     CLog::Log(LOGDEBUG, "Curl::Debug - %s%s", infotype, (*it).c_str());
-    it++;
+    ++it;
   }
   return 0;
 }
@@ -444,6 +444,7 @@ CCurlFile::CCurlFile()
   m_httpresponse = -1;
   m_acceptCharset = "UTF-8,*;q=0.8"; /* prefer UTF-8 if available */
   m_allowRetry = true;
+  m_stillRunning = 0;
 }
 
 //Has to be called before Open()
@@ -665,7 +666,7 @@ void CCurlFile::SetRequestHeaders(CReadState* state)
   }
 
   MAPHTTPHEADERS::iterator it;
-  for(it = m_requestheaders.begin(); it != m_requestheaders.end(); it++)
+  for(it = m_requestheaders.begin(); it != m_requestheaders.end(); ++it)
   {
     std::string buffer = it->first + ": " + it->second;
     state->m_curlHeaderList = g_curlInterface.slist_append(state->m_curlHeaderList, buffer.c_str());
@@ -731,7 +732,7 @@ void CCurlFile::ParseAndCorrectUrl(CURL &url2)
     //! @todo create a tokenizer that doesn't skip empty's
     StringUtils::Tokenize(filename, array, "/");
     filename.clear();
-    for(std::vector<std::string>::iterator it = array.begin(); it != array.end(); it++)
+    for(std::vector<std::string>::iterator it = array.begin(); it != array.end(); ++it)
     {
       if(it != array.begin())
         filename += "/";
@@ -1011,7 +1012,7 @@ bool CCurlFile::Open(const CURL& url)
   std::string redactPath = CURL::GetRedacted(m_url);
   CLog::Log(LOGDEBUG, "CurlFile::Open(%p) %s", (void*)this, redactPath.c_str());
 
-  assert(!(!m_state->m_easyHandle ^ !m_state->m_multiHandle));
+  assert(!((!m_state->m_easyHandle) ^ (!m_state->m_multiHandle)));
   if( m_state->m_easyHandle == NULL )
     g_curlInterface.easy_acquire(url2.GetProtocol().c_str(),
                                 url2.GetHostName().c_str(),
@@ -1682,7 +1683,7 @@ int8_t CCurlFile::CReadState::FillBuffer(unsigned int want)
         g_curlInterface.multi_fdset(m_multiHandle, &fdread, &fdwrite, &fdexcep, &maxfd);
 
         long timeout = 0;
-        if (CURLM_OK != g_curlInterface.multi_timeout(m_multiHandle, &timeout) || timeout == -1 || timeout < 200)
+        if (CURLM_OK != g_curlInterface.multi_timeout(m_multiHandle, &timeout) || timeout < 200)
           timeout = 200;
 
         XbmcThreads::EndTime endTime(timeout);

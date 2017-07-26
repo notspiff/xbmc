@@ -344,13 +344,13 @@ bool CPicture::ScaleImage(uint8_t *in_pixels, unsigned int in_width, unsigned in
                                                          out_width, out_height, AV_PIX_FMT_BGRA,
                                                          CPictureScalingAlgorithm::ToSwscale(scalingAlgorithm), NULL, NULL, NULL);
 
-  uint8_t *src[] = { in_pixels, 0, 0, 0 };
-  int     srcStride[] = { (int)in_pitch, 0, 0, 0 };
-  uint8_t *dst[] = { out_pixels , 0, 0, 0 };
-  int     dstStride[] = { (int)out_pitch, 0, 0, 0 };
-
   if (context)
   {
+    uint8_t *src[] = { in_pixels, 0, 0, 0 };
+    int     srcStride[] = { (int)in_pitch, 0, 0, 0 };
+    uint8_t *dst[] = { out_pixels , 0, 0, 0 };
+    int     dstStride[] = { (int)out_pitch, 0, 0, 0 };
+
     sws_scale(context, src, srcStride, 0, in_height, dst, dstStride);
     sws_freeContext(context);
     return true;

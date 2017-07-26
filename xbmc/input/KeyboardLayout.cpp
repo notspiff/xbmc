@@ -29,9 +29,9 @@
 #include "utils/XBMCTinyXML.h"
 #include "InputCodingTableFactory.h"
 
-CKeyboardLayout::CKeyboardLayout()
+CKeyboardLayout::CKeyboardLayout() :
+  m_codingtable(nullptr)
 {
-  m_codingtable = NULL;
 }
 
 CKeyboardLayout::~CKeyboardLayout() = default;

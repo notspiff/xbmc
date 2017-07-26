@@ -139,7 +139,6 @@ bool CFile::Copy(const CURL& url2, const CURL& dest, XFILE::IFileCallback* pCall
     int iBufferSize = GetChunkSize(file.GetChunkSize(), 128 * 1024);
 
     auto_buffer buffer(iBufferSize);
-    ssize_t iRead, iWrite;
 
     UINT64 llFileSize = file.GetLength();
     UINT64 llPos = 0;
@@ -151,7 +150,7 @@ bool CFile::Copy(const CURL& url2, const CURL& dest, XFILE::IFileCallback* pCall
     {
       g_application.ResetScreenSaver();
 
-      iRead = file.Read(buffer.get(), iBufferSize);
+      ssize_t iRead = file.Read(buffer.get(), iBufferSize);
       if (iRead == 0) break;
       else if (iRead < 0)
       {
@@ -161,7 +160,7 @@ bool CFile::Copy(const CURL& url2, const CURL& dest, XFILE::IFileCallback* pCall
       }
 
       /* write data and make sure we managed to write it all */
-      iWrite = 0;
+      ssize_t iWrite = 0;
       while(iWrite < iRead)
       {
         ssize_t iWrite2 = newFile.Write(buffer.get() + iWrite, iRead - iWrite);

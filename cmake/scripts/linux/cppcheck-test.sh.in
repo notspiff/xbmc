@@ -18,11 +18,20 @@ $cppcheck_cmd $@ --force --enable=all --suppress=unusedFunction $source_file &> 
 declare -a ignorere
 ignorere=(\\[.*/threads/Event.h.*\\]:.*CEventGroup.*not.explicit
           \\[.*/utils/Variant.h.*\\]:.*CVariant.*not.explicit
-          \\[.*\\]:.*Skipping.configuration.*
           \\[.*win/ThreadLocal.h.*\\]:.*Class.ThreadLocal.is.not.safe
           \\[.*/AEChannelInfo.h.*\\]:.*CAEChannelInfo.*not.explicit.
+          \\[.*/BaseEvent.h.*\\]:.*Unused.private.*CBaseEvent::VariantToLocalizedString
+          \\[.*/GUITexture.h.*\\]:.*CAspectRatio.*not.explicit
+          \\[.*/ActiveAEDSPMode.cpp.*\\]:.*CActiveAEDSPMode::m_critSection.*not.assigned.*operator
+          \\[.*/GUICallback.h.*\\]:.*C-style.pointer.casting
+          \\[.*/XbtFile.h.*\\]:.*Unused.private.*CXbtFile::GetFile
+          \\[.*/AutorunMediaJob.h.*\\]:.*Unused.private.*CAutorunMediaJob::GetWindowString
+          \\[.*threads/Thread.h.*\\]:.*Unused.private.*CThread::SetSignalHandlers
+          \\[.*/ThreadMessage.h.*\\]:.*Member.variable.*not.initialized
+          \\[.*/Observer.cpp.*\\]:.*Member.variable.*Observable::m_obsCritSection.*not.assigned
+          \\[.*/PerformanceSample.cpp.*\\]:.*tmDummy
+          \\[.*\\]:.*Skipping.configuration.*
           \\[\\*\\]:)
-
 
 nmatch=`cat $tmpfil | grep "\[.*\]" | wc -l`
 for RE in ${ignorere[*]}

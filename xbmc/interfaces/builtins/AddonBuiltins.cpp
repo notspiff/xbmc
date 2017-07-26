@@ -189,7 +189,6 @@ template<bool OnlyApple=false>
 static int RunScript(const std::vector<std::string>& params)
 {
 #if defined(TARGET_DARWIN_OSX)
-  std::string execute;
   std::string parameter = params.size() ? params[0] : "";
   if (URIUtils::HasExtension(parameter, ".applescript|.scpt"))
   {

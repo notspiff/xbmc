@@ -52,8 +52,8 @@ class CLinuxResourceCounter;
 struct CoreInfo
 {
   int    m_id;
-  double m_fSpeed;
-  double m_fPct;
+  double m_fSpeed = 0.0;
+  double m_fPct = 0.0;
 #ifdef TARGET_POSIX
   unsigned long long m_user;
   unsigned long long m_nice;
@@ -63,7 +63,7 @@ struct CoreInfo
   PDH_HCOUNTER m_coreCounter;
   unsigned long long m_total;
 #endif
-  unsigned long long m_idle;
+  unsigned long long m_idle = 0ULL;
   std::string m_strVendor;
   std::string m_strModel;
   std::string m_strBogoMips;
@@ -102,6 +102,8 @@ public:
   unsigned int GetCPUFeatures() const { return m_cpuFeatures; }
 
 private:
+  CCPUInfo(const CCPUInfo&) = delete;
+  CCPUInfo& operator=(const CCPUInfo&) = delete;
   bool readProcStat(unsigned long long& user, unsigned long long& nice, unsigned long long& system,
                     unsigned long long& idle, unsigned long long& io);
   void ReadCPUFeatures();

@@ -90,14 +90,14 @@ CPVREpgInfoTag::CPVREpgInfoTag(const EPG_TAG &data) :
     m_iEpisodeNumber(0),
     m_iEpisodePart(0),
     m_iUniqueBroadcastID(EPG_TAG_INVALID_UID),
-    m_epg(NULL)
+    m_epg(NULL),
+    m_startTime(data.startTime + g_advancedSettings.m_iPVRTimeCorrection),
+    m_endTime(data.endTime + g_advancedSettings.m_iPVRTimeCorrection),
+    m_firstAired(data.firstAired + g_advancedSettings.m_iPVRTimeCorrection)
 {
-  m_startTime = (data.startTime + g_advancedSettings.m_iPVRTimeCorrection);
-  m_endTime = (data.endTime + g_advancedSettings.m_iPVRTimeCorrection);
   m_iParentalRating = data.iParentalRating;
   m_iUniqueBroadcastID = data.iUniqueBroadcastId;
   m_bNotify = data.bNotify;
-  m_firstAired = (data.firstAired + g_advancedSettings.m_iPVRTimeCorrection);
   m_iSeriesNumber = data.iSeriesNumber;
   m_iEpisodeNumber = data.iEpisodeNumber;
   m_iEpisodePart = data.iEpisodePartNumber;

@@ -365,7 +365,7 @@ void CActiveAE::StateMachine(int signal, Protocol *port, Message *msg)
           return;
         case CActiveAEControlProtocol::STREAMRESAMPLEMODE:
           MsgStreamParameter *par;
-          par = (MsgStreamParameter*)msg->data;
+          par = reinterpret_cast<MsgStreamParameter*>(msg->data);
           if (par->stream)
           {
             par->stream->m_resampleMode = par->parameter.int_par;
@@ -627,20 +627,20 @@ void CActiveAE::StateMachine(int signal, Protocol *port, Message *msg)
           return;
         case CActiveAEControlProtocol::STREAMAMP:
           MsgStreamParameter *par;
-          par = (MsgStreamParameter*)msg->data;
+          par = reinterpret_cast<MsgStreamParameter*>(msg->data);
           par->stream->m_limiter.SetAmplification(par->parameter.float_par);
           par->stream->m_amplify = par->parameter.float_par;
           return;
         case CActiveAEControlProtocol::STREAMVOLUME:
-          par = (MsgStreamParameter*)msg->data;
+          par = reinterpret_cast<MsgStreamParameter*>(msg->data);
           par->stream->m_volume = par->parameter.float_par;
           return;
         case CActiveAEControlProtocol::STREAMRGAIN:
-          par = (MsgStreamParameter*)msg->data;
+          par = reinterpret_cast<MsgStreamParameter*>(msg->data);
           par->stream->m_rgain = par->parameter.float_par;
           return;
         case CActiveAEControlProtocol::STREAMRESAMPLERATIO:
-          par = (MsgStreamParameter*)msg->data;
+          par = reinterpret_cast<MsgStreamParameter*>(msg->data);
           if (par->stream->m_processingBuffers)
           {
             par->stream->m_processingBuffers->SetRR(par->parameter.double_par, m_settings.atempoThreshold);
@@ -648,14 +648,14 @@ void CActiveAE::StateMachine(int signal, Protocol *port, Message *msg)
           return;
         case CActiveAEControlProtocol::STREAMFFMPEGINFO:
           MsgStreamFFmpegInfo *info;
-          info = (MsgStreamFFmpegInfo*)msg->data;
+          info = reinterpret_cast<MsgStreamFFmpegInfo*>(msg->data);
           info->stream->m_profile = info->profile;
           info->stream->m_matrixEncoding = info->matrix_encoding;
           info->stream->m_audioServiceType = info->audio_service_type;
           return;
         case CActiveAEControlProtocol::STREAMFADE:
           MsgStreamFade *fade;
-          fade = (MsgStreamFade*)msg->data;
+          fade = reinterpret_cast<MsgStreamFade*>(msg->data);
           fade->stream->m_fadingBase = fade->from;
           fade->stream->m_fadingTarget = fade->target;
           fade->stream->m_fadingTime = fade->millis;
@@ -695,7 +695,7 @@ void CActiveAE::StateMachine(int signal, Protocol *port, Message *msg)
         case CActiveAEDataProtocol::NEWSTREAM:
           MsgStreamNew *streamMsg;
           CActiveAEStream *stream;
-          streamMsg = (MsgStreamNew*)msg->data;
+          streamMsg = reinterpret_cast<MsgStreamNew*>(msg->data);
           stream = CreateStream(streamMsg);
           if(stream)
           {
@@ -719,7 +719,7 @@ void CActiveAE::StateMachine(int signal, Protocol *port, Message *msg)
         case CActiveAEDataProtocol::STREAMSAMPLE:
           MsgStreamSample *msgData;
           CSampleBuffer *samples;
-          msgData = (MsgStreamSample*)msg->data;
+          msgData = reinterpret_cast<MsgStreamSample*>(msg->data);
           samples = msgData->stream->m_processingSamples.front();
           msgData->stream->m_processingSamples.pop_front();
           if (samples != msgData->buffer)
@@ -952,7 +952,6 @@ void CActiveAE::Process()
 {
   Message *msg = NULL;
   Protocol *port = NULL;
-  bool gotMsg;
   XbmcThreads::EndTime timer;
 
   m_state = AE_TOP_UNCONFIGURED;
@@ -967,7 +966,7 @@ void CActiveAE::Process()
 
   while (!m_bStop)
   {
-    gotMsg = false;
+    bool gotMsg = false;
     timer.Set(m_extTimeout);
 
     if (m_bStateMachineSelfTrigger)
@@ -1256,11 +1255,10 @@ void CActiveAE::Configure(AEAudioFormat *desiredFmt)
     }
     m_internalFormat = outputFormat;
 
-    bool isRaw;
     std::list<CActiveAEStream*>::iterator it;
     for(it=m_streams.begin(); it!=m_streams.end(); ++it)
     {
-      isRaw = ((*it)->m_format.m_dataFormat == AE_FMT_RAW);
+      bool isRaw = ((*it)->m_format.m_dataFormat == AE_FMT_RAW);
 
       if (!(*it)->m_inputBuffers)
       {
@@ -1743,7 +1741,7 @@ bool CActiveAE::InitSink()
       return false;
     }
     SinkReply *data;
-    data = (SinkReply*)reply->data;
+    data = reinterpret_cast<SinkReply*>(reply->data);
     if (data)
     {
       m_sinkFormat = data->format;
@@ -2382,7 +2380,7 @@ CSampleBuffer* CActiveAE::SyncStream(CActiveAEStream *stream)
           }
         }
 
-        if (!ret->pkt->nb_samples & !ret->pkt->pause_burst_ms)
+        if (!ret->pkt->nb_samples && !ret->pkt->pause_burst_ms)
         {
           ret->Return();
           ret = nullptr;
@@ -2517,13 +2515,12 @@ void CActiveAE::Deamplify(CSoundPacket &dstSample)
 {
   if (m_volumeScaled < 1.0 || m_muted)
   {
-    float *buffer;
     int nb_floats = dstSample.nb_samples * dstSample.config.channels / dstSample.planes;
     float volume = m_muted ? 0.0f : m_volumeScaled;
 
     for(int j=0; j<dstSample.planes; j++)
     {
-      buffer = (float*)dstSample.data[j];
+      float* buffer = reinterpret_cast<float*>(dstSample.data[j]);
 #if defined(HAVE_SSE) && defined(__SSE__)
       CAEUtil::SSEMulArray(buffer, volume, nb_floats);
 #else
@@ -3048,11 +3045,10 @@ IAESound *CActiveAE::MakeSound(const std::string& file)
 
     // decode until eof
     av_init_packet(&avpkt);
-    int len;
     while (av_read_frame(fmt_ctx, &avpkt) >= 0)
     {
       int got_frame = 0;
-      len = avcodec_decode_audio4(dec_ctx, decoded_frame, &got_frame, &avpkt);
+      int len = avcodec_decode_audio4(dec_ctx, decoded_frame, &got_frame, &avpkt);
       if (len < 0)
       {
         av_frame_free(&decoded_frame);
@@ -3073,6 +3069,7 @@ IAESound *CActiveAE::MakeSound(const std::string& file)
           int samples = fileSize / av_get_bytes_per_sample(dec_ctx->sample_fmt) / config.channels;
           config.fmt = dec_ctx->sample_fmt;
           config.bits_per_sample = dec_ctx->bits_per_coded_sample;
+          config.dither_bits = 0;
           sound->InitSound(true, config, samples);
           init = true;
         }

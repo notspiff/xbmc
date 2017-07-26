@@ -167,7 +167,7 @@ public:
   int source;
   double dts;    // last dts from demuxer, used to find discontinuities
   double dur;    // last frame expected duration
-  int dispTime; // display time from input stream
+  int dispTime = -1; // display time from input stream
   CDVDStreamInfo hint;   // stream hints, used to notice stream changes
   void* stream; // pointer or integer, identifying stream playing. if it changes stream changed
   int changes; // remembered counter from stream to track codec changes
@@ -175,8 +175,8 @@ public:
   unsigned int packets;
   IDVDStreamPlayer::ESyncState syncState;
   double starttime;
-  double cachetime;
-  double cachetotal;
+  double cachetime = 0.0;
+  double cachetotal = 0.0;
   const StreamType type;
   const int player;
   // stuff to handle starting after seek
@@ -292,7 +292,7 @@ class CProcessInfo;
 class CVideoPlayer : public IPlayer, public CThread, public IVideoPlayer, public IDispResource, public IRenderMsg
 {
 public:
-  CVideoPlayer(IPlayerCallback& callback);
+  explicit CVideoPlayer(IPlayerCallback& callback);
   ~CVideoPlayer() override;
   bool OpenFile(const CFileItem& file, const CPlayerOptions &options) override;
   bool CloseFile(bool reopen = false) override;

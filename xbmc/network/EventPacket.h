@@ -206,7 +206,7 @@ namespace EVENTPACKET
   class CEventPacket
   {
   public:
-    CEventPacket()
+    CEventPacket() : m_header{}
     {
       m_bValid = false;
       m_iSeq = 0;

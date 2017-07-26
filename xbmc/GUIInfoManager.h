@@ -151,7 +151,7 @@ public:
   /*! \brief Set currently playing file item
    \param blocking whether to run in current thread (true) or background thread (false)
    */
-  void SetCurrentItem(const CFileItemPtr item);
+  void SetCurrentItem(const CFileItemPtr& item);
   void ResetCurrentItem();
   // Current song stuff
   /// \brief Retrieves tag info (if necessary) and fills in our current song path.
@@ -291,7 +291,7 @@ protected:
    */
   PVR::CPVREpgInfoTagPtr GetEpgInfoTag() const;
 
-  void SetCurrentItemJob(const CFileItemPtr item);
+  void SetCurrentItemJob(const CFileItemPtr& item);
 
   // Conditional string parameters are stored here
   std::vector<std::string> m_stringParameters;

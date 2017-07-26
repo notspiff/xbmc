@@ -236,16 +236,16 @@ static const uint8_t* avc_find_startcode(const uint8_t *p, const uint8_t *end)
 
 static bool has_sei_recovery_point(const uint8_t *p, const uint8_t *end)
 {
-  int pt(0), ps(0), offset(1);
+  int offset(1);
 
   do
   {
-    pt = 0;
+    int pt = 0;
     do {
       pt += p[offset];
     } while (p[offset++] == 0xFF);
 
-    ps = 0;
+    int ps = 0;
     do {
       ps += p[offset];
     } while (p[offset++] == 0xFF);
@@ -327,6 +327,7 @@ CBitstreamConverter::CBitstreamConverter()
   m_to_annexb         = false;
   m_extradata         = NULL;
   m_extrasize         = 0;
+  m_sps_pps_size      = 0;
   m_convert_3byteTo4byteNALSize = false;
   m_convert_bytestream = false;
   m_sps_pps_context.sps_pps_data = NULL;
@@ -605,12 +606,11 @@ bool CBitstreamConverter::Convert(uint8_t *pData, int iSize)
           if (avio_open_dyn_buf(&pb) < 0)
             return false;
 
-          uint32_t nal_size;
           uint8_t *end = pData + iSize;
           uint8_t *nal_start = pData;
           while (nal_start < end)
           {
-            nal_size = BS_RB24(nal_start);
+            uint32_t nal_size = BS_RB24(nal_start);
             avio_wb32(pb, nal_size);
             nal_start += 3;
             avio_write(pb, nal_start, nal_size);
@@ -760,9 +760,9 @@ bool CBitstreamConverter::BitstreamConvertInitHEVC(void *in_extradata, int in_ex
   if (!in_extradata || in_extrasize < 23)
     return false;
 
-  uint16_t unit_nb, unit_size;
+  uint16_t unit_size;
   uint32_t total_size = 0;
-  uint8_t *out = NULL, array_nb, nal_type, sps_seen = 0, pps_seen = 0;
+  uint8_t *out = NULL, array_nb, sps_seen = 0, pps_seen = 0;
   const uint8_t *extradata = (uint8_t*)in_extradata + 21;
   static const uint8_t nalu_header[4] = {0, 0, 0, 1};
 
@@ -772,8 +772,8 @@ bool CBitstreamConverter::BitstreamConvertInitHEVC(void *in_extradata, int in_ex
   array_nb = *extradata++;
   while (array_nb--)
   {
-    nal_type = *extradata++ & 0x3f;
-    unit_nb  = extradata[0] << 8 | extradata[1];
+    uint8_t nal_type = *extradata++ & 0x3f;
+    uint16_t unit_nb  = extradata[0] << 8 | extradata[1];
     extradata += 2;
 
     if (nal_type == HEVC_NAL_SPS && unit_nb)

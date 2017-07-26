@@ -231,7 +231,7 @@ bool CPVRChannelGroup::MoveChannel(unsigned int iOldChannelNumber, unsigned int 
   CSingleLock lock(m_critSection);
 
   /* make sure the list is sorted by channel number */
-  SortByChannelNumber();
+  SortByChannelNumbers();
 
   /* old channel number out of range */
   if (iOldChannelNumber > m_sortedMembers.size())
@@ -373,7 +373,7 @@ bool CPVRChannelGroup::SortAndRenumber(void)
   if (m_bUsingBackendChannelOrder)
     SortByClientChannelNumber();
   else
-    SortByChannelNumber();
+    SortByChannelNumbers();
 
   bool bReturn = Renumber();
   ResetChannelNumberCache();
@@ -387,7 +387,7 @@ void CPVRChannelGroup::SortByClientChannelNumber(void)
     sort(m_sortedMembers.begin(), m_sortedMembers.end(), sortByClientChannelNumber());
 }
 
-void CPVRChannelGroup::SortByChannelNumber(void)
+void CPVRChannelGroup::SortByChannelNumbers(void)
 {
   CSingleLock lock(m_critSection);
   if (!PreventSortAndRenumber())
@@ -908,7 +908,7 @@ bool CPVRChannelGroup::Renumber(void)
     (*it).iSubChannelNumber = iSubChannelNumber;
   }
 
-  SortByChannelNumber();
+  SortByChannelNumbers();
   ResetChannelNumberCache();
 
   return bReturn;
@@ -1191,7 +1191,7 @@ bool CPVRChannelGroup::UpdateChannel(const CFileItem &item, bool bHidden, bool b
   /* set new values in the channel tag */
   if (bHidden)
   {
-    SortByChannelNumber(); // or previous changes will be overwritten
+    SortByChannelNumbers(); // or previous changes will be overwritten
     RemoveFromGroup(member.channel);
   }
   else

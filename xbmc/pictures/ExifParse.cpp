@@ -204,6 +204,7 @@ static void ErrNonfatal(const char* const msg, int a1, int a2)
 // Constructor.
 //--------------------------------------------------------------------------
 CExifParse::CExifParse () : m_ExifInfo(nullptr),
+        m_FocalPlaneXRes(0.0),
         m_FocalPlaneUnits(0.0), m_LargestExifOffset(0),
         m_ExifImageWidth(0), m_MotorolaOrder(false), m_DateFound(false)
 {}
@@ -340,11 +341,6 @@ void CExifParse::ProcessDir(const unsigned char* const DirStart,
     ErrNonfatal("Maximum directory nesting exceeded (corrupt exif header)", 0,0);
     return;
   }
-
-  char IndentString[25];
-  memset(IndentString, ' ', 25);
-  IndentString[NestingLevel * 4] = '\0';
-
 
   int NumDirEntries = Get16((void*)DirStart, m_MotorolaOrder);
 
@@ -700,11 +696,9 @@ void CExifParse::ProcessDir(const unsigned char* const DirStart,
   // In addition to linking to subdirectories via exif tags,
   // there's also a potential link to another directory at the end of each
   // directory.  this has got to be the result of a committee!
-  unsigned Offset;
-
   if (DIR_ENTRY_ADDR(DirStart, NumDirEntries) + 4 <= OffsetBase+ExifLength)
   {
-    Offset = (unsigned)Get32(DirStart+2+12*NumDirEntries, m_MotorolaOrder);
+    unsigned Offset = (unsigned)Get32(DirStart+2+12*NumDirEntries, m_MotorolaOrder);
     if (Offset)
     {
       const unsigned char* const SubdirStart = OffsetBase + Offset;
