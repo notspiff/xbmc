@@ -55,14 +55,17 @@ using namespace XFILE;
 
 static int Unicodedecode( uint8_t *data, int len, char *target )
 {
-  int p = 1, i = 0;
-
-  if( ( data[ 0 ] == 8 ) || ( data[ 0 ] == 16 ) ) do {
-    if( data[ 0 ] == 16 ) p++;  /* Ignore MSB of unicode16 */
-    if( p < len ) {
-      target[ i++ ] = data[ p++ ];
-    }
-  } while( p < len );
+  int i = 0;
+  if( ( data[ 0 ] == 8 ) || ( data[ 0 ] == 16 ) ) {
+    int p = 1;
+    do {
+      int p = 1;
+      if( data[ 0 ] == 16 ) p++;  /* Ignore MSB of unicode16 */
+      if( p < len ) {
+        target[ i++ ] = data[ p++ ];
+      }
+    } while( p < len );
+  }
 
   target[ i ] = '\0';
   return 0;
@@ -857,19 +860,18 @@ int udf25::UDFScanDir(const struct FileAD& Dir, char *FileName, struct Partition
   uint8_t filechar;
   unsigned int p;
   uint8_t *cached_dir_base = NULL, *cached_dir;
-  uint32_t dir_lba;
   struct AD tmpICB;
-  int found = 0;
-  int in_cache = 0;
 
   /* Scan dir for ICB of file */
   lbnum = partition->Start + Dir.AD_chain[0].Location;
 
   if(DVDUDFCacheLevel(-1) > 0) {
+    int in_cache = 0;
+    int found = 0;
     /* caching */
 
     if(!GetUDFCache(LBUDFCache, lbnum, &cached_dir)) {
-      dir_lba = (Dir.AD_chain[0].Length + DVD_VIDEO_LB_LEN) / DVD_VIDEO_LB_LEN;
+      uint32_t dir_lba = (Dir.AD_chain[0].Length + DVD_VIDEO_LB_LEN) / DVD_VIDEO_LB_LEN;
       if((cached_dir_base = (uint8_t *)malloc(dir_lba * DVD_VIDEO_LB_LEN + 2048)) == NULL)
         return 0;
       cached_dir = (uint8_t *)(((uintptr_t)cached_dir_base & ~((uintptr_t)2047)) + 2048);
@@ -990,13 +992,11 @@ UDF_FILE udf25::UDFFindFile( const char* filename, uint64_t *filesize )
 {
   uint8_t LogBlock_base[ DVD_VIDEO_LB_LEN + 2048 ];
   uint8_t *LogBlock = (uint8_t *)(((uintptr_t)LogBlock_base & ~((uintptr_t)2047)) + 2048);
-  uint32_t lbnum;
   uint16_t TagID;
   struct Partition partition;
   struct AD RootICB, ICB;
   struct FileAD File;
   char tokenline[ MAX_UDF_FILE_NAME_LEN ];
-  char *token;
   struct FileAD *result;
 
   *filesize = 0;
@@ -1012,7 +1012,7 @@ UDF_FILE udf25::UDFFindFile( const char* filename, uint64_t *filesize )
     SetUDFCache(PartitionCache, 0, &partition);
 
     /* Find root dir ICB */
-    lbnum = partition.Start;
+    uint32_t lbnum = partition.Start;
     do {
       if( DVDReadLBUDF( lbnum++, 1, LogBlock, 0 ) <= 0 )
         TagID = 0;
@@ -1043,7 +1043,7 @@ UDF_FILE udf25::UDFFindFile( const char* filename, uint64_t *filesize )
   {
     int cache_file_info = 0;
     /* Tokenize filepath */
-    token = strtok(tokenline, "/");
+    char* token = strtok(tokenline, "/");
 
     while( token != NULL ) {
       if( !UDFScanDir( File, token, &partition, &ICB,
@@ -1104,7 +1104,7 @@ HANDLE udf25::OpenFile( const char* filename )
 
   bdfile->file     = file;
   bdfile->filesize = filesize;
-  return (HANDLE)bdfile;
+  return reinterpret_cast<HANDLE>(bdfile);
 }
 
 
@@ -1113,8 +1113,6 @@ long udf25::ReadFile(HANDLE hFile, unsigned char *pBuffer, long lSize)
   BD_FILE bdfile = (BD_FILE)hFile;
   long    len_origin;
   uint64_t pos;
-  uint32_t len;
-  int      ret;
 
   /* Check arguments. */
   if( bdfile == NULL || pBuffer == NULL )
@@ -1123,7 +1121,7 @@ long udf25::ReadFile(HANDLE hFile, unsigned char *pBuffer, long lSize)
   len_origin = lSize;
   while(lSize > 0)
   {
-    len = UDFFilePos(bdfile->file, bdfile->seek_pos, &pos);
+    uint32_t len = UDFFilePos(bdfile->file, bdfile->seek_pos, &pos);
     if(len == 0)
       break;
 
@@ -1133,7 +1131,7 @@ long udf25::ReadFile(HANDLE hFile, unsigned char *pBuffer, long lSize)
     if((uint32_t)lSize < len)
       len = lSize;
 
-    ret = ReadAt(pos, len, pBuffer);
+    int ret = ReadAt(pos, len, pBuffer);
     if(ret < 0)
     {
       CLog::Log(LOGERROR, "udf25::ReadFile - error during read" );
@@ -1230,14 +1228,14 @@ udf_dir_t *udf25::OpenDir( const char *subdir )
 
   result = (udf_dir_t *)calloc(1, sizeof(udf_dir_t));
   if (!result) {
-    CloseFile((HANDLE)bd_file);
+    CloseFile(reinterpret_cast<HANDLE>(bd_file));
     return NULL;
   }
 
   result->dir_location = UDFFileBlockPos(bd_file->file, 0);
   result->dir_current  = UDFFileBlockPos(bd_file->file, 0);
   result->dir_length   = (uint32_t) bd_file->filesize;
-  CloseFile((HANDLE)bd_file);
+  CloseFile(reinterpret_cast<HANDLE>(bd_file));
 
   return result;
 }

@@ -75,8 +75,6 @@ CSimpleFileCache::CSimpleFileCache()
 CSimpleFileCache::~CSimpleFileCache()
 {
   Close();
-  delete m_cacheFileRead;
-  delete m_cacheFileWrite;
 }
 
 int CSimpleFileCache::Open()

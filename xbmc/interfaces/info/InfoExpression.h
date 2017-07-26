@@ -35,7 +35,7 @@ class InfoSingle : public InfoBool
 {
 public:
   InfoSingle(const std::string &expression, int context, unsigned int &refreshCounter)
-    : InfoBool(expression, context, refreshCounter) {};
+    : InfoBool(expression, context, refreshCounter), m_condition(0) {}
   void Initialize() override;
 
   void Update(const CGUIListItem *item) override;

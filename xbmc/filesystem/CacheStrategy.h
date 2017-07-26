@@ -22,6 +22,7 @@
 #ifndef XFILECACHESTRATEGY_H
 #define XFILECACHESTRATEGY_H
 
+#include <memory>
 #include <stdint.h>
 #include <string>
 #include "threads/Event.h"
@@ -103,8 +104,8 @@ public:
 
 protected:
   std::string m_filename;
-  IFile*   m_cacheFileRead;
-  IFile*   m_cacheFileWrite;
+  std::unique_ptr<IFile> m_cacheFileRead;
+  std::unique_ptr<IFile> m_cacheFileWrite;
   CEvent*  m_hDataAvailEvent;
   volatile int64_t m_nStartPosition;
   volatile int64_t m_nWritePosition;

@@ -827,10 +827,6 @@ JSONRPC_STATUS CVideoLibrary::RefreshEpisode(const std::string &method, ITranspo
     return InvalidParams;
 
   CFileItemPtr item = CFileItemPtr(new CFileItem(infos));
-  // We need to set the correct base path to get the valid fanart
-  int tvshowid = infos.m_iIdShow;
-  if (tvshowid <= 0)
-    tvshowid = videodatabase.GetTvShowForEpisode(id);
 
   bool ignoreNfo = parameterObject["ignorenfo"].asBoolean();
   std::string searchTitle = parameterObject["title"].asString();
@@ -995,7 +991,7 @@ int CVideoLibrary::RequiresAdditionalDetails(const MediaType& mediaType, const C
 
   const CVariant& properties = parameterObject["properties"];
   int details = VideoDbDetailsNone;
-  for (CVariant::const_iterator_array itr = properties.begin_array(); itr != properties.end_array(); itr++)
+  for (CVariant::const_iterator_array itr = properties.begin_array(); itr != properties.end_array(); ++itr)
   {
     std::string propertyValue = itr->asString();
     if (propertyValue == "cast")
@@ -1119,7 +1115,7 @@ void CVideoLibrary::UpdateVideoTag(const CVariant &parameterObject, CVideoInfoTa
   if (ParameterNotNull(parameterObject, "ratings"))
   {
     CVariant ratings = parameterObject["ratings"];
-    for (CVariant::const_iterator_map rIt = ratings.begin_map(); rIt != ratings.end_map(); rIt++)
+    for (CVariant::const_iterator_map rIt = ratings.begin_map(); rIt != ratings.end_map(); ++rIt)
     {
       if (rIt->second.isObject() && ParameterNotNull(rIt->second, "rating"))
       {
@@ -1155,7 +1151,7 @@ void CVideoLibrary::UpdateVideoTag(const CVariant &parameterObject, CVideoInfoTa
   if (ParameterNotNull(parameterObject, "uniqueid"))
   {
     CVariant uniqueids = parameterObject["uniqueid"];
-    for (CVariant::const_iterator_map idIt = uniqueids.begin_map(); idIt != uniqueids.end_map(); idIt++)
+    for (CVariant::const_iterator_map idIt = uniqueids.begin_map(); idIt != uniqueids.end_map(); ++idIt)
     {
       if (idIt->second.isString() && !idIt->second.asString().empty())
       {
@@ -1242,7 +1238,7 @@ void CVideoLibrary::UpdateVideoTag(const CVariant &parameterObject, CVideoInfoTa
   if (ParameterNotNull(parameterObject, "art"))
   {
     CVariant art = parameterObject["art"];
-    for (CVariant::const_iterator_map artIt = art.begin_map(); artIt != art.end_map(); artIt++)
+    for (CVariant::const_iterator_map artIt = art.begin_map(); artIt != art.end_map(); ++artIt)
     {
       if (artIt->second.isString() && !artIt->second.asString().empty())
       {

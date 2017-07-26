@@ -44,7 +44,7 @@ using namespace KODI::MESSAGING;
 JSONRPC_STATUS CAudioLibrary::GetProperties(const std::string &method, ITransportLayer *transport, IClient *client, const CVariant &parameterObject, CVariant &result)
 {
   CVariant properties = CVariant(CVariant::VariantTypeObject);
-  for (CVariant::const_iterator_array it = parameterObject["properties"].begin_array(); it != parameterObject["properties"].end_array(); it++)
+  for (CVariant::const_iterator_array it = parameterObject["properties"].begin_array(); it != parameterObject["properties"].end_array(); ++it)
   {
     std::string propertyName = it->asString();
     CVariant property;
@@ -806,7 +806,7 @@ bool CAudioLibrary::FillFileItemList(const CVariant &parameterObject, CFileItemL
   return success;
 }
 
-void CAudioLibrary::FillItemArtistIDs(const std::vector<int> artistids, CFileItemPtr &item)
+void CAudioLibrary::FillItemArtistIDs(const std::vector<int>& artistids, CFileItemPtr &item)
 {
   // Add artistIds as separate property as not part of CMusicInfoTag
   CVariant artistidObj(CVariant::VariantTypeArray);
@@ -964,15 +964,16 @@ bool CAudioLibrary::CheckForAdditionalProperties(const CVariant &properties, con
     return false;
 
   std::set<std::string> checkingProperties = checkProperties;
-  for (CVariant::const_iterator_array itr = properties.begin_array(); itr != properties.end_array() && !checkingProperties.empty(); itr++)
+  for (CVariant::const_iterator_array itr = properties.begin_array(); itr != properties.end_array() && !checkingProperties.empty(); ++itr)
   {
     if (!itr->isString())
       continue;
 
     std::string property = itr->asString();
-    if (checkingProperties.find(property) != checkingProperties.end())
+    auto it = checkingProperties.find(property);
+    if (it != checkingProperties.end())
     {
-      checkingProperties.erase(property);
+      checkingProperties.erase(it);
       foundProperties.insert(property);
     }
   }

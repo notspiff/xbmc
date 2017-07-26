@@ -33,9 +33,13 @@ extern "C" {
 
 using namespace ActiveAE;
 
-CActiveAEFilter::CActiveAEFilter()
+CActiveAEFilter::CActiveAEFilter() :
+  m_sampleRate(0), m_channelLayout(0), m_tempo(0.0),
+  m_filterEof(false), m_started(false), m_hasData(false),
+  m_needData(false), m_sampleOffset(0), m_SamplesIn(0), m_SamplesOut(0)
 {
   m_pFilterGraph = nullptr;
+  m_pFilterCtxAtempo = nullptr;
   m_pFilterCtxIn = nullptr;
   m_pFilterCtxOut = nullptr;
   m_pOutFrame = nullptr;

@@ -33,6 +33,7 @@ CAEEncoderFFmpeg::CAEEncoderFFmpeg():
   m_BitRate       (0    ),
   m_CodecCtx      (NULL ),
   m_SwrCtx        (NULL ),
+  m_Buffer             {},
   m_BufferSize    (0    ),
   m_OutputSize    (0    ),
   m_OutputRatio   (0.0  ),

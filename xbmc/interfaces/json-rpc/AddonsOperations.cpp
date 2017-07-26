@@ -86,7 +86,7 @@ JSONRPC_STATUS CAddonsOperations::GetAddons(const std::string &method, ITranspor
       {
         if (!installed.isBoolean() || installed.asBoolean())
           CAddonMgr::GetInstance().GetInstalledAddons(typeAddons);
-        if (!installed.isBoolean() || (installed.isBoolean() && !installed.asBoolean()))
+        if (!installed.isBoolean() || !installed.asBoolean())
           CAddonMgr::GetInstance().GetInstallableAddons(typeAddons);
       }
       else if (enabled.asBoolean() && (!installed.isBoolean() || installed.asBoolean())) //Enabled
@@ -100,7 +100,7 @@ JSONRPC_STATUS CAddonsOperations::GetAddons(const std::string &method, ITranspor
       {
         if (!installed.isBoolean() || installed.asBoolean())
           CAddonMgr::GetInstance().GetInstalledAddons(typeAddons, *typeIt);
-        if (!installed.isBoolean() || (installed.isBoolean() && !installed.asBoolean()))
+        if (!installed.isBoolean() || !installed.asBoolean())
           CAddonMgr::GetInstance().GetInstallableAddons(typeAddons, *typeIt);
       }
       else if (enabled.asBoolean() && (!installed.isBoolean() || installed.asBoolean())) //Enabled
@@ -184,7 +184,7 @@ JSONRPC_STATUS CAddonsOperations::ExecuteAddon(const std::string &method, ITrans
   CVariant params = parameterObject["params"];
   if (params.isObject())
   {
-    for (CVariant::const_iterator_map it = params.begin_map(); it != params.end_map(); it++)
+    for (CVariant::const_iterator_map it = params.begin_map(); it != params.end_map(); ++it)
     {
       if (it != params.begin_map())
         argv += ",";
@@ -193,7 +193,7 @@ JSONRPC_STATUS CAddonsOperations::ExecuteAddon(const std::string &method, ITrans
   }
   else if (params.isArray())
   {
-    for (CVariant::const_iterator_array it = params.begin_array(); it != params.end_array(); it++)
+    for (CVariant::const_iterator_array it = params.begin_array(); it != params.end_array(); ++it)
     {
       if (it != params.begin_array())
         argv += ",";

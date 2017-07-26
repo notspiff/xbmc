@@ -67,9 +67,9 @@ void CSampleBuffer::Return()
     pool->ReturnBuffer(this);
 }
 
-CActiveAEBufferPool::CActiveAEBufferPool(const AEAudioFormat& format)
+CActiveAEBufferPool::CActiveAEBufferPool(const AEAudioFormat& format) :
+  m_format(format)
 {
-  m_format = format;
   if (m_format.m_dataFormat == AE_FMT_RAW)
   {
     m_format.m_frameSize = 1;
@@ -81,10 +81,9 @@ CActiveAEBufferPool::CActiveAEBufferPool(const AEAudioFormat& format)
 
 CActiveAEBufferPool::~CActiveAEBufferPool()
 {
-  CSampleBuffer *buffer;
   while(!m_allSamples.empty())
   {
-    buffer = m_allSamples.front();
+    CSampleBuffer* buffer = m_allSamples.front();
     m_allSamples.pop_front();
     delete buffer;
   }
@@ -112,7 +111,6 @@ void CActiveAEBufferPool::ReturnBuffer(CSampleBuffer *buffer)
 
 bool CActiveAEBufferPool::Create(unsigned int totaltime)
 {
-  CSampleBuffer *buffer;
   SampleConfig config;
   config.fmt = CAEUtil::GetAVSampleFormat(m_format.m_dataFormat);
   config.bits_per_sample = CAEUtil::DataFormatToUsedBits(m_format.m_dataFormat);
@@ -130,7 +128,7 @@ bool CActiveAEBufferPool::Create(unsigned int totaltime)
   unsigned int n = 0;
   while (time < totaltime || n < 5)
   {
-    buffer = new CSampleBuffer();
+    CSampleBuffer* buffer = new CSampleBuffer();
     buffer->pool = this;
     buffer->pkt = new CSoundPacket(config, m_format.m_frames);
 
@@ -148,9 +146,9 @@ bool CActiveAEBufferPool::Create(unsigned int totaltime)
 // ----------------------------------------------------------------------------------
 
 CActiveAEBufferPoolResample::CActiveAEBufferPoolResample(const AEAudioFormat& inputFormat, const AEAudioFormat& outputFormat, AEQuality quality)
-  : CActiveAEBufferPool(outputFormat)
+  : CActiveAEBufferPool(outputFormat), m_planes{}, 
+    m_inputFormat(inputFormat), m_remap(false)
 {
-  m_inputFormat = inputFormat;
   if (m_inputFormat.m_dataFormat == AE_FMT_RAW)
   {
     m_format.m_frameSize = 1;
@@ -500,7 +498,7 @@ void CActiveAEBufferPoolResample::ForceResampler(bool force)
 // Atempo
 // ----------------------------------------------------------------------------------
 
-CActiveAEBufferPoolAtempo::CActiveAEBufferPoolAtempo(const AEAudioFormat& format) : CActiveAEBufferPool(format)
+CActiveAEBufferPoolAtempo::CActiveAEBufferPoolAtempo(const AEAudioFormat& format) : CActiveAEBufferPool(format), m_planes{}, m_lastSamplePts(0), m_fillPackets(false)
 {
   m_drain = false;
   m_empty = true;

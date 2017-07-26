@@ -2849,7 +2849,7 @@ bool CMusicDatabase::Search(const std::string& search, CFileItemList &items)
   // and finally songs
   SearchSongs(search, items);
   CLog::Log(LOGDEBUG, "%s Songs search in %i ms",
-            __FUNCTION__, XbmcThreads::SystemClockMillis() - time); time = XbmcThreads::SystemClockMillis();
+            __FUNCTION__, XbmcThreads::SystemClockMillis() - time); 
   return true;
 }
 
@@ -2873,7 +2873,6 @@ bool CMusicDatabase::SearchSongs(const std::string& search, CFileItemList &items
     if (!m_pDS->query(strSQL)) return false;
     if (m_pDS->num_rows() == 0) return false;
 
-    std::string songLabel = g_localizeStrings.Get(179); // Song
     while (!m_pDS->eof())
     {
       CFileItemPtr item(new CFileItem);
@@ -3567,7 +3566,7 @@ bool CMusicDatabase::GetGenresNav(const std::string& strBaseDir, CFileItemList& 
     if (!BuildSQL(strSQLExtra, extFilter, strSQLExtra))
       return false;
 
-    strSQL = PrepareSQL(strSQL.c_str(), !extFilter.fields.empty() && extFilter.fields.compare("*") != 0 ? extFilter.fields.c_str() : "genre.*") + strSQLExtra;
+    strSQL = PrepareSQL(strSQL, !extFilter.fields.empty() && extFilter.fields.compare("*") != 0 ? extFilter.fields.c_str() : "genre.*") + strSQLExtra;
 
     // run query
     CLog::Log(LOGDEBUG, "%s query: %s", __FUNCTION__, strSQL.c_str());
@@ -4112,7 +4111,7 @@ bool CMusicDatabase::GetAlbumsByWhere(const std::string &baseDir, const Filter &
     if (!m_pDS->query(strSQL))
       return false;
     CLog::Log(LOGDEBUG, "%s - query took %i ms",
-              __FUNCTION__, XbmcThreads::SystemClockMillis() - time); time = XbmcThreads::SystemClockMillis();
+              __FUNCTION__, XbmcThreads::SystemClockMillis() - time);
 
     int iRowsFound = m_pDS->num_rows();
     if (iRowsFound <= 0)
@@ -4241,7 +4240,7 @@ bool CMusicDatabase::GetAlbumsByWhere(const std::string &baseDir, const Filter &
     if (!m_pDS->query(strSQL))
       return false;
     CLog::Log(LOGDEBUG, "%s - query took %i ms",
-      __FUNCTION__, XbmcThreads::SystemClockMillis() - time); time = XbmcThreads::SystemClockMillis();
+      __FUNCTION__, XbmcThreads::SystemClockMillis() - time);
 
     int iRowsFound = m_pDS->num_rows();
     if (iRowsFound <= 0)

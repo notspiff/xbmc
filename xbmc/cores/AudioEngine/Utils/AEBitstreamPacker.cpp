@@ -163,7 +163,6 @@ void CAEBitstreamPacker::PackTrueHD(CAEStreamInfo &info, uint8_t* data, int size
   /* setup the frame for the data */
   if (m_trueHDPos == 0)
   {
-    memset(m_trueHD, 0, MAT_FRAME_SIZE);
     memcpy(m_trueHD, mat_start_code, sizeof(mat_start_code));
     memcpy(m_trueHD + (12 * TRUEHD_FRAME_OFFSET) - BURST_HEADER_SIZE + MAT_MIDDLE_CODE_OFFSET, mat_middle_code, sizeof(mat_middle_code));
     memcpy(m_trueHD + MAT_FRAME_SIZE - sizeof(mat_end_code), mat_end_code, sizeof(mat_end_code));

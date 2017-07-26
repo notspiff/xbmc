@@ -254,7 +254,7 @@ std::string CJSONRPC::MethodCall(const std::string &inputString, ITransportLayer
       }
       else
       {
-        for (CVariant::const_iterator_array itr = inputroot.begin_array(); itr != inputroot.end_array(); itr++)
+        for (CVariant::const_iterator_array itr = inputroot.begin_array(); itr != inputroot.end_array(); ++itr)
         {
           CVariant response;
           if (HandleMethodCall(*itr, response, transport, client))

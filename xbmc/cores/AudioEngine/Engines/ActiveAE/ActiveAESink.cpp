@@ -41,7 +41,11 @@ using namespace ActiveAE;
 CActiveAESink::CActiveAESink(CEvent *inMsgEvent) :
   CThread("AESink"),
   m_controlPort("SinkControlPort", inMsgEvent, &m_outMsgEvent),
-  m_dataPort("SinkDataPort", inMsgEvent, &m_outMsgEvent)
+  m_dataPort("SinkDataPort", inMsgEvent, &m_outMsgEvent),
+  m_state(0), m_bStateMachineSelfTrigger(false),
+  m_extTimeout(0), m_silenceTimeOut(0), m_extError(false),
+  m_extSilenceTimeout(0), m_extAppFocused(false), m_extStreaming(false),
+  m_swapState(CHECK_SWAP), m_sinkLatency(0), m_needIecPack(false)
 {
   m_inMsgEvent = inMsgEvent;
   m_sink = nullptr;
@@ -253,7 +257,7 @@ void CActiveAESink::StateMachine(int signal, Protocol *port, Message *msg)
         {
         case CSinkControlProtocol::CONFIGURE:
           SinkConfig *data;
-          data = (SinkConfig*)msg->data;
+          data = reinterpret_cast<SinkConfig*>(msg->data);
           if (data)
           {
             m_requestedFormat = data->format;
@@ -596,7 +600,6 @@ void CActiveAESink::Process()
 {
   Message *msg = nullptr;
   Protocol *port = nullptr;
-  bool gotMsg;
   XbmcThreads::EndTime timer;
 
   m_state = S_TOP_UNCONFIGURED;
@@ -606,7 +609,7 @@ void CActiveAESink::Process()
 
   while (!m_bStop)
   {
-    gotMsg = false;
+    bool gotMsg = false;
     timer.Set(m_extTimeout);
 
     if (m_bStateMachineSelfTrigger)
@@ -920,9 +923,7 @@ unsigned int CActiveAESink::OutputSamples(CSampleBuffer* samples)
   uint8_t *packBuffer;
   unsigned int frames = samples->pkt->nb_samples;
   unsigned int totalFrames = frames;
-  unsigned int maxFrames;
   int retry = 0;
-  unsigned int written = 0;
   std::unique_ptr<uint8_t[]> mergebuffer;
   uint8_t* p_mergebuffer = NULL;
   AEDelayStatus status;
@@ -938,13 +939,11 @@ unsigned int CActiveAESink::OutputSamples(CSampleBuffer* samples)
         {
           if (frames == 61440)
           {
-            int offset;
-            int len;
             m_packer->GetBuffer();
             for (int i=0; i<24; i++)
             {
-              offset = i*2560;
-              len = (*(buffer[0] + offset+2560-2) << 8) + *(buffer[0] + offset+2560-1);
+              int offset = i*2560;
+              int len = (*(buffer[0] + offset+2560-2) << 8) + *(buffer[0] + offset+2560-1);
               m_packer->Pack(m_sinkFormat.m_streamInfo, buffer[0] + offset, len);
             }
           }
@@ -993,15 +992,13 @@ unsigned int CActiveAESink::OutputSamples(CSampleBuffer* samples)
     {
       if (m_sinkFormat.m_streamInfo.m_type == CAEStreamInfo::STREAM_TYPE_TRUEHD && frames == 61440)
       {
-        int offset;
-        int len;
         unsigned int size = 0;
         mergebuffer.reset(new uint8_t[MAX_IEC61937_PACKET]);
         p_mergebuffer = mergebuffer.get();
         for (int i=0; i<24; i++)
         {
-          offset = i*2560;
-          len = (*(buffer[0] + offset+2560-2) << 8) + *(buffer[0] + offset+2560-1);
+          int offset = i*2560;
+          int len = (*(buffer[0] + offset+2560-2) << 8) + *(buffer[0] + offset+2560-1);
           memcpy(&(mergebuffer.get())[size], buffer[0] + offset, len);
           size += len;
         }
@@ -1023,8 +1020,8 @@ unsigned int CActiveAESink::OutputSamples(CSampleBuffer* samples)
 
   while (frames > 0)
   {
-    maxFrames = std::min(frames, m_sinkFormat.m_frames);
-    written = m_sink->AddPackets(buffer, maxFrames, totalFrames - frames);
+    unsigned int maxFrames = std::min(frames, m_sinkFormat.m_frames);
+    int written = m_sink->AddPackets(buffer, maxFrames, totalFrames - frames);
     if (written == 0)
     {
       Sleep(500*m_sinkFormat.m_frames/m_sinkFormat.m_sampleRate);

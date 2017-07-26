@@ -34,7 +34,7 @@
 #include "utils/StringUtils.h"
 #include "ServiceBroker.h"
 
-VideoPlayerCodec::VideoPlayerCodec()
+VideoPlayerCodec::VideoPlayerCodec() : m_audioPlanes{}
 {
   m_CodecName = "VideoPlayer";
   m_pDemuxer = NULL;
@@ -43,6 +43,8 @@ VideoPlayerCodec::VideoPlayerCodec()
   m_nAudioStream = -1;
   m_nDecodedLen = 0;
   m_bInited = false;
+  m_bCanSeek = false;
+  m_planes = 0;
   m_pResampler = NULL;
   m_needConvert = false;
   m_channels = 0;

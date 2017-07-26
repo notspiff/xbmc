@@ -30,7 +30,13 @@ extern "C" {
 
 using namespace ActiveAE;
 
-CActiveAEResampleFFMPEG::CActiveAEResampleFFMPEG()
+CActiveAEResampleFFMPEG::CActiveAEResampleFFMPEG() :
+  m_loaded(false), m_src_chan_layout(0),
+  m_dst_chan_layout(0), m_src_rate(0),
+  m_dst_rate(0), m_src_channels(0),
+  m_dst_channels(0), m_src_bits(0),
+  m_dst_bits(0), m_src_dither_bits(0),
+  m_dst_dither_bits(0), m_rematrix{}
 {
   m_pContext = NULL;
   m_doesResample = false;
@@ -213,10 +219,10 @@ int CActiveAEResampleFFMPEG::Resample(uint8_t **dst_buffer, int dst_samples, uin
     {
       int planes = av_sample_fmt_is_planar(m_dst_fmt) ? m_dst_channels : 1;
       int samples = ret * m_dst_channels / planes;
-      uint8_t *src, *dst;
       for (int i=0; i<planes; i++)
       {
-        src = dst = dst_buffer[i];
+        uint8_t* src = dst_buffer[i];
+        uint8_t* dst = src;
         for (int j=0; j<samples; j++)
         {
 #ifndef WORDS_BIGENDIAN

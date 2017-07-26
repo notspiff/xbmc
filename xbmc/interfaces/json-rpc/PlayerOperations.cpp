@@ -187,7 +187,7 @@ JSONRPC_STATUS CPlayerOperations::GetItem(const std::string &method, ITransportL
       if (player == Video)
       {
         bool additionalInfo = false;
-        for (CVariant::const_iterator_array itr = parameterObject["properties"].begin_array(); itr != parameterObject["properties"].end_array(); itr++)
+        for (CVariant::const_iterator_array itr = parameterObject["properties"].begin_array(); itr != parameterObject["properties"].end_array(); ++itr)
         {
           std::string fieldValue = itr->asString();
           if (fieldValue == "cast" || fieldValue == "set" || fieldValue == "setid" || fieldValue == "showlink" || fieldValue == "resume" ||
@@ -545,8 +545,8 @@ JSONRPC_STATUS CPlayerOperations::Open(const std::string &method, ITransportLaye
         }
 
         return StartSlideshow("", false, optionShuffled.isBoolean() && optionShuffled.asBoolean(), firstPicturePath);
-        break;
       }
+      break;
     }
 
     return ACK;

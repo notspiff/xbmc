@@ -878,7 +878,7 @@ JSONRPC_STATUS JSONSchemaTypeDefinition::Check(const CVariant &value, CVariant &
       {
         CVariant::const_iterator_map iter;
         CVariant::const_iterator_map iterEnd = value.end_map();
-        for (iter = value.begin_map(); iter != iterEnd; iter++)
+        for (iter = value.begin_map(); iter != iterEnd; ++iter)
         {
           if (properties.find(iter->first) != properties.end())
             continue;
@@ -1155,7 +1155,7 @@ void JSONSchemaTypeDefinition::Print(bool isParameter, bool isGlobal, bool print
   }
 }
 
-void JSONSchemaTypeDefinition::Set(const JSONSchemaTypeDefinitionPtr typeDefinition)
+void JSONSchemaTypeDefinition::Set(const JSONSchemaTypeDefinitionPtr& typeDefinition)
 {
   if (typeDefinition.get() == NULL)
     return;
@@ -1996,7 +1996,7 @@ void CJSONServiceDescription::removeReferenceTypeDefinition(const std::string &t
     m_types.erase(type);
 }
 
-void CJSONServiceDescription::getReferencedTypes(const JSONSchemaTypeDefinitionPtr type, std::vector<std::string> &referencedTypes)
+void CJSONServiceDescription::getReferencedTypes(const JSONSchemaTypeDefinitionPtr& type, std::vector<std::string> &referencedTypes)
 {
   // If the current type is a referenceable object, we can add it to the list
   if (type->ID.size() > 0)

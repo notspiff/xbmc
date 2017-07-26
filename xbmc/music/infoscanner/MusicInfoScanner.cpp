@@ -1247,10 +1247,11 @@ INFO_RET CMusicInfoScanner::DownloadAlbumInfo(const CAlbum& album, const ADDON::
     iSelectedAlbum = -1; // set negative so that we can detect a failure
     if (scraper.Succeeded() && scraper.GetAlbumCount() >= 1)
     {
-      double bestRelevance = 0;
-      double minRelevance = THRESHOLD;
       if (scraper.GetAlbumCount() > 1) // score the matches
       {
+        double bestRelevance = 0;
+        double minRelevance = THRESHOLD;
+
         //show dialog with all albums found
         if (pDialog)
         {

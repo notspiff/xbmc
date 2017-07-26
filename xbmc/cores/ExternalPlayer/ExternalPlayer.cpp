@@ -225,9 +225,9 @@ void CExternalPlayer::Process()
   CLog::Log(LOGNOTICE, "%s: Start", __FUNCTION__);
 
   // make sure we surround the arguments with quotes where necessary
-  std::string strFName;
   std::string strFArgs;
 #if defined(TARGET_WINDOWS)
+  std::string strFName;
   // W32 batch-file handline
   if (StringUtils::EndsWith(m_filename, ".bat") || StringUtils::EndsWith(m_filename, ".cmd"))
   {
@@ -238,8 +238,8 @@ void CExternalPlayer::Process()
     //strFArgs = "/c ";
   }
   else
-#endif
     strFName = m_filename;
+#endif
 
   strFArgs.append("\"");
   strFArgs.append(m_filename);
@@ -320,7 +320,7 @@ void CExternalPlayer::Process()
 
   m_callback.OnPlayBackStarted();
 
-  bool ret = true;
+  bool ret;
 #if defined(TARGET_WINDOWS)
   ret = ExecuteAppW32(strFName.c_str(),strFArgs.c_str());
 #elif defined(TARGET_ANDROID)

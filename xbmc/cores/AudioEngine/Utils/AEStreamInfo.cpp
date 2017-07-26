@@ -59,6 +59,7 @@ static const uint32_t DTSSampleRates[DTS_SFREQ_COUNT] =
 };
 
 CAEStreamParser::CAEStreamParser() :
+  m_buffer        { },
   m_bufferSize    (0),
   m_skipBytes     (0),
   m_coreOnly      (false),
@@ -76,6 +77,8 @@ CAEStreamParser::CAEStreamParser() :
 
 CAEStreamInfo::CAEStreamInfo() :
   m_type(STREAM_TYPE_NULL),
+  m_sampleRate(0),
+  m_channels(0),
   m_dataIsLE(true),
   m_dtsPeriod(0),
   m_repeat(0),
@@ -382,7 +385,7 @@ unsigned int CAEStreamParser::SyncAC3(uint8_t *data, unsigned int size)
       switch (fscod)
       {
         case 0: framesize = bitRate * 2; break;
-        case 1: framesize = (320 * bitRate / 147 + (frmsizecod & 1 ? 1 : 0)); break;
+        case 1: framesize = (320 * bitRate / 147 + ((frmsizecod & 1) ? 1 : 0)); break;
         case 2: framesize = bitRate * 4; break;
       }
 
@@ -718,7 +721,7 @@ unsigned int CAEStreamParser::SyncTrueHD(uint8_t *data, unsigned int size)
         continue;
 
       /* get the sample rate and substreams, we have a valid master audio unit */
-      m_info.m_sampleRate = (rate & 0x8 ? 44100 : 48000) << (rate & 0x7);
+      m_info.m_sampleRate = ((rate & 0x8) ? 44100 : 48000) << (rate & 0x7);
       m_substreams = (data[20] & 0xF0) >> 4;
 
       /* get the number of encoded channels */

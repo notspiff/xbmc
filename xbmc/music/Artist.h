@@ -37,6 +37,8 @@ class CMusicDatabase;
 class CArtist
 {
 public:
+  CArtist() { Reset(); }
+
   long idArtist;
   bool operator<(const CArtist& a) const
   {

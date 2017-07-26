@@ -30,6 +30,18 @@ ignorere=(\\[.*/threads/Event.h.*\\]:.*CEventGroup.*not.explicit
           \\[.*/ThreadMessage.h.*\\]:.*Member.variable.*not.initialized
           \\[.*/Observer.cpp.*\\]:.*Member.variable.*Observable::m_obsCritSection.*not.assigned
           \\[.*/PerformanceSample.cpp.*\\]:.*tmDummy
+          \\[.*/AEEncoderFFmpeg.h.*\\]:.*Unused.private.*CAEEncoderFFmpeg::BuildChannelLayout
+          \\[.*/ExternalPlayer.h.*\\]:.*Unused.private.*CExternalPlayer::GetCustomRegexpReplacers
+          \\[.*/VideoPlayerCodec.h.*\\]:.*Unused.private.*VideoPlayerCodec::GetPassthroughStreamType
+          \\[.*/NFSDirectory.h.*\\]:.*Unused.private.*CNFSDirectory::GetServerList
+          \\[.*/NFSDirectory.h.*\\]:.*Unused.private.*CNFSDirectory::ResolveSymlink
+          \\[.*/NFSDirectory.h.*\\]:.*Unused.private.*CNFSDirectory::GetDirectoryFromExportList
+          \\[.*/udf25.cpp.*\\]:Variable..directory_base..is.not.assigned
+          \\[.*/udf25.cpp.*\\]:Variable..Anchor_base..is.not.assigned
+          \\[.*/udf25.cpp.*\\]:Variable..LogBlock_base..is.not.assigned
+          \\[.*/MusicDatabaseDirectory/DirectoryNodeGrouped.h.*\\]:.*Unused.private.*CDirectoryNodeGrouped::GetContentType
+          \\[.*/ProfilesOperations.cpp.*\\]:.*Condition.*is.always.true
+          \\[.*/GUIDialogVisualisationPresetList.h.*\\]:.*Unused.private.*CGUIDialogVisualisationPresetList::SetVisualisation
           \\[.*\\]:.*Skipping.configuration.*
           \\[\\*\\]:)
 

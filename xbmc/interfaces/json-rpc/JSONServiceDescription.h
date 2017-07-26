@@ -50,7 +50,7 @@ namespace JSONRPC
     bool Parse(const CVariant &value, bool isParameter = false);
     JSONRPC_STATUS Check(const CVariant &value, CVariant &outputValue, CVariant &errorData);
     void Print(bool isParameter, bool isGlobal, bool printDefault, bool printDescriptions, CVariant &output) const;
-    void Set(const JSONSchemaTypeDefinitionPtr typeDefinition);
+    void Set(const JSONSchemaTypeDefinitionPtr& typeDefinition);
     
     std::string missingReference;
 
@@ -403,7 +403,7 @@ namespace JSONRPC
     static void addReferenceTypeDefinition(JSONSchemaTypeDefinitionPtr typeDefinition);
     static void removeReferenceTypeDefinition(const std::string &typeID);
 
-    static void getReferencedTypes(const JSONSchemaTypeDefinitionPtr type, std::vector<std::string> &referencedTypes);
+    static void getReferencedTypes(const JSONSchemaTypeDefinitionPtr& type, std::vector<std::string> &referencedTypes);
 
     class CJsonRpcMethodMap
     {

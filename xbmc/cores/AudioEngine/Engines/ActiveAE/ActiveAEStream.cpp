@@ -29,10 +29,10 @@
 
 using namespace ActiveAE;
 
-CActiveAEStream::CActiveAEStream(AEAudioFormat *format, unsigned int streamid, CActiveAE *ae)
+CActiveAEStream::CActiveAEStream(AEAudioFormat *format, unsigned int streamid, CActiveAE *ae) :
+  m_format(*format)
 {
   m_activeAE = ae;
-  m_format = *format;
   m_id = streamid;
   m_bufferedTime = 0;
   m_currentBuffer = NULL;
@@ -97,10 +97,10 @@ void CActiveAEStream::InitRemapper()
 {
   // check if input format follows ffmpeg channel mask
   bool needRemap = false;
-  unsigned int avLast, avCur = 0;
+  unsigned int avCur = 0;
   for(unsigned int i=0; i<m_format.m_channelLayout.Count(); i++)
   {
-    avLast = avCur;
+    unsigned int avLast = avCur;
     avCur = CAEUtil::GetAVChannel(m_format.m_channelLayout[i]);
     if(avCur < avLast)
     {
@@ -202,10 +202,8 @@ double CActiveAEStream::CalcResampleRatio(double error)
   else if (fabs(error) > 5)
     m_resampleIntegral += error / 1000 / 50;
 
-  double proportional = 0.0;
-
   double proportionaldiv = 2.0;
-  proportional = error / GetErrorInterval() / proportionaldiv;
+  double proportional = error / GetErrorInterval() / proportionaldiv;
 
   double clockspeed = 1.0;
   if (m_pClock)
@@ -583,9 +581,9 @@ void CActiveAEStream::RegisterSlave(IAEStream *slave)
 // CActiveAEStreamBuffers
 //------------------------------------------------------------------------------
 
-CActiveAEStreamBuffers::CActiveAEStreamBuffers(const AEAudioFormat& inputFormat, const AEAudioFormat& outputFormat, AEQuality quality)
+CActiveAEStreamBuffers::CActiveAEStreamBuffers(const AEAudioFormat& inputFormat, const AEAudioFormat& outputFormat, AEQuality quality) :
+  m_inputFormat(inputFormat)
 {
-  m_inputFormat = inputFormat;
   m_resampleBuffers = new CActiveAEBufferPoolResample(inputFormat, outputFormat, quality);
   m_atempoBuffers = new CActiveAEBufferPoolAtempo(outputFormat);
 }

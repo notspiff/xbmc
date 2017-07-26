@@ -522,19 +522,6 @@ void CGUIViewStateWindowMusicNav::SaveViewState()
   SaveViewToDb(m_items.GetPath(), WINDOW_MUSIC_NAV);
 }
 
-void CGUIViewStateWindowMusicNav::AddOnlineShares()
-{
-  if (!g_advancedSettings.m_bVirtualShares)
-    return;
-
-  VECSOURCES *musicSources = CMediaSourceSettings::GetInstance().GetSources("music");
-
-  for (int i = 0; i < (int)musicSources->size(); ++i)
-  {
-    CMediaSource share = musicSources->at(i);
-  }
-}
-
 VECSOURCES& CGUIViewStateWindowMusicNav::GetSources()
 {
   //  Setup shares we want to have
@@ -552,8 +539,6 @@ VECSOURCES& CGUIViewStateWindowMusicNav::GetSources()
     share.m_iDriveType = CMediaSource::SOURCE_TYPE_LOCAL;
     m_sources.push_back(share);
   }
-
-  AddOnlineShares();
 
   return CGUIViewStateWindowMusic::GetSources();
 }
