@@ -340,7 +340,7 @@ namespace addon
     ///
     /// @warning Only use `instance` from the CreateInstance call
     ///
-    CInstanceVisualization(KODI_HANDLE instance)
+    explicit CInstanceVisualization(KODI_HANDLE instance)
       : IAddonInstance(ADDON_INSTANCE_VISUALIZATION),
         m_presetLockedByUser(false)
     {
@@ -691,11 +691,6 @@ namespace addon
       addon->toAddon.addonInstance->AudioData(audioData, audioDataLength, freqData, freqDataLength);
     }
     
-    inline static bool ADDON_IsDirty(const AddonInstance_Visualization* addon)
-    {
-      return addon->toAddon.addonInstance->IsDirty();
-    }
-
     inline static void ADDON_Render(const AddonInstance_Visualization* addon)
     {
       addon->toAddon.addonInstance->Render();

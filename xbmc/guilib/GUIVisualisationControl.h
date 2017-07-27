@@ -88,7 +88,7 @@ private:
   bool m_wantsFreq;
   float m_freq[AUDIO_BUFFER_SIZE]; /*!< Frequency data */
   std::vector<std::string> m_presets; /*!< cached preset list */
-  std::unique_ptr<RFFT> m_transform;
+  std::unique_ptr<RFFT> m_dfttransform;
 
   /* values set from "OnInitialize" IAudioCallback  */
   int m_channels;

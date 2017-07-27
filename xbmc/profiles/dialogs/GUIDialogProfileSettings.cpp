@@ -51,7 +51,8 @@
 
 CGUIDialogProfileSettings::CGUIDialogProfileSettings()
     : CGUIDialogSettingsManualBase(WINDOW_DIALOG_PROFILE_SETTINGS, "DialogSettings.xml"),
-      m_needsSaving(false)
+      m_needsSaving(false), m_sourcesMode(0), m_dbMode(0),
+      m_isDefault(false), m_isNewUser(false), m_showDetails(false)
 { }
 
 CGUIDialogProfileSettings::~CGUIDialogProfileSettings() = default;

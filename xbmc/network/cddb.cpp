@@ -48,6 +48,7 @@ Xcddb::Xcddb()
     : m_cddb_socket(close, -1)
 #endif
     , m_cddb_ip_address(g_advancedSettings.m_cddbAddress)
+    , cdtoc{}
 {
   m_lastError = 0;
 }

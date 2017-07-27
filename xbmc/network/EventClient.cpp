@@ -47,7 +47,7 @@ using namespace EVENTPACKET;
 
 struct ButtonStateFinder
 {
-  ButtonStateFinder(const CEventButtonState& state)
+  explicit ButtonStateFinder(const CEventButtonState& state)
     : m_keycode(state.m_iKeyCode)
     , m_map(state.m_mapName)
     , m_button(state.m_buttonName)
@@ -156,13 +156,13 @@ bool CEventClient::AddPacket(CEventPacket *packet)
       {
         iSeqPayloadSize += m_seqPackets[i]->PayloadSize();
       }
-      unsigned int offset = 0;
       void *newPayload = NULL;
       newPayload = malloc(iSeqPayloadSize);
       if (newPayload)
       {
         unsigned char *payloadPtr = (unsigned char *)newPayload;
         unsigned int packets = packet->Size(); // packet can be deleted in this loop
+        unsigned int offset = 0;
         for (unsigned int i = 1 ; i<=packets ; i++)
         {
           memcpy((void*)(payloadPtr + offset), m_seqPackets[i]->Payload(),

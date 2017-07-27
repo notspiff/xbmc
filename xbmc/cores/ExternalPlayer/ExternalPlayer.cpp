@@ -320,13 +320,14 @@ void CExternalPlayer::Process()
 
   m_callback.OnPlayBackStarted();
 
-  bool ret;
 #if defined(TARGET_WINDOWS)
-  ret = ExecuteAppW32(strFName.c_str(),strFArgs.c_str());
+  bool ret = ExecuteAppW32(strFName.c_str(),strFArgs.c_str());
 #elif defined(TARGET_ANDROID)
-  ret = ExecuteAppAndroid(m_filename.c_str(), mainFile.c_str());
+  bool ret = ExecuteAppAndroid(m_filename.c_str(), mainFile.c_str());
 #elif defined(TARGET_POSIX) || defined(TARGET_DARWIN_OSX)
-  ret = ExecuteAppLinux(strFArgs.c_str());
+  bool ret = ExecuteAppLinux(strFArgs.c_str());
+#else
+  bool ret = false;
 #endif
   int64_t elapsedMillis = XbmcThreads::SystemClockMillis() - m_playbackStartTime;
 

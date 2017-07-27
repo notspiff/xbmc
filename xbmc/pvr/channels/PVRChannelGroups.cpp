@@ -411,10 +411,10 @@ int CPVRChannelGroups::GetGroupList(CFileItemList* results, bool bExcludeHidden 
 
 CPVRChannelGroupPtr CPVRChannelGroups::GetPreviousGroup(const CPVRChannelGroup &group) const
 {
-  bool bReturnNext(false);
-
   {
     CSingleLock lock(m_critSection);
+    bool bReturnNext(false);
+
     for (std::vector<CPVRChannelGroupPtr>::const_reverse_iterator it = m_groups.rbegin(); it != m_groups.rend(); ++it)
     {
       // return this entry
@@ -440,10 +440,10 @@ CPVRChannelGroupPtr CPVRChannelGroups::GetPreviousGroup(const CPVRChannelGroup &
 
 CPVRChannelGroupPtr CPVRChannelGroups::GetNextGroup(const CPVRChannelGroup &group) const
 {
-  bool bReturnNext(false);
-
   {
     CSingleLock lock(m_critSection);
+    bool bReturnNext(false);
+
     for (std::vector<CPVRChannelGroupPtr>::const_iterator it = m_groups.begin(); it != m_groups.end(); ++it)
     {
       // return this entry

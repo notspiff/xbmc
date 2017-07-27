@@ -97,7 +97,9 @@ CPVRChannelGroup::CPVRChannelGroup(const PVR_CHANNEL_GROUP &group) :
 }
 
 CPVRChannelGroup::CPVRChannelGroup(const CPVRChannelGroup &group) :
-    m_strGroupName(group.m_strGroupName)
+    m_strGroupName(group.m_strGroupName),
+    m_sortedMembers(group.m_sortedMembers),
+    m_members(group.m_members)
 {
   m_bRadio                      = group.m_bRadio;
   m_iGroupType                  = group.m_iGroupType;
@@ -110,8 +112,6 @@ CPVRChannelGroup::CPVRChannelGroup(const CPVRChannelGroup &group) :
   m_bHidden                     = group.m_bHidden;
   m_bSelectedGroup              = group.m_bSelectedGroup;
   m_bPreventSortAndRenumber     = group.m_bPreventSortAndRenumber;
-  m_members                     = group.m_members;
-  m_sortedMembers               = group.m_sortedMembers;
   m_iPosition                   = group.m_iPosition;
   OnInit();
 }

@@ -324,7 +324,6 @@ void CGUIDialogSongInfo::OnGetThumb()
   }
 
   // local thumb
-  std::string cachedLocalThumb;
   std::string localThumb(m_song->GetUserMusicThumb(true));
   if (m_song->IsMusicDb())
   {

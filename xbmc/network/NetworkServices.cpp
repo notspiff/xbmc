@@ -370,7 +370,7 @@ bool CNetworkServices::OnSettingChanging(std::shared_ptr<const CSetting> setting
     {
       bool result = true;
 #ifdef HAS_EVENT_SERVER
-      result = StopEventServer(true, true);
+      result &= StopEventServer(true, true);
 #endif // HAS_EVENT_SERVER
 #ifdef HAS_JSONRPC
       result &= StopJSONRPCServer(false);

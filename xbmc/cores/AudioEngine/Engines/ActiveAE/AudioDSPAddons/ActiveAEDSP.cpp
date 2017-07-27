@@ -28,30 +28,19 @@ extern "C" {
 }
 
 #include "ActiveAEDSPProcess.h"
-#include "addons/AddonInstaller.h"
-#include "addons/AddonSystemSettings.h"
 #include "addons/binary-addons/BinaryAddonBase.h"
-#include "addons/settings/GUIDialogAddonSettings.h"
 #include "Application.h"
-#include "cores/AudioEngine/Engines/ActiveAE/ActiveAEBuffer.h"
-#include "cores/AudioEngine/Interfaces/AEResample.h"
 #include "cores/AudioEngine/Utils/AEUtil.h"
-#include "dialogs/GUIDialogKaiToast.h"
-#include "dialogs/GUIDialogOK.h"
-#include "dialogs/GUIDialogSelect.h"
 #include "guiinfo/GUIInfoLabels.h"
 #include "guilib/GUIWindowManager.h"
 #include "guilib/LocalizeStrings.h"
 #include "messaging/ApplicationMessenger.h"
 #include "messaging/helpers/DialogHelper.h"
-#include "settings/AdvancedSettings.h"
 #include "settings/dialogs/GUIDialogAudioDSPManager.h"
 #include "settings/MediaSettings.h"
-#include "settings/MediaSourceSettings.h"
 #include "settings/Settings.h"
 #include "utils/JobManager.h"
 #include "utils/log.h"
-#include "utils/StringUtils.h"
 
 
 using namespace ADDON;

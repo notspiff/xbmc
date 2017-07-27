@@ -90,6 +90,8 @@ protected:
 
 private:
   void reset();
+  CWebSocketFrame(const CWebSocketFrame&) = delete;
+  CWebSocketFrame& operator=(const CWebSocketFrame&) = delete;
 };
 
 class CWebSocketMessage
@@ -115,7 +117,7 @@ protected:
 class CWebSocket
 {
 public:
-  CWebSocket() { m_state = WebSocketStateNotConnected; m_message = NULL; }
+  CWebSocket() { m_state = WebSocketStateNotConnected; m_message = NULL; m_version = 0;}
   virtual ~CWebSocket() { if (m_message) delete m_message; };
 
   int GetVersion() { return m_version; }

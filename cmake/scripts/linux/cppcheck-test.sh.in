@@ -36,13 +36,23 @@ ignorere=(\\[.*/threads/Event.h.*\\]:.*CEventGroup.*not.explicit
           \\[.*/NFSDirectory.h.*\\]:.*Unused.private.*CNFSDirectory::GetServerList
           \\[.*/NFSDirectory.h.*\\]:.*Unused.private.*CNFSDirectory::ResolveSymlink
           \\[.*/NFSDirectory.h.*\\]:.*Unused.private.*CNFSDirectory::GetDirectoryFromExportList
-          \\[.*/udf25.cpp.*\\]:Variable..directory_base..is.not.assigned
-          \\[.*/udf25.cpp.*\\]:Variable..Anchor_base..is.not.assigned
-          \\[.*/udf25.cpp.*\\]:Variable..LogBlock_base..is.not.assigned
+          \\[.*/udf25.cpp.*\\]:.*Variable..directory_base..is.not.assigned
+          \\[.*/udf25.cpp.*\\]:.*Variable..Anchor_base..is.not.assigned
+          \\[.*/udf25.cpp.*\\]:.*Variable..LogBlock_base..is.not.assigned
           \\[.*/MusicDatabaseDirectory/DirectoryNodeGrouped.h.*\\]:.*Unused.private.*CDirectoryNodeGrouped::GetContentType
           \\[.*/ProfilesOperations.cpp.*\\]:.*Condition.*is.always.true
           \\[.*/GUIDialogVisualisationPresetList.h.*\\]:.*Unused.private.*CGUIDialogVisualisationPresetList::SetVisualisation
-          \\[.*\\]:.*Skipping.configuration.*
+          \\[.*/DllLoader.cpp.*\\]:.*Obsolete.function..alloca..called
+          \\[.*/NetworkServices.h.*\\]:.*Unused.private.*CNetworkServices::ValidatePort
+          \\[.*/TCPServer.cpp.*\\]:.*CTCPClient::m_critSection.*not.assigned.*CTCPClient::operator=
+          \\[.*/WakeOnAccess.h.*\\]:.*Unused.private.*CWakeOnAccess::LoadFromXML
+          \\[.*/WakeOnAccess.h.*\\]:.*Unused.private.*CWakeOnAccess::SaveMACDiscoveryResult
+          \\[.*/AirPlayServer.cpp.*\\]:.*Obsolete.function..asctime
+          \\[.*/GUIDialogLockSettings.h.*\\]:.*Unused.private.*CGUIDialogLockSettings::setDetailSettingsEnabled
+          \\[.*GUIDialogLockSettings.h.*\\]:.*Unused.private.*CGUIDialogLockSettings::setLockCodeLabel
+          \\[.*/PVRTimers.cpp.*\\]:.*scope.*bStateChanged.*reduced
+          \\[.*\\]:.*Skipping.configuration
+          \\[.*\\]:.*error..syntax.error
           \\[\\*\\]:)
 
 nmatch=`cat $tmpfil | grep "\[.*\]" | wc -l`

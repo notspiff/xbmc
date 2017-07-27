@@ -267,7 +267,7 @@ bool CAirPlayServer::IsRunning()
   if (ServerInstance == NULL)
     return false;
 
-  return ((CThread*)ServerInstance)->IsRunning();
+  return static_cast<CThread*>(ServerInstance)->IsRunning();
 }
 
 void CAirPlayServer::AnnounceToClients(int state)
@@ -464,6 +464,8 @@ CAirPlayServer::CTCPClient::CTCPClient()
 
   m_bAuthenticated = false;
   m_lastEvent = EVENT_NONE;
+
+  m_sessionCounter = 0;
 }
 
 CAirPlayServer::CTCPClient::CTCPClient(const CTCPClient& client)
@@ -486,7 +488,11 @@ CAirPlayServer::CTCPClient::~CTCPClient()
 
 CAirPlayServer::CTCPClient& CAirPlayServer::CTCPClient::operator=(const CTCPClient& client)
 {
+  if (this == &client)
+    return *this;
+
   Copy(client);
+  m_lastEvent = EVENT_NONE;
   m_httpParser = new HttpParser();
   m_pLibPlist = new DllLibPlist();
   return *this;

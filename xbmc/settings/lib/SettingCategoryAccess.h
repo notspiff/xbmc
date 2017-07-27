@@ -38,7 +38,7 @@ public:
 class CSettingCategoryAccessConditionCombination : public CSettingConditionCombination
 {
 public:
-  CSettingCategoryAccessConditionCombination(CSettingsManager *settingsManager = nullptr)
+  explicit CSettingCategoryAccessConditionCombination(CSettingsManager *settingsManager = nullptr)
     : CSettingConditionCombination(settingsManager)
   { }
   ~CSettingCategoryAccessConditionCombination() override = default;

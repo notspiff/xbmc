@@ -46,18 +46,16 @@ bool in_ether (const char *bufp, unsigned char *addr)
   if (strlen(bufp) != 17)
     return false;
 
-  char c;
   const char *orig;
   unsigned char *ptr = addr;
-  unsigned val;
 
   int i = 0;
   orig = bufp;
 
   while ((*bufp != '\0') && (i < 6))
   {
-    val = 0;
-    c = *bufp++;
+    unsigned val = 0;
+    char c = *bufp++;
 
     if (isdigit(c))
       val = c - '0';

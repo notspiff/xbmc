@@ -41,7 +41,7 @@ namespace PVR
     class clazz : public CStaticContextMenuAction \
     { \
     public: \
-      clazz(uint32_t label) : CStaticContextMenuAction(label) {} \
+      explicit clazz(uint32_t label) : CStaticContextMenuAction(label) {} \
       bool IsVisible(const CFileItem &item) const override; \
       bool Execute(const CFileItemPtr &item) const override; \
     };
@@ -538,9 +538,8 @@ namespace PVR
     return instance;
   }
 
-  CPVRContextMenuManager::CPVRContextMenuManager()
-  {
-    m_items =
+  CPVRContextMenuManager::CPVRContextMenuManager() :
+    m_items
     {
       std::make_shared<CONTEXTMENUITEM::ShowInformation>(),
       std::make_shared<CONTEXTMENUITEM::ShowChannelGuide>(19686), /* Channel guide */
@@ -560,7 +559,8 @@ namespace PVR
       std::make_shared<CONTEXTMENUITEM::DeleteRecording>(),
       std::make_shared<CONTEXTMENUITEM::UndeleteRecording>(19290), /* Undelete */
       std::make_shared<CONTEXTMENUITEM::PVRClientMenuHook>(19195), /* PVR client specific action */
-    };
+    }
+  {
   }
 
 } // namespace PVR

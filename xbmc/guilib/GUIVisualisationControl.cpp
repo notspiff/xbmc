@@ -275,10 +275,10 @@ void CGUIVisualisationControl::OnAudioData(const float* audioData, unsigned int 
   {
     const float *psAudioData = ptrAudioBuffer->Get();
 
-    if (!m_transform)
-      m_transform.reset(new RFFT(AUDIO_BUFFER_SIZE/2, false)); // half due to stereo
+    if (!m_dfttransform)
+      m_dfttransform.reset(new RFFT(AUDIO_BUFFER_SIZE/2, false)); // half due to stereo
 
-    m_transform->calc(psAudioData, m_freq);
+    m_dfttransform->calc(psAudioData, m_freq);
 
     // Transfer data to our visualisation
     m_instance->AudioData(psAudioData, ptrAudioBuffer->Size(), m_freq, AUDIO_BUFFER_SIZE/2); // half due to complex-conjugate
@@ -471,6 +471,6 @@ void CGUIVisualisationControl::ClearBuffers()
     m_freq[j] = 0.0f;
   }
 
-  if (m_transform)
-    m_transform.reset();
+  if (m_dfttransform)
+    m_dfttransform.reset();
 }

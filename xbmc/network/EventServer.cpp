@@ -51,12 +51,16 @@ using namespace SOCKETS;
 /* CEventServer                                                         */
 /************************************************************************/
 CEventServer* CEventServer::m_pInstance = NULL;
-CEventServer::CEventServer() : CThread("EventServer")
+
+CEventServer::CEventServer() :
+  CThread("EventServer"),
+  m_bRunning(false)
 {
+  m_iPort         = 0;
+  m_iMaxClients   = 0;
   m_pSocket       = NULL;
   m_pPacketBuffer = NULL;
   m_bStop         = false;
-  m_bRunning      = false;
   m_bRefreshSettings = false;
 
   // default timeout in ms for receiving a single packet

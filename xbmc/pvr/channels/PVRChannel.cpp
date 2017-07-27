@@ -77,27 +77,28 @@ CPVRChannel::CPVRChannel(bool bRadio /* = false */)
 }
 
 CPVRChannel::CPVRChannel(const PVR_CHANNEL &channel, unsigned int iClientId)
+  : m_bIsRadio(channel.bIsRadio)
+  , m_bIsHidden(channel.bIsHidden)
+  , m_strIconPath(channel.strIconPath)
+  , m_strChannelName(channel.strChannelName)
+  , m_bEPGEnabled(!channel.bIsHidden)
+  , m_strEPGScraper("client")
+  , m_iUniqueId(channel.iUniqueId)
+  , m_iClientId(iClientId)
+  , m_iClientChannelNumber{channel.iChannelNumber,
+                           channel.iSubChannelNumber}
+  , m_strClientChannelName(channel.strChannelName)
+  , m_strInputFormat(channel.strInputFormat)
+  , m_strStreamURL(channel.strStreamURL)
+  , m_iClientEncryptionSystem(channel.iEncryptionSystem)
 {
   m_iChannelId              = -1;
-  m_bIsRadio                = channel.bIsRadio;
-  m_bIsHidden               = channel.bIsHidden;
   m_bIsUserSetIcon          = false;
   m_bIsUserSetName          = false;
   m_bIsLocked               = false;
-  m_strIconPath             = channel.strIconPath;
-  m_strChannelName          = channel.strChannelName;
-  m_iUniqueId               = channel.iUniqueId;
-  m_iClientChannelNumber.channel    = channel.iChannelNumber;
-  m_iClientChannelNumber.subchannel = channel.iSubChannelNumber;
-  m_strClientChannelName    = channel.strChannelName;
-  m_strInputFormat          = channel.strInputFormat;
-  m_iClientEncryptionSystem = channel.iEncryptionSystem;
   m_iCachedChannelNumber    = 0;
   m_iCachedSubChannelNumber = 0;
-  m_iClientId               = iClientId;
   m_iLastWatched            = 0;
-  m_bEPGEnabled             = !channel.bIsHidden;
-  m_strEPGScraper           = "client";
   m_iEpgId                  = -1;
   m_bEPGCreated             = false;
   m_bChanged                = false;

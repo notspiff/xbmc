@@ -185,7 +185,6 @@ std::vector<CGUIFeatureList::FeatureGroup> CGUIFeatureList::GetFeatureGroups(con
   std::vector<FeatureGroup> groups;
 
   // Get group names
-  std::vector<std::string> groupNames;
   for (const CControllerFeature& feature : features)
   {
     bool bAdded = false;

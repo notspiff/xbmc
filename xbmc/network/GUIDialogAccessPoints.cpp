@@ -35,8 +35,10 @@
 
 CGUIDialogAccessPoints::CGUIDialogAccessPoints(void)
     : CGUIDialog(WINDOW_DIALOG_ACCESS_POINTS, "DialogAccessPoints.xml")
+    , m_selectedAPEncMode(ENC_NONE), m_wasItemSelected(false)
 {
   m_accessPoints = new CFileItemList;
+  
 }
 
 CGUIDialogAccessPoints::~CGUIDialogAccessPoints(void)

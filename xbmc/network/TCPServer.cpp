@@ -109,7 +109,7 @@ bool CTCPServer::IsRunning()
   if (ServerInstance == NULL)
     return false;
 
-  return ((CThread*)ServerInstance)->IsRunning();
+  return static_cast<CThread*>(ServerInstance)->IsRunning();
 }
 
 CTCPServer::CTCPServer(int port, bool nonlocal) : CThread("TCPServer")
@@ -513,7 +513,8 @@ CTCPServer::CTCPClient::CTCPClient()
   m_addrlen = sizeof(m_cliaddr);
 }
 
-CTCPServer::CTCPClient::CTCPClient(const CTCPClient& client)
+CTCPServer::CTCPClient::CTCPClient(const CTCPClient& client) :
+  m_critSection{}
 {
   Copy(client);
 }

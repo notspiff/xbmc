@@ -118,12 +118,11 @@ extern "C" void __stdcall init_emu_environ()
 #if defined(TARGET_WINDOWS)
   using KODI::PLATFORM::WINDOWS::FromW;
   // fill our array with the windows system vars
-  LPTSTR lpszVariable;
   LPTCH lpvEnv;
   lpvEnv = GetEnvironmentStrings();
   if (lpvEnv != NULL)
   {
-    lpszVariable = (LPTSTR) lpvEnv;
+    LPTSTR lpszVariable = (LPTSTR) lpvEnv;
     while (*lpszVariable)
     {
       dll_putenv(FromW(lpszVariable).c_str());

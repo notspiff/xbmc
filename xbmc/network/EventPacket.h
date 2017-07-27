@@ -219,7 +219,7 @@ namespace EVENTPACKET
       m_eType = PT_LAST;
     }
 
-    CEventPacket(int datasize, const void* data)
+    CEventPacket(int datasize, const void* data) : m_header{}
     {
       m_bValid = false;
       m_iSeq = 0;

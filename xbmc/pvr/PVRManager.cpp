@@ -130,10 +130,9 @@ void CPVRManagerJobQueue::ExecutePendingJobs()
     m_triggerEvent.Reset();
   }
 
-  CJob *job = nullptr;
   while (!pendingUpdates.empty())
   {
-    job = pendingUpdates.front();
+    CJob* job = pendingUpdates.front();
     pendingUpdates.erase(pendingUpdates.begin());
 
     job->DoWork();
@@ -505,10 +504,10 @@ bool CPVRManager::SetWakeupCommand(void)
   const std::string strWakeupCommand(m_settings.GetStringValue(CSettings::SETTING_PVRPOWERMANAGEMENT_SETWAKEUPCMD));
   if (!strWakeupCommand.empty() && m_timers)
   {
-    time_t iWakeupTime;
     const CDateTime nextEvent = m_timers->GetNextEventTime();
     if (nextEvent.IsValid())
     {
+      time_t iWakeupTime;
       nextEvent.GetAsTime(iWakeupTime);
 
       std::string strExecCommand = StringUtils::Format("%s %ld", strWakeupCommand.c_str(), iWakeupTime);

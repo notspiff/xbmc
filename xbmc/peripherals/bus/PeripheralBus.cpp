@@ -299,7 +299,6 @@ bool CPeripheralBus::HasPeripheral(const std::string &strLocation) const
 
 void CPeripheralBus::GetDirectory(const std::string &strPath, CFileItemList &items) const
 {
-  std::string strDevPath;
   CSingleLock lock(m_critSection);
   for (const auto& peripheral : m_peripherals)
   {
@@ -333,7 +332,6 @@ PeripheralPtr CPeripheralBus::GetByPath(const std::string &strPath) const
 {
   PeripheralPtr result;
 
-  std::string strDevPath;
   CSingleLock lock(m_critSection);
   for (auto& peripheral : m_peripherals)
   {

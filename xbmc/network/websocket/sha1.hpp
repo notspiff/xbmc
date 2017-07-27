@@ -63,7 +63,7 @@ private:
     std::size_t byte_count_;
 };
 
-inline sha1::sha1()
+inline sha1::sha1() : block_{}
 {
     reset();
 }
