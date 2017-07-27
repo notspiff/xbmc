@@ -834,7 +834,7 @@ SettingPtr CAddonSettings::InitializeFromOldSettingPath(const std::string& setti
   const auto audioMask = g_advancedSettings.GetMusicExtensions();
   const auto videoMask = g_advancedSettings.m_videoExtensions;
   const auto imageMask = g_advancedSettings.GetPictureExtensions();
-  auto execMask = "";
+  std::string execMask;
 #if defined(TARGET_WINDOWS)
   execMask = ".exe|.bat|.cmd|.py";
 #endif  // defined(TARGET_WINDOWS)
@@ -1305,7 +1305,7 @@ bool CAddonSettings::LoadOldSettingValues(const CXBMCTinyXML& doc, std::map<std:
   return !settings.empty();
 }
 
-bool CAddonSettings::ParseOldLabel(const TiXmlElement* element, const std::string settingId, int& labelId)
+bool CAddonSettings::ParseOldLabel(const TiXmlElement* element, const std::string& settingId, int& labelId)
 {
   labelId = -1;
   if (element == nullptr)
@@ -1334,7 +1334,7 @@ bool CAddonSettings::ParseOldLabel(const TiXmlElement* element, const std::strin
   return parsed;
 }
 
-bool CAddonSettings::ParseOldCondition(std::shared_ptr<const CSetting> setting, const std::vector<std::shared_ptr<const CSetting>> settings, const std::string& condition, CSettingDependency& dependeny) const
+bool CAddonSettings::ParseOldCondition(const std::shared_ptr<const CSetting>& setting, const std::vector<std::shared_ptr<const CSetting>>& settings, const std::string& condition, CSettingDependency& dependeny) const
 {
   if (setting == nullptr)
     return false;

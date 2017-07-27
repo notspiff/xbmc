@@ -90,7 +90,6 @@ bool CGUIPassword::IsItemUnlocked(CFileItem* pItem, const std::string &strType)
     case -1:
       { // user canceled out
         return false;
-        break;
       }
     case 0:
       {
@@ -117,7 +116,6 @@ bool CGUIPassword::IsItemUnlocked(CFileItem* pItem, const std::string &strType)
       {
         // this should never happen, but if it does, do nothing
         return false;
-        break;
       }
     }
   }

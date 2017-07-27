@@ -258,7 +258,7 @@ CFileItem::CFileItem(const CGUIListItem& item)
   Initialize();
   // not particularly pretty, but it gets around the issue of Initialize() defaulting
   // parameters in the CGUIListItem base class.
-  *((CGUIListItem *)this) = item;
+  *static_cast<CGUIListItem*>(this) = item;
 
   FillInMimeType(false);
 }
@@ -733,9 +733,8 @@ void CFileItem::ToSortable(SortItem &sortable, Field field) const
 
 void CFileItem::ToSortable(SortItem &sortable, const Fields &fields) const
 {
-  Fields::const_iterator it;
-  for (it = fields.begin(); it != fields.end(); it++)
-    ToSortable(sortable, *it);
+  for (const auto& it : fields)
+    ToSortable(sortable, it);
 
   /* FieldLabel is used as a fallback by all sorters and therefore has to be present as well */
   sortable[FieldLabel] = GetLabel();
@@ -1738,8 +1737,8 @@ void CFileItem::LoadEmbeddedCue()
     {
       std::vector<std::string> MediaFileVec;
       cuesheet->GetMediaFiles(MediaFileVec);
-      for (std::vector<std::string>::iterator itMedia = MediaFileVec.begin(); itMedia != MediaFileVec.end(); itMedia++)
-        cuesheet->UpdateMediaFile(*itMedia, GetPath());
+      for (auto& itMedia : MediaFileVec)
+        cuesheet->UpdateMediaFile(itMedia, GetPath());
       SetCueDocument(cuesheet);
     }
     // Clear cuesheet tag having added it to item
@@ -2037,7 +2036,7 @@ void CFileItemList::Assign(const CFileItemList& itemlist, bool append)
 bool CFileItemList::Copy(const CFileItemList& items, bool copyItems /* = true */)
 {
   // assign all CFileItem parts
-  *(CFileItem*)this = *(CFileItem*)&items;
+  *static_cast<CFileItem*>(this) = static_cast<const CFileItem&>(items);
 
   // assign the rest of the CFileItemList properties
   m_replaceListing  = items.m_replaceListing;
@@ -2208,11 +2207,11 @@ void CFileItemList::Sort(SortDescription sortDescription)
   // apply the new order to the existing CFileItems
   VECFILEITEMS sortedFileItems;
   sortedFileItems.reserve(Size());
-  for (SortItems::const_iterator it = sortItems.begin(); it != sortItems.end(); it++)
+  for (const auto& it : sortItems)
   {
-    CFileItemPtr item = m_items[(int)(*it)->at(FieldId).asInteger()];
+    CFileItemPtr item = m_items[(int)it->at(FieldId).asInteger()];
     // Set the sort label in the CFileItem
-    item->SetSortLabel((*it)->at(FieldSort).asWideString());
+    item->SetSortLabel(it->at(FieldSort).asWideString());
 
     sortedFileItems.push_back(item);
   }
@@ -2433,9 +2432,9 @@ void CFileItemList::FilterCueItems()
           cuesheet->GetMediaFiles(MediaFileVec);
 
           // queue the cue sheet and the underlying media file for deletion
-          for(std::vector<std::string>::iterator itMedia = MediaFileVec.begin(); itMedia != MediaFileVec.end(); itMedia++)
+          for(const auto& itMedia : MediaFileVec)
           {
-            std::string strMediaFile = *itMedia;
+            std::string strMediaFile = itMedia;
             std::string fileFromCue = strMediaFile; // save the file from the cue we're matching against,
                                                    // as we're going to search for others here...
             bool bFoundMediaFile = CFile::Exists(strMediaFile);
@@ -2549,7 +2548,7 @@ void CFileItemList::StackFolders()
     else
       folderRegExps.push_back(folderRegExp);
 
-    strExpression++;
+    ++strExpression;
   }
 
   if (!folderRegExp.IsCompiled())
@@ -2608,7 +2607,7 @@ void CFileItemList::StackFolders()
             if (nFiles == 1)
               *item = *items[index];
           }
-          expr++;
+          ++expr;
         }
 
         // check for dvd folders
@@ -2647,7 +2646,7 @@ void CFileItemList::StackFiles()
       else
         CLog::Log(LOGERROR, "Invalid video stack RE (%s). Must have 4 captures.", strRegExp->c_str());
     }
-    strRegExp++;
+    ++strRegExp;
   }
 
   // now stack the files, some of which may be from the previous stack iteration
@@ -2740,7 +2739,7 @@ void CFileItemList::StackFiles()
                 else // Sequel
                 {
                   offset = 0;
-                  expr++;
+                  ++expr;
                   break;
                 }
               }
@@ -2752,21 +2751,21 @@ void CFileItemList::StackFiles()
               else // Extension mismatch
               {
                 offset = 0;
-                expr++;
+                ++expr;
                 break;
               }
             }
             else // Title mismatch
             {
               offset = 0;
-              expr++;
+              ++expr;
               break;
             }
           }
           else // No match 2, next expression
           {
             offset = 0;
-            expr++;
+            ++expr;
             break;
           }
           j++;
@@ -2777,7 +2776,7 @@ void CFileItemList::StackFiles()
       else // No match 1
       {
         offset = 0;
-        expr++;
+        ++expr;
       }
       if (stack.size() > 1)
       {
@@ -2827,7 +2826,7 @@ bool CFileItemList::Load(int windowID)
       return true;
     }
   }
-  catch(std::out_of_range ex)
+  catch(std::out_of_range& ex)
   {
     CLog::Log(LOGERROR, "Corrupt archive: %s", CURL::GetRedacted(path).c_str());
   }
@@ -2874,7 +2873,6 @@ std::string CFileItemList::GetDiscFileCache(int windowID) const
 
   uint32_t crc = Crc32::ComputeFromLowerCase(strPath);
 
-  std::string cacheFile;
   if (IsCDDA() || IsOnDVD())
     return StringUtils::Format("special://temp/archive_cache/r-%08x.fi", crc);
 
@@ -3496,7 +3494,7 @@ std::string CFileItem::FindTrailer() const
     {
       matchRegExps.push_back(tmpRegExp);
     }
-    strRegExp++;
+    ++strRegExp;
   }
 
   std::string strTrailer;
@@ -3523,7 +3521,7 @@ std::string CFileItem::FindTrailer() const
           i = items.Size();
           break;
         }
-        expr++;
+        ++expr;
       }
     }
   }

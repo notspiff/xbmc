@@ -321,10 +321,9 @@ AVFrame* CFFmpegImage::ExtractFrame()
     m_hasAlpha = true;
 
   AVDictionary* dic = av_frame_get_metadata(frame);
-  AVDictionaryEntry* entry = NULL;
   if (dic)
   {
-    entry = av_dict_get(dic, "Orientation", NULL, AV_DICT_MATCH_CASE);
+    AVDictionaryEntry* entry = av_dict_get(dic, "Orientation", NULL, AV_DICT_MATCH_CASE);
     if (entry && entry->value)
     {
       int orientation = atoi(entry->value);

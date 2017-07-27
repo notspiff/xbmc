@@ -231,8 +231,6 @@ void CGUIDialogMediaSource::OnPathBrowse(int item)
   if (m_name != CUtil::GetTitleFromPath(m_paths->Get(item)->GetPath()))
     m_bNameChanged = true;
 
-  std::string strDevices = g_localizeStrings.Get(33040); //"% Devices"
-
   if (m_type == "music")
   {
     CMediaSource share1;

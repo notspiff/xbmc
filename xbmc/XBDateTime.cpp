@@ -265,16 +265,16 @@ CDateTime::CDateTime(const SYSTEMTIME &time)
   m_state = ToFileTime(time, m_time) ? valid : invalid;
 }
 
-CDateTime::CDateTime(const FILETIME &time)
+CDateTime::CDateTime(const FILETIME &time) :
+  m_time(time)
 {
-  m_time=time;
   SetValid(true);
 }
 
-CDateTime::CDateTime(const CDateTime& time)
+CDateTime::CDateTime(const CDateTime& time) :
+  m_time(time.m_time),
+  m_state(time.m_state)
 {
-  m_time=time.m_time;
-  m_state=time.m_state;
 }
 
 CDateTime::CDateTime(const time_t& time)

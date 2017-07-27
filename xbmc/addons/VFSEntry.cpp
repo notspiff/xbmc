@@ -95,7 +95,7 @@ void CVFSAddonCache::Update()
 class CVFSURLWrapper
 {
   public:
-    CVFSURLWrapper(const CURL& url2)
+    explicit CVFSURLWrapper(const CURL& url2)
     {
       m_strings.push_back(url2.Get());
       m_strings.push_back(url2.GetDomain());
@@ -130,10 +130,10 @@ CVFSEntry::CVFSEntry(BinaryAddonBasePtr addonInfo)
     m_extensions(addonInfo->Type(ADDON_VFS)->GetValue("@extensions").asString()),
     m_files(addonInfo->Type(ADDON_VFS)->GetValue("@files").asBoolean()),
     m_directories(addonInfo->Type(ADDON_VFS)->GetValue("@directories").asBoolean()),
-    m_filedirectories(addonInfo->Type(ADDON_VFS)->GetValue("@filedirectories").asBoolean())
+    m_filedirectories(addonInfo->Type(ADDON_VFS)->GetValue("@filedirectories").asBoolean()),
+    m_struct{{0}}
 
 {
-  m_struct = {{ 0 }};
   m_struct.toKodi.kodiInstance = this;
   if (CreateInstance(&m_struct) != ADDON_STATUS_OK)
     CLog::Log(LOGFATAL, "CVFSEntry - Couldn't create instance on add-on '%s'", addonInfo->Name().c_str());
@@ -529,7 +529,7 @@ bool CVFSEntryIDirectoryWrapper::DoGetKeyboardInput(void* ctx,
                                                     char** input,
                                                     bool hidden_input)
 {
-  return ((CVFSEntryIDirectoryWrapper*)ctx)->GetKeyboardInput2(heading, input, hidden_input);
+  return static_cast<CVFSEntryIDirectoryWrapper*>(ctx)->GetKeyboardInput2(heading, input, hidden_input);
 }
 
 bool CVFSEntryIDirectoryWrapper::GetKeyboardInput2(const char* heading,
@@ -549,8 +549,8 @@ void CVFSEntryIDirectoryWrapper::DoSetErrorDialog(void* ctx, const char* heading
                                                   const char* line2,
                                                   const char* line3)
 {
-  ((CVFSEntryIDirectoryWrapper*)ctx)->SetErrorDialog2(heading, line1,
-                                                      line2, line3);
+  static_cast<CVFSEntryIDirectoryWrapper*>(ctx)->SetErrorDialog2(heading, line1,
+                                                                 line2, line3);
 }
 
 void CVFSEntryIDirectoryWrapper::SetErrorDialog2(const char* heading,
@@ -571,7 +571,7 @@ void CVFSEntryIDirectoryWrapper::SetErrorDialog2(const char* heading,
 void CVFSEntryIDirectoryWrapper::DoRequireAuthentication(void* ctx,
                                                          const char* url)
 {
-  ((CVFSEntryIDirectoryWrapper*)ctx)->RequireAuthentication2(CURL(url));
+  static_cast<CVFSEntryIDirectoryWrapper*>(ctx)->RequireAuthentication2(CURL(url));
 }
 
 void CVFSEntryIDirectoryWrapper::RequireAuthentication2(const CURL& url)

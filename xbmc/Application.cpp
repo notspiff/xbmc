@@ -282,6 +282,7 @@ CApplication::CApplication(void)
   , m_volumeLevel(VOLUME_MAXIMUM)
   , m_pInertialScrollingHandler(new CInertialScrollingHandler())
   , m_network(nullptr)
+  , m_replayGainSettings{}
   , m_fallbackLanguageLoaded(false)
   , m_WaitingExternalCalls(0)
   , m_ProcessedExternalCalls(0)
@@ -383,7 +384,7 @@ void CApplication::Preflight()
   std::string install_path;
 
   install_path = CUtil::GetHomePath();
-  setenv("KODI_HOME", install_path.c_str(), 0);
+  ::setenv("KODI_HOME", install_path.c_str(), 0);
   install_path += "/tools/darwin/runtime/preflight";
   system(install_path.c_str());
 #endif
@@ -449,6 +450,12 @@ bool CApplication::Create(const CAppParamParser &params)
     inited = InitDirectoriesOSX();
   if (!inited)
     inited = InitDirectoriesWin32();
+
+  if (!inited)
+  {
+    fprintf(stderr,"%s\n", "Could not initialize directories");
+    return false;
+  }
 
   // copy required files
   CopyUserDataIfNeeded("special://masterprofile/", "RssFeeds.xml");
@@ -549,14 +556,12 @@ bool CApplication::Create(const CAppParamParser &params)
   CRegExp::LogCheckUtf8Support();
   CLog::Log(LOGNOTICE, "-----------------------------------------------------------------------");
 
-  std::string strExecutablePath = CUtil::GetHomePath();
-
   // for python scripts that check the OS
   //! @todo - move to CPlatformXXX
 #if defined(TARGET_DARWIN)
-  setenv("OS","OS X",true);
+  ::setenv("OS","OS X",true);
 #elif defined(TARGET_POSIX)
-  setenv("OS","Linux",true);
+  ::setenv("OS","Linux",true);
 #elif defined(TARGET_WINDOWS)
   CEnvironment::setenv("OS", "win32");
 #endif
@@ -788,12 +793,6 @@ bool CApplication::InitDirectoriesLinux()
 */
 
 #if defined(TARGET_POSIX) && !defined(TARGET_DARWIN)
-  std::string userName;
-  if (getenv("USER"))
-    userName = getenv("USER");
-  else
-    userName = "root";
-
   std::string userHome;
   if (getenv("HOME"))
     userHome = getenv("HOME");
@@ -835,8 +834,8 @@ bool CApplication::InitDirectoriesLinux()
   }
 
   /* Set some environment variables */
-  setenv(envAppBinHome, appBinPath.c_str(), 0);
-  setenv(envAppHome, appPath.c_str(), 0);
+  ::setenv(envAppBinHome, appBinPath.c_str(), 0);
+  ::setenv(envAppHome, appPath.c_str(), 0);
 
   if (m_bPlatformDirectories)
   {
@@ -890,12 +889,6 @@ bool CApplication::InitDirectoriesLinux()
 bool CApplication::InitDirectoriesOSX()
 {
 #if defined(TARGET_DARWIN)
-  std::string userName;
-  if (getenv("USER"))
-    userName = getenv("USER");
-  else
-    userName = "root";
-
   std::string userHome;
   if (getenv("HOME"))
     userHome = getenv("HOME");
@@ -907,12 +900,12 @@ bool CApplication::InitDirectoriesOSX()
     binaddonAltDir = getenv("KODI_BINADDON_PATH");
 
   std::string appPath = CUtil::GetHomePath();
-  setenv("KODI_HOME", appPath.c_str(), 0);
+  ::setenv("KODI_HOME", appPath.c_str(), 0);
 
 #if defined(TARGET_DARWIN_IOS)
   std::string fontconfigPath;
   fontconfigPath = appPath + "/system/players/VideoPlayer/etc/fonts/fonts.conf";
-  setenv("FONTCONFIG_FILE", fontconfigPath.c_str(), 0);
+  ::setenv("FONTCONFIG_FILE", fontconfigPath.c_str(), 0);
 #endif
 
   // setup path to our internal dylibs so loader can find them
@@ -2284,15 +2277,16 @@ bool CApplication::OnAction(const CAction &action)
       if (m_muted)
         UnMute();
       float volume = m_volumeLevel;
-      int volumesteps = m_ServiceManager->GetSettings().GetInt(CSettings::SETTING_AUDIOOUTPUT_VOLUMESTEPS);
-      // sanity check
-      if (volumesteps == 0)
-        volumesteps = 90;
 
 // Android has steps based on the max available volume level
 #if defined(TARGET_ANDROID)
       float step = (VOLUME_MAXIMUM - VOLUME_MINIMUM) / CXBMCApp::GetMaxSystemVolume();
 #else
+      int volumesteps = m_ServiceManager->GetSettings().GetInt(CSettings::SETTING_AUDIOOUTPUT_VOLUMESTEPS);
+      // sanity check
+      if (volumesteps == 0)
+        volumesteps = 90;
+
       float step   = (VOLUME_MAXIMUM - VOLUME_MINIMUM) / volumesteps;
 
       if (action.GetRepeat())

@@ -93,6 +93,7 @@ CDisplaySettings::CDisplaySettings()
   m_verticalShift = 0.0f;
   m_nonLinearStretched = false;
   m_resolutionChangeAborted = false;
+  m_currentResolution = RES_CUSTOM;
 }
 
 CDisplaySettings::~CDisplaySettings() = default;

@@ -48,6 +48,7 @@ CGUIDialogNumeric::CGUIDialogNumeric(void)
   , m_bConfirmed{false}
   , m_bCanceled{false}
   , m_mode{INPUT_PASSWORD}
+  , m_ip{}
   , m_block{0}
   , m_lastblock{0}
   , m_dirty{false}

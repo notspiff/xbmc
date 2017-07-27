@@ -166,58 +166,58 @@ field_value::~field_value() = default;
   
 //Conversations functions
 std::string field_value::get_asString() const {
-    std::string tmp;
     switch (field_type) {
     case ft_String: {
-      tmp = str_value;
-      return tmp;
+      return str_value;
     }
     case ft_Boolean:{
       if (bool_value) 
-	return tmp = "True";
+	return "True";
       else
-	return tmp = "False";
+	return "False";
     }
     case ft_Char: {
-      return tmp = char_value;
+      char t[10];
+      sprintf(t,"%c",char_value);
+      return t;
     }
     case ft_Short: {
       char t[10];
       sprintf(t,"%i",short_value);
-      return tmp = t;
+      return t;
     }
     case ft_UShort: {
       char t[10];
       sprintf(t,"%i",ushort_value);
-      return tmp = t;
+      return t;
     }
     case ft_Int: {
       char t[12];
       sprintf(t,"%d",int_value);
-      return tmp = t;
+      return t;
     }
     case ft_UInt: {
       char t[12];
       sprintf(t,"%u",uint_value);
-      return tmp = t;
+      return t;
     }
     case ft_Float: {
       char t[16];
       sprintf(t,"%f",float_value);
-      return tmp = t;
+      return t;
     }
     case ft_Double: {
       char t[32];
       sprintf(t,"%f",double_value);
-      return tmp = t;
+      return t;
     }
     case ft_Int64: {
       char t[23];
       sprintf(t,"%" PRId64,int64_value);
-      return tmp = t;
+      return t;
     }
     default:
-      return tmp = "";
+      return "";
     }
   }
 
@@ -592,52 +592,42 @@ field_value& field_value::operator= (const field_value & fv) {
     case ft_String: {
       set_asString(fv.get_asString());
       return *this;
-      break;
     }
     case ft_Boolean:{
       set_asBool(fv.get_asBool());
       return *this;
-      break;     
     }
     case ft_Char: {
       set_asChar(fv.get_asChar());
       return *this;
-      break;
     }
     case ft_Short: {
       set_asShort(fv.get_asShort());
       return *this;
-      break;
     }
     case ft_UShort: {
       set_asUShort(fv.get_asUShort());
       return *this;
-      break;
     }
     case ft_Int: {
       set_asInt(fv.get_asInt());
       return *this;
-      break;
     }
     case ft_UInt: {
       set_asUInt(fv.get_asUInt());
       return *this;
-      break;
     }
     case ft_Float: {
       set_asFloat(fv.get_asFloat());
       return *this;
-      break;
     }
     case ft_Double: {
       set_asDouble(fv.get_asDouble());
       return *this;
-      break;
     }
     case ft_Int64: {
       set_asInt64(fv.get_asInt64());
       return *this;
-      break;
     }
     default:
       return *this;

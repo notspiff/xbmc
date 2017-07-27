@@ -43,7 +43,7 @@ namespace dbiplus {
 
 int callback(void* res_ptr,int ncol, char** result,char** cols)
 {
-  result_set* r = (result_set*)res_ptr;
+  result_set* r = static_cast<result_set*>(res_ptr);
 
   if (!r->record_header.size())
   {
@@ -96,6 +96,8 @@ SqliteDatabase::SqliteDatabase() {
   db = "sqlite.db";
   login = "root";
   passwd = "";
+  conn = nullptr;
+  last_err = 0;
 }
 
 SqliteDatabase::~SqliteDatabase() {
@@ -104,7 +106,7 @@ SqliteDatabase::~SqliteDatabase() {
 
 
 Dataset* SqliteDatabase::CreateDataset() const {
-  return new SqliteDataset((SqliteDatabase*)this); 
+  return new SqliteDataset(const_cast<SqliteDatabase*>(this)); 
 }
 
 void SqliteDatabase::setHostName(const char *newHost) {
@@ -275,9 +277,7 @@ int SqliteDatabase::copy(const char *backup_name) {
   std::string backup_db = backup_name;
 
   sqlite3 *pFile;           /* Database connection opened on zFilename */
-  sqlite3_backup *pBackup;  /* Backup object used to copy data */
 
-  //
   if (backup_name[0] == '/' || backup_name[0] == '\\')
     backup_db = backup_db.substr(1);
 
@@ -292,7 +292,8 @@ int SqliteDatabase::copy(const char *backup_name) {
   rc = sqlite3_open(backup_path.c_str(), &pFile);
   if( rc==SQLITE_OK )
   {
-    pBackup = sqlite3_backup_init(pFile, "main", getHandle(), "main");
+    /* Backup object used to copy data */
+    sqlite3_backup* pBackup = sqlite3_backup_init(pFile, "main", getHandle(), "main");
 
     if( pBackup )
     {
@@ -592,13 +593,12 @@ int SqliteDataset::exec(const std::string &sql) {
       (qry.find("CREATE INDEX") != std::string::npos))
   {
     size_t pos = 0;
-    size_t pos2 = 0;
-
     if ( (pos = qry.find("(")) != std::string::npos )
     {
       pos++;
       while ( (pos = qry.find("(", pos)) != std::string::npos )
       {
+        size_t pos2;
         if ( (pos2 = qry.find(")", pos)) != std::string::npos )
         {
           qry.replace(pos, pos2-pos+1, "");

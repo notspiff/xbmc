@@ -32,6 +32,7 @@ CAudioDecoder::CAudioDecoder(const BinaryAddonBasePtr& addonInfo)
   m_CodecName = addonInfo->Type(ADDON_AUDIODECODER)->GetValue("@name").asString();
   m_strExt = m_CodecName + "stream";
   m_struct = {{ 0 }};
+  m_channel = nullptr;
 }
 
 CAudioDecoder::~CAudioDecoder()

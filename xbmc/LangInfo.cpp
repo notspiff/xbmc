@@ -210,14 +210,14 @@ CLangInfo::CRegion::CRegion(const CRegion& region):
   m_strDateFormatLong(region.m_strDateFormatLong),
   m_strDateFormatShort(region.m_strDateFormatShort),
   m_strTimeFormat(region.m_strTimeFormat),
-  m_strTimeZone(region.m_strTimeZone)
+  m_strTimeZone(region.m_strTimeZone),
+  m_strGrouping(region.m_strGrouping)
 {
   m_strMeridiemSymbols[MeridiemSymbolPM] = region.m_strMeridiemSymbols[MeridiemSymbolPM];
   m_strMeridiemSymbols[MeridiemSymbolAM] = region.m_strMeridiemSymbols[MeridiemSymbolAM];
   m_tempUnit=region.m_tempUnit;
   m_speedUnit=region.m_speedUnit;
   m_cThousandsSep = region.m_cThousandsSep;
-  m_strGrouping = region.m_strGrouping;
   m_cDecimalSep = region.m_cDecimalSep;
 }
 
@@ -240,6 +240,9 @@ void CLangInfo::CRegion::SetDefaults()
   m_tempUnit = CTemperature::UnitCelsius;
   m_speedUnit = CSpeed::UnitKilometresPerHour;
   m_strTimeZone.clear();
+
+  m_cDecimalSep = '.';
+  m_cThousandsSep = '.';
 }
 
 void CLangInfo::CRegion::SetTemperatureUnit(const std::string& strUnit)

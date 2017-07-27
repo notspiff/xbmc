@@ -85,7 +85,8 @@ std::string Database::prepare(const char *format, ...)
 //************* Dataset implementation ***************
 
 Dataset::Dataset():
-  select_sql("")
+  select_sql(""), autorefresh(false), errmsg(nullptr),
+  ds_state(dsInactive)
 {
 
   db = NULL;
@@ -313,8 +314,8 @@ void Dataset::deletion() {
 
 
 bool Dataset::set_field_value(const char *f_name, const field_value &value) {
-  bool found = false;
   if ((ds_state == dsInsert) || (ds_state == dsEdit)) {
+    bool found = false;
       for (unsigned int i=0; i < fields_object->size(); i++) 
 	if (str_compare((*edit_object)[i].props.name.c_str(), f_name)==0) {
 			     (*edit_object)[i].val = value;
@@ -448,13 +449,12 @@ void Dataset::setParamList(const ParamList &params){
 
 
 bool Dataset::locate(){
-  bool result;
   if (plist.empty()) return false;
 
   std::map<std::string, field_value>::const_iterator i;
   first();
   while (!eof()) {
-    result = true;
+    bool result = true;
     for (i=plist.begin();i!=plist.end();++i)
       if (fv(i->first.c_str()).get_asString() == i->second.get_asString()) {
 	continue;
@@ -472,12 +472,11 @@ bool Dataset::locate(const ParamList &params) {
 }
 
 bool Dataset::findNext(void) {
-  bool result;
   if (plist.empty()) return false;
 
   std::map<std::string, field_value>::const_iterator i;
   while (!eof()) {
-    result = true;
+    bool result = true;
     for (i=plist.begin();i!=plist.end();++i)
       if (fv(i->first.c_str()).get_asString() == i->second.get_asString()) {
 	continue;

@@ -28,7 +28,6 @@
 #include "addons/AudioDecoder.h"
 #include "addons/BinaryAddonCache.h"
 #include "addons/IAddon.h"
-#include "addons/ImageDecoder.h"
 #include "addons/binary-addons/BinaryAddonBase.h"
 #include "Application.h"
 #include "ServiceBroker.h"
@@ -61,6 +60,7 @@ CAdvancedSettings::CAdvancedSettings()
 {
   m_initialized = false;
   m_fullScreen = false;
+  Initialize();
 }
 
 void CAdvancedSettings::OnSettingsLoaded()

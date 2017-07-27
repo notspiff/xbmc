@@ -82,6 +82,8 @@ const char* CBinaryAddonType::GetPlatformLibraryName(const TiXmlElement* element
   if (libraryName == nullptr)
 #endif
   libraryName = element->Attribute("library_osx");
+#else
+  libraryName=nullptr;
 #endif
 
   return libraryName;

@@ -186,7 +186,6 @@ void CAddonMgr::FillCpluffMetadata(const cp_plugin_info_t* plugin, CAddonBuilder
           icon = URIUtils::AddFileToFolder(plugin->plugin_path, icon);
         builder.SetIcon(icon);
 
-        std::map<std::string, std::string> art;
         std::array<std::string, 3> artTypes{{"fanart", "banner", "clearlogo"}};
         for (auto type : artTypes)
         {
@@ -412,7 +411,7 @@ void CAddonMgr::RemoveFromUpdateableAddons(AddonPtr &pAddon)
 
 struct AddonIdFinder
 {
-    AddonIdFinder(const std::string& id)
+    explicit AddonIdFinder(const std::string& id)
       : m_id(id)
     {}
 

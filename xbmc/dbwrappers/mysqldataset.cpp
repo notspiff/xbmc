@@ -64,7 +64,7 @@ MysqlDatabase::~MysqlDatabase() {
 }
 
 Dataset* MysqlDatabase::CreateDataset() const {
-   return new MysqlDataset((MysqlDatabase*)this);
+   return new MysqlDataset(const_cast<MysqlDatabase*>(this));
 }
 
 int MysqlDatabase::status(void) {
@@ -460,7 +460,6 @@ long MysqlDatabase::nextid(const char* sname) {
   CLog::Log(LOGDEBUG,"MysqlDatabase::nextid for %s",sname);
   if (!active) return DB_UNEXPECTED_RESULT;
   const char* seq_table = "sys_seq";
-  int id;/*,nrow,ncol;*/
   MYSQL_RES* res;
   char sqlcmd[512];
   sprintf(sqlcmd,"select nextid from %s where seq_name = '%s'",seq_table, sname);
@@ -472,6 +471,7 @@ long MysqlDatabase::nextid(const char* sname) {
   res = mysql_store_result(conn);
   if (res)
   {
+    int id;
     if (mysql_num_rows(res) == 0)
     {
       id = 1;
@@ -767,38 +767,36 @@ void MysqlDatabase::mysqlVXPrintf(
   va_list ap                         /* arguments */
 ){
   int c;                     /* Next character in the format string */
-  char *bufpt;               /* Pointer to the conversion buffer */
-  int precision;             /* Precision of the current field */
-  int length;                /* Length of the field */
-  int idx;                   /* A general purpose loop counter */
-  int width;                 /* Width of the current field */
-  etByte flag_leftjustify;   /* True if "-" flag is present */
-  etByte flag_plussign;      /* True if "+" flag is present */
-  etByte flag_blanksign;     /* True if " " flag is present */
-  etByte flag_alternateform; /* True if "#" flag is present */
-  etByte flag_altform2;      /* True if "!" flag is present */
-  etByte flag_zeropad;       /* True if field width constant starts with zero */
-  etByte flag_long;          /* True if "l" flag is present */
-  etByte flag_longlong;      /* True if the "ll" flag is present */
-  etByte done;               /* Loop termination flag */
-  uint64_t longvalue;        /* Value for integer types */
-  double realvalue;          /* Value for real types */
-  const et_info *infop;      /* Pointer to the appropriate info structure */
-  char buf[etBUFSIZE];       /* Conversion buffer */
-  char prefix;               /* Prefix character.  "+" or "-" or " " or '\0'. */
-  etByte xtype = 0;          /* Conversion paradigm */
-  char *zExtra;              /* Extra memory used for etTCLESCAPE conversions */
-  int  exp, e2;              /* exponent of real numbers */
-  double rounder;            /* Used for rounding floating point values */
-  etByte flag_dp;            /* True if decimal point should be shown */
-  etByte flag_rtz;           /* True if trailing zeros should be removed */
-  etByte flag_exp;           /* True to force display of the exponent */
-  int nsd;                   /* Number of significant digits returned */
-  size_t idx2;
-
-  length = 0;
-  bufpt = 0;
+  int length = 0;
+  char* bufpt = nullptr;
   for(; (c=(*fmt))!=0; ++fmt){
+    int precision;             /* Precision of the current field */
+    int idx;                   /* A general purpose loop counter */
+    int width;                 /* Width of the current field */
+    etByte flag_leftjustify;   /* True if "-" flag is present */
+    etByte flag_plussign;      /* True if "+" flag is present */
+    etByte flag_blanksign;     /* True if " " flag is present */
+    etByte flag_alternateform; /* True if "#" flag is present */
+    etByte flag_altform2;      /* True if "!" flag is present */
+    etByte flag_zeropad;       /* True if field width constant starts with zero */
+    etByte flag_long;          /* True if "l" flag is present */
+    etByte flag_longlong;      /* True if the "ll" flag is present */
+    etByte done;               /* Loop termination flag */
+    uint64_t longvalue;        /* Value for integer types */
+    double realvalue;          /* Value for real types */
+    const et_info *infop;      /* Pointer to the appropriate info structure */
+    char buf[etBUFSIZE];       /* Conversion buffer */
+    char prefix;               /* Prefix character.  "+" or "-" or " " or '\0'. */
+    etByte xtype = 0;          /* Conversion paradigm */
+    char *zExtra;              /* Extra memory used for etTCLESCAPE conversions */
+    int  exp, e2;              /* exponent of real numbers */
+    double rounder;            /* Used for rounding floating point values */
+    etByte flag_dp;            /* True if decimal point should be shown */
+    etByte flag_rtz;           /* True if trailing zeros should be removed */
+    etByte flag_exp;           /* True to force display of the exponent */
+    int nsd;                   /* Number of significant digits returned */
+    size_t idx2;
+
     bool isLike = false;
     if( c!='%' ){
       int amt;

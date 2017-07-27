@@ -42,7 +42,6 @@ ignorere=(\\[.*/threads/Event.h.*\\]:.*CEventGroup.*not.explicit
           \\[.*/MusicDatabaseDirectory/DirectoryNodeGrouped.h.*\\]:.*Unused.private.*CDirectoryNodeGrouped::GetContentType
           \\[.*/ProfilesOperations.cpp.*\\]:.*Condition.*is.always.true
           \\[.*/GUIDialogVisualisationPresetList.h.*\\]:.*Unused.private.*CGUIDialogVisualisationPresetList::SetVisualisation
-          \\[.*/DllLoader.cpp.*\\]:.*Obsolete.function..alloca..called
           \\[.*/NetworkServices.h.*\\]:.*Unused.private.*CNetworkServices::ValidatePort
           \\[.*/TCPServer.cpp.*\\]:.*CTCPClient::m_critSection.*not.assigned.*CTCPClient::operator=
           \\[.*/WakeOnAccess.h.*\\]:.*Unused.private.*CWakeOnAccess::LoadFromXML
@@ -52,6 +51,14 @@ ignorere=(\\[.*/threads/Event.h.*\\]:.*CEventGroup.*not.explicit
           \\[.*GUIDialogLockSettings.h.*\\]:.*Unused.private.*CGUIDialogLockSettings::setLockCodeLabel
           \\[.*/PVRTimers.cpp.*\\]:.*scope.*bStateChanged.*reduced
           \\[.*/GUIFixedListContainer.h.*\\].*Unused.private.*CGUIFixedListContainer::GetCursorRange
+          \\[.*/SettingDependency.h.*\\]:.*Unused.private.*CSettingDependencyCondition::setOperator
+          \\[.*/SettingDependency.h.*\\]:.*Unused.private.*CSettingDependencyCondition::setTarget
+          \\[.*/SettingDependency.h.*\\]:.*Unused.private.*CSettingDependency::setType
+          \\[.*/AddonInstaller.h.*\\]:.*Unused.private.*CAddonUnInstallJob::ClearFavourites
+          \\[.*/FFmpegImage.h.*\\]:.*Unused.private.*CFFmpegImage::CleanupLocalOutputBuffer
+          \\[.*/FFmpegImage.h.*\\]:.*Unused.private.*CFFmpegImage::EncodeFFmpegFrame
+          \\[.*\\]:.*Obsolete.function..alloca..called
+          \\[.*\\]:.*Using.memset.*contains.a.floating.point
           \\[.*\\]:.*Skipping.configuration
           \\[.*\\]:.*error..syntax.error
           \\[\\*\\]:)

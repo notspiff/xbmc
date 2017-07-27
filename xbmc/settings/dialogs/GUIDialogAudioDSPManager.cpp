@@ -993,8 +993,6 @@ int CGUIDialogAudioDSPManager::helper_GetDialogId(CActiveAEDSPModePtr &ModePoint
 
   if (ModePointer->HasSettingsDialog())
   {
-    AE_DSP_MENUHOOKS hooks;
-    
     if (dialogId == 0)
       CLog::Log(LOGERROR, "DSP Dialog Manager - %s - Present marked settings dialog of mode %s on addon %s not found",
                             __FUNCTION__,

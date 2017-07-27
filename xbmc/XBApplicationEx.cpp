@@ -65,7 +65,6 @@ INT CXBApplicationEx::Run(const CAppParamParser &params)
 {
   CLog::Log(LOGNOTICE, "Running the application..." );
 
-  unsigned int lastFrameTime = 0;
   unsigned int frameTime = 0;
   const unsigned int noRenderFrameTime = 15;  // Simulates ~66fps
 
@@ -79,6 +78,7 @@ INT CXBApplicationEx::Run(const CAppParamParser &params)
   // Run xbmc
   while (!m_bStop)
   {
+    unsigned int lastFrameTime = XbmcThreads::SystemClockMillis();
 #ifdef HAS_PERFORMANCE_SAMPLE
     CPerformanceSample sampleLoop("XBApplicationEx-loop");
 #endif
@@ -89,7 +89,6 @@ INT CXBApplicationEx::Run(const CAppParamParser &params)
     try
     {
 #endif
-      lastFrameTime = XbmcThreads::SystemClockMillis();
       Process();
       //reset exception count
 #ifdef XBMC_TRACK_EXCEPTIONS

@@ -210,11 +210,10 @@ std::string GetHomePath(const std::string& strTarget, std::string strPath)
   if (strPath.empty())
   {
     auto strHomePath = CUtil::ResolveExecutablePath();
-    int      result = -1;
     char     given_path[2 * MAXPATHLEN];
     size_t path_size = 2 * MAXPATHLEN;
 
-    result = CDarwinUtils::GetExecutablePath(given_path, &path_size);
+    int result = CDarwinUtils::GetExecutablePath(given_path, &path_size);
     if (result == 0)
     {
       // Move backwards to last /.
@@ -318,8 +317,6 @@ std::string CUtil::GetTitleFromPath(const CURL& url, bool bIsFolder /* = false *
   std::string path(url.Get());
   URIUtils::RemoveSlashAtEnd(path);
   std::string strFilename = URIUtils::GetFileName(path);
-
-  std::string strHostname = url.GetHostName();
 
 #ifdef HAS_UPNP
   // UPNP
@@ -913,7 +910,7 @@ bool CUtil::CreateDirectoryEx(const std::string& strPath)
     return false;
   std::string dir(dirs.front());
   URIUtils::AddSlashAtEnd(dir);
-  for (std::vector<std::string>::const_iterator it = dirs.begin() + 1; it != dirs.end(); it ++)
+  for (std::vector<std::string>::const_iterator it = dirs.begin() + 1; it != dirs.end(); ++it)
   {
     dir = URIUtils::AddFileToFolder(dir, *it);
     CDirectory::Create(dir);
@@ -966,7 +963,7 @@ std::string CUtil::MakeLegalPath(const std::string &strPathAndFile, int LegalTyp
   // "protocol://domain"
   std::string dir(dirs.front());
   URIUtils::AddSlashAtEnd(dir);
-  for (std::vector<std::string>::const_iterator it = dirs.begin() + 1; it != dirs.end(); it ++)
+  for (std::vector<std::string>::const_iterator it = dirs.begin() + 1; it != dirs.end(); ++it)
     dir = URIUtils::AddFileToFolder(dir, MakeLegalFileName(*it, LegalType));
   if (trailingSlash) URIUtils::AddSlashAtEnd(dir);
   return dir;
@@ -1439,9 +1436,8 @@ bool CUtil::MakeShortenPath(std::string StrInput, std::string& StrOutput, size_t
   }
 
   char cDelim = '\0';
-  size_t nGreaterDelim, nPos;
 
-  nPos = StrInput.find_last_of( '\\' );
+  size_t nPos = StrInput.find_last_of( '\\' );
   if (nPos != std::string::npos)
     cDelim = '\\';
   else
@@ -1461,7 +1457,7 @@ bool CUtil::MakeShortenPath(std::string StrInput, std::string& StrOutput, size_t
   while( iTextMaxLength < iStrInputSize )
   {
     nPos = StrInput.find_last_of( cDelim, nPos );
-    nGreaterDelim = nPos;
+    size_t nGreaterDelim = nPos;
 
     if (nPos == std::string::npos || nPos == 0)
       break;

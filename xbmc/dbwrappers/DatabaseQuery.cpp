@@ -146,7 +146,7 @@ bool CDatabaseQueryRule::Load(const CVariant &obj)
     m_parameter.push_back(value.asString());
   else if (value.isArray())
   {
-    for (CVariant::const_iterator_array val = value.begin_array(); val != value.end_array(); val++)
+    for (CVariant::const_iterator_array val = value.begin_array(); val != value.end_array(); ++val)
     {
       if (val->isString() && !val->asString().empty())
         m_parameter.push_back(val->asString());
@@ -476,7 +476,7 @@ bool CDatabaseQueryRuleCombination::Load(const CVariant &obj, const IDatabaseQue
   else
     child = obj;
 
-  for (CVariant::const_iterator_array it = child.begin_array(); it != child.end_array(); it++)
+  for (CVariant::const_iterator_array it = child.begin_array(); it != child.end_array(); ++it)
   {
     if (!it->isObject())
       continue;

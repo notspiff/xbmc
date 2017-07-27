@@ -24,8 +24,8 @@ namespace ADDON
 
 CAudioEncoder::CAudioEncoder(BinaryAddonBasePtr addonInfo)
   : IAddonInstanceHandler(ADDON_INSTANCE_AUDIOENCODER, addonInfo)
+  , m_struct {{0}}
 {
-  m_struct = {{ 0 }};
 }
 
 bool CAudioEncoder::Init(AddonToKodiFuncTable_AudioEncoder& callbacks)

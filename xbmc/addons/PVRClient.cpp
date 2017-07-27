@@ -801,7 +801,7 @@ PVR_ERROR CPVRClient::GetRecordings(CPVRRecordings *results, bool deleted)
 
   ADDON_HANDLE_STRUCT handle;
   handle.callerAddress = this;
-  handle.dataAddress = (CPVRRecordings*) results;
+  handle.dataAddress = results;
   PVR_ERROR retVal = m_struct.toAddon.GetRecordings(&handle, deleted);
 
   LogError(retVal, __FUNCTION__);
@@ -1926,9 +1926,9 @@ xbmc_codec_t CPVRClient::cb_get_codec_by_name(const void* kodiInstance, const ch
   return CCodecIds::GetInstance().GetCodecByName(strCodecName);
 }
 
-CPVRClientCapabilities::CPVRClientCapabilities()
+CPVRClientCapabilities::CPVRClientCapabilities() :
+  m_addonCapabilities{0}
 {
-  m_addonCapabilities = {0};
 }
 
 const CPVRClientCapabilities& CPVRClientCapabilities::operator =(const PVR_ADDON_CAPABILITIES& addonCapabilities)

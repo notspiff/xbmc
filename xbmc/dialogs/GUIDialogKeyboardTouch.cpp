@@ -28,6 +28,8 @@ CGUIDialogKeyboardTouch::CGUIDialogKeyboardTouch()
 , CGUIKeyboard()
 , CThread("keyboard")
 , m_pCharCallback(NULL)
+, m_bHiddenInput(false)
+, m_confirmed(false)
 {
 }
 

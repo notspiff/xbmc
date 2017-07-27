@@ -46,6 +46,7 @@ CGUIEPGGridContainer::CGUIEPGGridContainer(int parentID, int controlID, float po
                                            ORIENTATION orientation, int scrollTime, int preloadItems, int timeBlocks, int rulerUnit,
                                            const CTextureInfo& progressIndicatorTexture)
 : IGUIContainer(parentID, controlID, posX, posY, width, height),
+  m_renderOffset{},
   m_orientation(orientation),
   m_channelLayout(nullptr),
   m_focusedChannelLayout(nullptr),
@@ -90,6 +91,7 @@ CGUIEPGGridContainer::CGUIEPGGridContainer(int parentID, int controlID, float po
   m_channelScrollLastTime(0),
   m_channelScrollSpeed(0),
   m_channelScrollOffset(0),
+  m_critSection{},
   m_gridModel(new CGUIEPGGridContainerModel),
   m_item(nullptr)
 {
@@ -151,6 +153,7 @@ CGUIEPGGridContainer::CGUIEPGGridContainer(const CGUIEPGGridContainer &other)
   m_channelScrollLastTime(other.m_channelScrollLastTime),
   m_channelScrollSpeed(other.m_channelScrollSpeed),
   m_channelScrollOffset(other.m_channelScrollOffset),
+  m_critSection{},
   m_gridModel(new CGUIEPGGridContainerModel(*other.m_gridModel)),
   m_updatedGridModel(other.m_updatedGridModel ? new CGUIEPGGridContainerModel(*other.m_updatedGridModel) : nullptr),
   m_outdatedGridModel(other.m_outdatedGridModel ? new CGUIEPGGridContainerModel(*other.m_outdatedGridModel) : nullptr),

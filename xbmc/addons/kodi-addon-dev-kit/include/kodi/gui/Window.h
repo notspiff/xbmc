@@ -426,7 +426,7 @@ namespace gui
     /// @param[in] itemPosition         [opt] The position for item, default is on end
     ///
     ///
-    void AddListItem(const std::string item, int itemPosition = -1)
+    void AddListItem(const std::string& item, int itemPosition = -1)
     {
       m_interface->kodi_gui->window->add_list_item(m_interface->kodiBase, m_controlHandle, std::make_shared<kodi::gui::CListItem>(item)->m_controlHandle, itemPosition);
     }

@@ -262,7 +262,7 @@ void CURL::Parse(const std::string& strURL1)
   // if [] found, let's store string inside as hostname
   // and remove that parsed part from strHostNameAndPort
   size_t iBrk = strHostNameAndPort.rfind("]");
-  if (iBrk != std::string::npos && strHostNameAndPort.find("[") == 0)
+  if (iBrk != std::string::npos && strHostNameAndPort[0] == '[')
   {
     m_strHostName = strHostNameAndPort.substr(1, iBrk-1);
     strHostNameAndPort.erase(0, iBrk+1);
@@ -726,9 +726,8 @@ bool CURL::IsProtocolEqual(const std::string &protocol, const char *type)
 
 void CURL::GetOptions(std::map<std::string, std::string> &options) const
 {
-  CUrlOptions::UrlOptions optionsMap = m_options.GetOptions();
-  for (CUrlOptions::UrlOptions::const_iterator option = optionsMap.begin(); option != optionsMap.end(); option++)
-    options[option->first] = option->second.asString();
+  for (const auto& option : m_options.GetOptions())
+    options[option.first] = option.second.asString();
 }
 
 bool CURL::HasOption(const std::string &key) const
@@ -769,9 +768,8 @@ void CURL::RemoveOption(const std::string &key)
 
 void CURL::GetProtocolOptions(std::map<std::string, std::string> &options) const
 {
-  CUrlOptions::UrlOptions optionsMap = m_protocolOptions.GetOptions();
-  for (CUrlOptions::UrlOptions::const_iterator option = optionsMap.begin(); option != optionsMap.end(); option++)
-    options[option->first] = option->second.asString();
+  for (const auto& option : m_protocolOptions.GetOptions())
+    options[option.first] = option.second.asString();
 }
 
 bool CURL::HasProtocolOption(const std::string &key) const
