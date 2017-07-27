@@ -35,7 +35,7 @@
 
 static bool ReadString(FILE* file, char* str, size_t max_length)
 {
-  if (file == nullptr || str == nullptr || max_length <= 0)
+  if (file == nullptr || str == nullptr || max_length == 0)
     return false;
 
   return (fread(str, max_length, 1, file) == 1);

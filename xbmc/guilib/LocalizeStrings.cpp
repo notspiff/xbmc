@@ -96,9 +96,9 @@ static bool LoadPO(const std::string &filename, std::map<uint32_t, LocStr>& stri
 
   while ((PODoc.GetNextEntry()))
   {
-    uint32_t id;
     if (PODoc.GetEntryType() == ID_FOUND)
     {
+      uint32_t id;
       bool bStrInMem = strings.find((id = PODoc.GetEntryID()) + offset) != strings.end();
       PODoc.ParseEntry(bSourceLanguage);
 

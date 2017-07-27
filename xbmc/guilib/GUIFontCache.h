@@ -140,10 +140,13 @@ class CGUIFontCache
 {
   CGUIFontCacheImpl<Position, Value>* m_impl;
 
+  CGUIFontCache(const CGUIFontCache<Position,Value>&) = delete;
+  const CGUIFontCache<Position,Value>& operator=(const CGUIFontCache<Position,Value>&) = delete;
+
 public:
   const CGUIFontTTFBase &m_font;
 
-  CGUIFontCache(CGUIFontTTFBase &font);
+  explicit CGUIFontCache(CGUIFontTTFBase &font);
 
   ~CGUIFontCache();
  

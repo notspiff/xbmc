@@ -46,13 +46,12 @@ int SysfsUtils::SetString(const std::string& path, const std::string& valstr)
 
 int SysfsUtils::GetString(const std::string& path, std::string& valstr)
 {
-  int len;
-  char buf[256] = {0};
-
   int fd = open(path.c_str(), O_RDONLY);
   if (fd >= 0)
   {
     valstr.clear();
+    int len;
+    char buf[256] = {0};
     while ((len = read(fd, buf, 256)) > 0)
       valstr.append(buf, len);
     close(fd);

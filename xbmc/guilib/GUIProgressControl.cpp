@@ -37,6 +37,7 @@ CGUIProgressControl::CGUIProgressControl(int parentID, int controlID,
     , m_guiMid(posX, posY, width, height, midTexture)
     , m_guiRight(posX, posY, width, height, rightTexture)
     , m_guiOverlay(posX, posY, width, height, overlayTexture)
+    , m_guiMidClipRect{}
 {
   m_fPercent = 0;
   m_iInfoCode = 0;

@@ -169,7 +169,7 @@ CVariant::CVariant(VariantType type)
       m_data.map = new VariantMap();
       break;
     default:
-      memset(&m_data, 0, sizeof(m_data));
+      m_data = {};
       break;
   }
 }

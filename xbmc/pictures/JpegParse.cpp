@@ -72,10 +72,8 @@ enum {
 // Constructor
 //--------------------------------------------------------------------------
 CJpegParse::CJpegParse():
-  m_SectionBuffer(NULL)
+  m_SectionBuffer(NULL), m_ExifInfo{}, m_IPTCInfo{}
 {
-  memset(&m_ExifInfo, 0, sizeof(m_ExifInfo));
-  memset(&m_IPTCInfo, 0, sizeof(m_IPTCInfo));
 }
 
 //--------------------------------------------------------------------------

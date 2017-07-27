@@ -36,6 +36,7 @@ CGUIRenderingControl::CGUIRenderingControl(int parentID, int controlID, float po
 
 CGUIRenderingControl::CGUIRenderingControl(const CGUIRenderingControl &from)
 : CGUIControl(from)
+, m_rendering{}
 {
   ControlType = GUICONTROL_RENDERADDON;
   m_callback = NULL;

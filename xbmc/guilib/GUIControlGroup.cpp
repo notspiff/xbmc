@@ -215,7 +215,6 @@ bool CGUIControlGroup::OnMessage(CGUIMessage& message)
       }
       // unsuccessful
       return false;
-      break;
     }
   case GUI_MSG_LOSTFOCUS:
     {
@@ -249,10 +248,10 @@ bool CGUIControlGroup::OnMessage(CGUIMessage& message)
       return true;
     break;
   }
-  bool handled(false);
   //not intented for any specific control, send to all childs and our base handler.
   if (message.GetControlId() == 0)
   {
+    bool handled(false);
     for (auto *control : m_children)
     {
       handled |= control->OnMessage(message);
@@ -441,7 +440,7 @@ CGUIControl *CGUIControlGroup::GetFocusedControl() const
         return focusedControl;
     }
     else if (control->HasFocus())
-      return (CGUIControl *)control;
+      return control;
   }
   return NULL;
 }

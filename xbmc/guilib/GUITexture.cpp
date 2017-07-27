@@ -25,13 +25,14 @@
 #include "utils/MathUtils.h"
 #include "utils/StringUtils.h"
 
-CTextureInfo::CTextureInfo()
+CTextureInfo::CTextureInfo() : border{}
 {
   orientation = 0;
   useLarge = false;
 }
 
-CTextureInfo::CTextureInfo(const std::string &file):
+CTextureInfo::CTextureInfo(const std::string &file) :
+  border{},
   filename(file)
 {
   orientation = 0;
@@ -50,7 +51,7 @@ CTextureInfo& CTextureInfo::operator=(const CTextureInfo &right)
 }
 
 CGUITextureBase::CGUITextureBase(float posX, float posY, float width, float height, const CTextureInfo& texture) :
-  m_height(height), m_info(texture)
+  m_height(height), m_info(texture), m_diffuseOffset{}
 {
   m_posX = posX;
   m_posY = posY;

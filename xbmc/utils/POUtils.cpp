@@ -24,7 +24,7 @@
 #include "utils/log.h"
 #include <stdlib.h>
 
-CPODocument::CPODocument()
+CPODocument::CPODocument() : m_Entry{}
 {
   m_CursorPos = 0;
   m_nextEntryPos = 0;
@@ -190,12 +190,11 @@ std::string CPODocument::UnescapeString(const std::string &strInput)
   if (strInput.empty())
     return strOutput;
 
-  char oescchar;
   strOutput.reserve(strInput.size());
   std::string::const_iterator it = strInput.begin();
   while (it < strInput.end())
   {
-    oescchar = *it++;
+    char oescchar = *it++;
     if (oescchar == '\\')
     {
       if (it == strInput.end())
@@ -265,13 +264,12 @@ bool CPODocument::ParseNumID()
 
 void CPODocument::GetString(CStrEntry &strEntry)
 {
-  size_t nextLFPos;
   size_t startPos = strEntry.Pos;
   strEntry.Str.clear();
 
   while (startPos < m_Entry.Content.size())
   {
-    nextLFPos = m_Entry.Content.find("\n", startPos);
+    size_t nextLFPos = m_Entry.Content.find("\n", startPos);
     if (nextLFPos == std::string::npos)
       nextLFPos = m_Entry.Content.size();
 

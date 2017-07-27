@@ -140,7 +140,6 @@ void CRssReader::Process()
     std::string strUrl = m_vecUrls[iFeed];
     lock.Leave();
 
-    int nRetries = 3;
     CURL url(strUrl);
     std::string fileCharset;
 
@@ -154,6 +153,7 @@ void CRssReader::Process()
     else
     {
       XbmcThreads::EndTime timeout(15000);
+      int nRetries = 3;
       while (!m_bStop && nRetries > 0)
       {
         if (timeout.IsTimePast())
@@ -193,11 +193,10 @@ void CRssReader::Process()
     {
       // erase any <content:encoded> tags (also unsupported by tinyxml)
       size_t iStart = strXML.find("<content:encoded>");
-      size_t iEnd = 0;
       while (iStart != std::string::npos)
       {
         // get <content:encoded> end position
-        iEnd = strXML.find("</content:encoded>", iStart) + 18;
+        size_t iEnd = strXML.find("</content:encoded>", iStart) + 18;
 
         // erase the section
         strXML = strXML.erase(iStart, iEnd - iStart);

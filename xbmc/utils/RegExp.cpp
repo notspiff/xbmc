@@ -244,10 +244,15 @@ CRegExp::CRegExp(const CRegExp& re)
 
 CRegExp& CRegExp::operator=(const CRegExp& re)
 {
+  if (this == &re)
+    return *this;
+
   size_t size;
   Cleanup();
   m_jitCompiled = false;
   m_pattern = re.m_pattern;
+  m_utf8Mode = re.m_utf8Mode;
+  m_jitStack = nullptr;
   if (re.m_re)
   {
     if (pcre_fullinfo(re.m_re, NULL, PCRE_INFO_SIZE, &size) >= 0)

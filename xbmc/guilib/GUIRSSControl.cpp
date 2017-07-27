@@ -44,6 +44,7 @@ CGUIRSSControl::CGUIRSSControl(int parentID, int controlID, float posX, float po
 
 CGUIRSSControl::CGUIRSSControl(const CGUIRSSControl &from)
   : CGUIControl(from),
+  m_criticalSection{},
   m_feed(),
   m_strRSSTags(from.m_strRSSTags),
   m_label(from.m_label),

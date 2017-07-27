@@ -43,7 +43,9 @@ CSeekHandler::CSeekHandler()
   m_requireSeek(false),
   m_analogSeek(false),
   m_seekSize(0),
-  m_seekStep(0)
+  m_seekStep(0),
+  m_timeCodeStamp{},
+  m_timeCodePosition(0)
 {
 }
 

@@ -45,7 +45,7 @@ CGraphicContext::CGraphicContext(void) :
   m_iScreenHeight(576),
   m_iScreenWidth(720),
   m_iScreenId(0),
-  /*m_videoRect,*/
+  m_videoRect{},
   m_bFullScreenRoot(false),
   m_bFullScreenVideo(false),
   m_bCalibrating(false),
@@ -61,6 +61,7 @@ CGraphicContext::CGraphicContext(void) :
   m_stereoView(RENDER_STEREO_VIEW_OFF)
   , m_stereoMode(RENDER_STEREO_MODE_OFF)
   , m_nextStereoMode(RENDER_STEREO_MODE_OFF)
+  , m_scissors{}
 {
 }
 

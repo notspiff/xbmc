@@ -30,8 +30,8 @@
 
 void CPictureInfoTag::Reset()
 {
-  memset(&m_exifInfo, 0, sizeof(m_exifInfo));
-  memset(&m_iptcInfo, 0, sizeof(m_iptcInfo));
+  m_exifInfo = {};
+  m_iptcInfo = {};
   m_isLoaded = false;
   m_isInfoSetExternally = false;
   m_dateTimeTaken.Reset();

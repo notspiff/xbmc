@@ -104,6 +104,7 @@ CGUIWindowFileManager::CGUIWindowFileManager(void)
   m_Directory[1]->m_bIsFolder = true;
   bCheckShareConnectivity = true;
   m_loadType = KEEP_IN_MEMORY;
+  m_errorHeading = m_errorLine = 0;
 }
 
 CGUIWindowFileManager::~CGUIWindowFileManager(void)
@@ -843,7 +844,7 @@ void CGUIWindowFileManager::GoParentFolder(int iList)
         g_ZipManager.release(m_Directory[iList]->GetPath()); // release resources
   }
 
-  std::string strPath(m_strParentPath[iList]), strOldPath(m_Directory[iList]->GetPath());
+  std::string strPath(m_strParentPath[iList]);
   Update(iList, strPath);
 }
 
@@ -1000,7 +1001,7 @@ void CGUIWindowFileManager::OnPopupMenu(int list, int item, bool bContextDriven 
   bool showEntry = false;
   if (item >= m_vecItems[list]->Size()) item = -1;
   if (item >= 0)
-    showEntry=(!pItem->IsParentFolder() || (pItem->IsParentFolder() && m_vecItems[list]->GetSelectedCount()>0));
+    showEntry=(!pItem->IsParentFolder() || m_vecItems[list]->GetSelectedCount() > 0);
 
   // determine available players
   std::vector<std::string>players;
@@ -1161,7 +1162,7 @@ void CGUIWindowFileManager::OnJobComplete(unsigned int jobID, bool success, CJob
 {
   if(!success)
   {
-    CFileOperationJob* fileJob = (CFileOperationJob*)job;
+    CFileOperationJob* fileJob = static_cast<CFileOperationJob*>(job);
     CGUIDialogOK::ShowAndGetInput(CVariant{fileJob->GetHeading()},
                                   CVariant{fileJob->GetLine()}, CVariant{16200}, CVariant{0});
   }

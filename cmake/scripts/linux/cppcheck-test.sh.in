@@ -51,6 +51,7 @@ ignorere=(\\[.*/threads/Event.h.*\\]:.*CEventGroup.*not.explicit
           \\[.*/GUIDialogLockSettings.h.*\\]:.*Unused.private.*CGUIDialogLockSettings::setDetailSettingsEnabled
           \\[.*GUIDialogLockSettings.h.*\\]:.*Unused.private.*CGUIDialogLockSettings::setLockCodeLabel
           \\[.*/PVRTimers.cpp.*\\]:.*scope.*bStateChanged.*reduced
+          \\[.*/GUIFixedListContainer.h.*\\].*Unused.private.*CGUIFixedListContainer::GetCursorRange
           \\[.*\\]:.*Skipping.configuration
           \\[.*\\]:.*error..syntax.error
           \\[\\*\\]:)

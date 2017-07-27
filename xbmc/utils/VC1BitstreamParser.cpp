@@ -60,6 +60,9 @@ CVC1BitstreamParser::CVC1BitstreamParser()
 void CVC1BitstreamParser::Reset()
 {
   m_Profile = VC1_PROFILE_NOPROFILE;
+  m_MaxBFrames = 0;
+  m_SimpleSkipBits = 0;
+  m_AdvInterlace = 0;
 }
 
 bool CVC1BitstreamParser::IsRecoveryPoint(const uint8_t *buf, int buf_size)
