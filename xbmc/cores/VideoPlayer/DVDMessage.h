@@ -25,6 +25,7 @@
 #include "FileItem.h"
 #include "cores/IPlayer.h"
 #include <atomic>
+#include <memory>
 #include <string>
 #include <string.h>
 
@@ -131,7 +132,7 @@ public:
   void Wait(std::atomic<bool>& abort, unsigned int source);
 
 private:
-  class CDVDMsgGeneralSynchronizePriv* m_p;
+  std::unique_ptr<CDVDMsgGeneralSynchronizePriv> m_p;
 };
 
 template <typename T>

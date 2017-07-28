@@ -67,7 +67,7 @@
 
 CGUIDialogVideoSettings::CGUIDialogVideoSettings()
     : CGUIDialogSettingsManualBase(WINDOW_DIALOG_VIDEO_OSD_SETTINGS, "DialogSettings.xml"),
-      m_viewModeChanged(false)
+      m_videoStream(-1), m_viewModeChanged(false)
 { }
 
 CGUIDialogVideoSettings::~CGUIDialogVideoSettings() = default;

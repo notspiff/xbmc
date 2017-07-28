@@ -137,14 +137,13 @@ void CVAAPIContext::SetValidDRMVaDisplayFromRenderNode()
 {
   int const buf_size{128};
   char name[buf_size];
-  int fd{-1};
 
   // 128 is the start of the NUM in renderD<NUM>
   for (int i = 128; i < (128 + 16); i++)
   {
-    snprintf(name, buf_size, "/dev/dri/renderD%u", i);
+    snprintf(name, buf_size, "/dev/dri/renderD%i", i);
 
-    fd = open(name, O_RDWR);
+    int fd = open(name, O_RDWR);
 
     if (fd < 0)
     {
@@ -316,7 +315,7 @@ bool CVAAPIContext::IsValidDecoder(CDecoder *decoder)
 
 void CVAAPIContext::FFReleaseBuffer(void *opaque, uint8_t *data)
 {
-  CDecoder *va = (CDecoder*)opaque;
+  CDecoder *va = static_cast<CDecoder*>(opaque);
   if (m_context && m_context->IsValidDecoder(va))
   {
     va->FFReleaseBuffer(data);
@@ -496,13 +495,17 @@ bool CDecoder::m_capGeneral = false;
 bool CDecoder::m_capHevc = false;
 
 CDecoder::CDecoder(CProcessInfo& processInfo) :
+  m_DisplayState(VAAPI_OPEN),
+  m_ErrorCount(0),
+  m_vaapiConfigured(false),
+  m_vaapiConfig{},
   m_vaapiOutput(*this, &m_inMsgEvent),
+  m_bufferStats{},
+  m_codecControl(0),
   m_processInfo(processInfo)
 {
   m_vaapiConfig.videoSurfaces = &m_videoSurfaces;
 
-  m_vaapiConfigured = false;
-  m_DisplayState = VAAPI_OPEN;
   m_vaapiConfig.context = 0;
   m_vaapiConfig.configId = VA_INVALID_ID;
   m_vaapiConfig.processInfo = &m_processInfo;
@@ -850,7 +853,7 @@ CDVDVideoCodec::VCReturn CDecoder::Decode(AVCodecContext* avctx, AVFrame* pFrame
     // send frame to output for processing
     CVaapiDecodedPicture pic;
     memset(&pic.DVDPic, 0, sizeof(pic.DVDPic));
-    ((ICallbackHWAccel*)avctx->opaque)->GetPictureCommon(&pic.DVDPic);
+    static_cast<ICallbackHWAccel*>(avctx->opaque)->GetPictureCommon(&pic.DVDPic);
     pic.videoSurface = surf;
     pic.DVDPic.color_matrix = avctx->colorspace;
     m_bufferStats.IncDecoded();
@@ -1212,7 +1215,7 @@ void CDecoder::Register(bool hevc)
 class VAAPI::CVaapiBufferPool : public IVideoBufferPool
 {
 public:
-  CVaapiBufferPool(CDecoder &decoder);
+  explicit CVaapiBufferPool(CDecoder &decoder);
   ~CVaapiBufferPool() override;
   CVideoBuffer* Get() override;
   void Return(int id) override;
@@ -1226,7 +1229,7 @@ public:
   std::deque<CVaapiProcessedPicture> processedPics;
   std::deque<CVaapiProcessedPicture> processedPicsAway;
   std::deque<CVaapiDecodedPicture> decodedPics;
-  int procPicId;
+  int procPicId = 0;
 
 protected:
   std::vector<CVaapiRenderPicture*> allRenderPics;
@@ -1240,10 +1243,9 @@ protected:
 CVaapiBufferPool::CVaapiBufferPool(CDecoder &decoder)
   : m_vaapi(decoder)
 {
-  CVaapiRenderPicture *pic;
   for (unsigned int i = 0; i < NUM_RENDER_PICS; i++)
   {
-    pic = new CVaapiRenderPicture(i);
+    CVaapiRenderPicture* pic = new CVaapiRenderPicture(i);
     allRenderPics.push_back(pic);
     freeRenderPics.push_back(i);
   }
@@ -1251,10 +1253,9 @@ CVaapiBufferPool::CVaapiBufferPool(CDecoder &decoder)
 
 CVaapiBufferPool::~CVaapiBufferPool()
 {
-  CVaapiRenderPicture *pic;
   for (unsigned int i = 0; i < NUM_RENDER_PICS; i++)
   {
-    pic = allRenderPics[i];
+    CVaapiRenderPicture* pic = allRenderPics[i];
     delete pic;
   }
   allRenderPics.clear();
@@ -1381,10 +1382,18 @@ COutput::COutput(CDecoder &decoder, CEvent *inMsgEvent) :
   CThread("Vaapi-Output"),
   m_controlPort("OutputControlPort", inMsgEvent, &m_outMsgEvent),
   m_dataPort("OutputDataPort", inMsgEvent, &m_outMsgEvent),
-  m_vaapi(decoder)
+  m_inMsgEvent(inMsgEvent),
+  m_state(0),
+  m_bStateMachineSelfTrigger(false),
+  m_vaapi(decoder),
+  m_extTimeout(0),
+  m_vaError(false),
+  m_config{},
+  m_bufferPool(std::make_shared<CVaapiBufferPool>(decoder)),
+  m_pp(nullptr),
+  m_diMethods{},
+  m_currentDiMethod(VS_INTERLACEMETHOD_NONE)
 {
-  m_inMsgEvent = inMsgEvent;
-  m_bufferPool = std::make_shared<CVaapiBufferPool>(decoder);
 }
 
 void COutput::Start()
@@ -1497,7 +1506,7 @@ void COutput::StateMachine(int signal, Protocol *port, Message *msg)
         {
         case COutputControlProtocol::INIT:
           CVaapiConfig *data;
-          data = (CVaapiConfig*)msg->data;
+          data = reinterpret_cast<CVaapiConfig*>(msg->data);
           if (data)
           {
             m_config = *data;
@@ -1549,7 +1558,7 @@ void COutput::StateMachine(int signal, Protocol *port, Message *msg)
         {
         case COutputDataProtocol::NEWFRAME:
           CVaapiDecodedPicture *frame;
-          frame = (CVaapiDecodedPicture*)msg->data;
+          frame = reinterpret_cast<CVaapiDecodedPicture*>(msg->data);
           if (frame)
           {
             m_bufferPool->decodedPics.push_back(*frame);
@@ -1731,7 +1740,6 @@ void COutput::Process()
 {
   Message *msg = NULL;
   Protocol *port = NULL;
-  bool gotMsg;
 
   m_state = O_TOP_UNCONFIGURED;
   m_extTimeout = 1000;
@@ -1739,7 +1747,7 @@ void COutput::Process()
 
   while (!m_bStop)
   {
-    gotMsg = false;
+    bool gotMsg = false;
 
     if (m_bStateMachineSelfTrigger)
     {
@@ -1840,7 +1848,7 @@ void COutput::Flush()
   {
     if (msg->signal == COutputDataProtocol::NEWFRAME)
     {
-      CVaapiDecodedPicture pic = *(CVaapiDecodedPicture*)msg->data;
+      CVaapiDecodedPicture pic = *reinterpret_cast<CVaapiDecodedPicture*>(msg->data);
       m_config.videoSurfaces->ClearRender(pic.videoSurface);
     }
     else if (msg->signal == COutputDataProtocol::RETURNPIC)
@@ -2244,6 +2252,10 @@ CVppPostproc::CVppPostproc()
   m_contextId = VA_INVALID_ID;
   m_configId = VA_INVALID_ID;
   m_filter = VA_INVALID_ID;
+  m_forwardRefs = m_backwardRefs = 0;
+  m_currentIdx = 0;
+  m_frameCount = 0;
+  m_vppMethod = VS_INTERLACEMETHOD_NONE;
 }
 
 CVppPostproc::~CVppPostproc()
@@ -2738,7 +2750,10 @@ bool CVppPostproc::CheckSuccess(VAStatus status)
 
 #define CACHED_BUFFER_SIZE 4096
 
-CFFmpegPostproc::CFFmpegPostproc()
+CFFmpegPostproc::CFFmpegPostproc() :
+  m_pFilterIn(nullptr),
+  m_pFilterOut(nullptr),
+  m_diMethod(VS_INTERLACEMETHOD_NONE)
 {
   m_cache = NULL;
   m_pFilterFrameIn = NULL;

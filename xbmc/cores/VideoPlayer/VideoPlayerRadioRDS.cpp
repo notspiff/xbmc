@@ -517,6 +517,50 @@ CDVDRadioRDSData::CDVDRadioRDSData(CProcessInfo &processInfo)
   , IDVDStreamPlayer(processInfo)
   , m_speed(DVD_PLAYSPEED_NORMAL)
   , m_messageQueue("rds")
+  , m_currentFileUpdate(false)
+  , m_UECPData{}
+  , m_UECPDataIndex(0)
+  , m_UECPDataStart(false)
+  , m_UECPDatabStuff(false)
+  , m_UECPDataDeadBreak(false)
+  , m_RDS_IsRBDS(false)
+  , m_RDS_SlowLabelingCodesPresent(false)
+  , m_PI_Current(0)
+  , m_PI_CountryCode(0)
+  , m_PI_ProgramType(0)
+  , m_PI_ProgramReferenceNumber(0)
+  , m_EPP_TM_INFO_ExtendedCountryCode(0) 
+  , m_PS_Present(false)
+  , m_PS_Index(0)
+  , m_PS_Text{}
+  , m_DI_IsStereo(false)
+  , m_DI_ArtificialHead(false)
+  , m_DI_Compressed(false)
+  , m_DI_DynamicPTY(false)
+  , m_TA_TP_TrafficAdvisory(false)
+  , m_TA_TP_TrafficVolume(0.f)
+  , m_MS_SpeechActive(false)
+  , m_PTY(0)
+  , m_PTYN{}
+  , m_PTYN_Present(false)
+  , m_RT_Present(false)
+  , m_RT_Index(0)
+  , m_RT_MaxSize(0)
+  , m_RT_NewItem(false)
+  , m_RT_Text{}
+  , m_RTPlus_Present(false)
+  , m_RTPlus_WorkText{}
+  , m_RTPlus_TToggle(false)
+  , m_RTPlus_iDiffs(0)
+  , m_RTPlus_GenrePresent(false)
+  , m_RTPlus_Temptext{}
+  , m_RTPlus_Show(false)
+  , m_RTPlus_Title{}
+  , m_RTPlus_Artist{}
+  , m_RTPlus_iToggle(0)
+  , m_RTPlus_ItemToggle(0)
+  , m_RTPlus_Starttime(0)
+  , m_TMC_LastData{}
 {
   CLog::Log(LOGDEBUG, "Radio UECP (RDS) Processor - new %s", __FUNCTION__);
 
@@ -663,7 +707,7 @@ void CDVDRadioRDSData::Process()
     {
       CSingleLock lock(m_critSection);
 
-      DemuxPacket* pPacket = ((CDVDMsgDemuxerPacket*)pMsg)->GetPacket();
+      DemuxPacket* pPacket = static_cast<CDVDMsgDemuxerPacket*>(pMsg)->GetPacket();
 
       ProcessUECP(pPacket->pData, pPacket->iSize);
     }
@@ -1268,7 +1312,7 @@ unsigned int CDVDRadioRDSData::DecodeRTPlus(uint8_t *msgElement, unsigned int le
     else
     {
       // +Memory
-      memset(m_RTPlus_Temptext, 0x20, RT_MEL);
+      memset(m_RTPlus_Temptext+rtp_start[i], 0x20, RT_MEL-(rtp_len[i]+1));
       memcpy(m_RTPlus_Temptext, m_RTPlus_WorkText+rtp_start[i], rtp_len[i]+1);
       m_RTPlus_Temptext[rtp_len[i]+1] = 0;
       rds_entitychar(m_RTPlus_Temptext);
@@ -1441,7 +1485,7 @@ unsigned int CDVDRadioRDSData::DecodeRTPlus(uint8_t *msgElement, unsigned int le
         case RTPLUS_PURCHASE:
         case RTPLUS_GET_DATA:
 #ifdef RDS_IMPROVE_CHECK
-          printf("  RTp-Unkn. : %02i - %s\n", rtp_typ[i], m_RTPlus_Temptext);
+          printf("  RTp-Unkn. : %02u - %s\n", rtp_typ[i], m_RTPlus_Temptext);
           break;
 #endif // RDS_IMPROVE_CHECK
         /// Unused and not needed data informations

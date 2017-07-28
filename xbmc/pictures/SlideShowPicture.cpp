@@ -43,7 +43,15 @@
 
 static float zoomamount[10] = { 1.0f, 1.2f, 1.5f, 2.0f, 2.8f, 4.0f, 6.0f, 9.0f, 13.5f, 20.0f };
 
-CSlideShowPic::CSlideShowPic() : m_alpha(0)
+CSlideShowPic::CSlideShowPic()
+: m_alpha(0)
+, m_ax{}, m_ay{}
+, m_sx{}, m_sy{}
+, m_bx{}, m_by{}
+, m_ox{}, m_oy{}
+, m_transitionStart{TRANSITION_NONE, 0, 0}
+, m_transitionEnd{TRANSITION_NONE, 0, 0}
+, m_transitionTemp{TRANSITION_NONE, 0, 0}
 {
   m_pImage = NULL;
   m_bIsLoaded = false;
@@ -53,6 +61,25 @@ CSlideShowPic::CSlideShowPic() : m_alpha(0)
 
   m_bCanMoveHorizontally = false;
   m_bCanMoveVertically = false;
+  m_bIsComic = false;
+
+  m_iOriginalWidth = 0;
+  m_iOriginalHeight = 0;
+  m_iSlideNumber = 0;
+  m_bIsDirty = false;
+  m_fWidth = m_fHeight = 0.f;
+  m_fPosX = m_fPosY = m_fPosZ = 0.f;
+  m_fVelocityX = m_fVelocityY = m_fVelocityZ = 0.f;
+  m_fZoomAmount = 0.f;
+  m_fZoomLeft = m_fZoomTop = 0.f;
+  m_fAngle = m_fTransitionAngle = m_fTransitionZoom = 0.f;
+  m_iCounter = m_iTotalFrames = 0;
+  m_bPause = false;
+  m_bNoEffect = false;
+  m_bFullSize = false;
+
+  m_displayEffect = EFFECT_NONE;
+  
 #ifdef HAS_DX
   m_vb = NULL;
 #endif
@@ -785,8 +812,6 @@ bool CSlideShowPic::UpdateVertexBuffer(Vertex* vertices)
 void CSlideShowPic::Render(float *x, float *y, CBaseTexture* pTexture, color_t color)
 {
 #ifdef HAS_DX
-  static const DWORD FVF_VERTEX = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
-
   Vertex vertex[5];
   for (int i = 0; i < 4; i++)
   {

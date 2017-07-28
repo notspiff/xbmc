@@ -37,6 +37,7 @@ CDVDAudioCodecPassthrough::CDVDAudioCodecPassthrough(CProcessInfo &processInfo, 
   CDVDAudioCodec(processInfo),
   m_buffer(NULL),
   m_bufferSize(0),
+  m_backlogBuffer{},
   m_currentPts(DVD_NOPTS_VALUE),
   m_nextPts(DVD_NOPTS_VALUE),
   m_trueHDoffset(0)
@@ -101,7 +102,6 @@ void CDVDAudioCodecPassthrough::Dispose()
 
 bool CDVDAudioCodecPassthrough::AddData(const DemuxPacket &packet)
 {
-  int used = 0;
   if (m_backlogSize)
   {
     m_dataSize = m_bufferSize;
@@ -157,21 +157,19 @@ bool CDVDAudioCodecPassthrough::AddData(const DemuxPacket &packet)
       return true;
 
     m_dataSize = m_bufferSize;
-    used = m_parser.AddData(pData, iSize, &m_buffer, &m_dataSize);
+    int used = m_parser.AddData(pData, iSize, &m_buffer, &m_dataSize);
     m_bufferSize = std::max(m_bufferSize, m_dataSize);
 
     if (used != iSize)
     {
       m_backlogSize = iSize - used;
       memcpy(m_backlogBuffer, pData + used, m_backlogSize);
-      used = iSize;
     }
   }
   else if (pData)
   {
     memcpy(m_backlogBuffer + m_backlogSize, pData, iSize);
     m_backlogSize += iSize;
-    used = iSize;
   }
 
   if (!m_dataSize)

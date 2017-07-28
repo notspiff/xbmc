@@ -104,7 +104,8 @@ Dataset::Dataset():
 
 
 Dataset::Dataset(Database *newDb):
-  select_sql("")
+  select_sql(""), autorefresh(false), errmsg(nullptr),
+  ds_state(dsInactive)
 {
 
   db = newDb;

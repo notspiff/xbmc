@@ -28,12 +28,12 @@ extern "C" {
 }
 
 CDVDVideoPPFFmpeg::CDVDVideoPPFFmpeg(CProcessInfo &processInfo):
-  m_sType(""), m_processInfo(processInfo)
+  m_sType(""), m_processInfo(processInfo),
+  m_pTarget{}
 {
   m_pMode = m_pContext = NULL;
   m_iInitWidth = m_iInitHeight = 0;
   m_deinterlace = false;
-  memset(&m_pTarget, 0, sizeof(VideoPicture));
 }
 
 CDVDVideoPPFFmpeg::~CDVDVideoPPFFmpeg()
@@ -159,7 +159,7 @@ bool CDVDVideoPPFFmpeg::Process(VideoPicture* pPicture)
   return true;
 }
 
-bool CDVDVideoPPFFmpeg::GetPicture(VideoPicture* pPicture)
+bool CDVDVideoPPFFmpeg::GetPicture(VideoPicture*& pPicture)
 {
   if (m_pTarget.videoBuffer)
   {

@@ -42,10 +42,10 @@ void DebugLog(const char *format, ...)
 #endif
 }
 
-CDVDDemuxSPU::CDVDDemuxSPU()
+CDVDDemuxSPU::CDVDDemuxSPU() :
+  m_spuData{},
+  m_clut{}
 {
-  memset(&m_spuData, 0, sizeof(m_spuData));
-  memset(m_clut, 0, sizeof(m_clut));
   m_bHasClut = false;
 }
 

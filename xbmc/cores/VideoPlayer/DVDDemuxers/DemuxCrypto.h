@@ -55,17 +55,22 @@ struct DemuxCryptoSession
 
   static const uint8_t FLAG_SECURE_DECODER = 1;
   uint8_t flags;
+private:
+  DemuxCryptoSession(const DemuxCryptoSession&) = delete;
+  DemuxCryptoSession& operator=(const DemuxCryptoSession&) = delete;
 };
 
 //CryptoInfo stores the information to decrypt a sample
 
 struct DemuxCryptoInfo
 {
-  DemuxCryptoInfo(const unsigned int numSubs)
+  explicit DemuxCryptoInfo(const unsigned int numSubs)
     : numSubSamples(numSubs)
     , flags(0)
     , clearBytes(new uint16_t[numSubs])
     , cipherBytes(new uint32_t[numSubs])
+    , iv{}
+    , kid{}
   {};
 
   ~DemuxCryptoInfo()
@@ -82,4 +87,7 @@ struct DemuxCryptoInfo
 
   uint8_t iv[16]; // initialization vector
   uint8_t kid[16]; // key id
+private:
+  DemuxCryptoInfo(const DemuxCryptoInfo&) = delete;
+  DemuxCryptoInfo& operator=(const DemuxCryptoInfo&) = delete;
 };

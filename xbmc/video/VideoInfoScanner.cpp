@@ -749,8 +749,6 @@ namespace VIDEO
     CFileItemList items;
     const std::vector<std::string> &regexps = g_advancedSettings.m_tvshowExcludeFromScanRegExps;
 
-    bool bSkip = false;
-
     if (item->m_bIsFolder)
     {
       /*
@@ -766,6 +764,7 @@ namespace VIDEO
       if (g_advancedSettings.m_bVideoLibraryUseFastHash)
         hash = GetRecursiveFastHash(item->GetPath(), regexps);
 
+      bool bSkip = false;
       if (m_database.GetPathHash(item->GetPath(), dbHash) && !hash.empty() && dbHash == hash)
       {
         // fast hashes match - no need to process anything
@@ -1007,7 +1006,7 @@ namespace VIDEO
       if (!reg.RegComp(expression[i].regexp))
         continue;
 
-      int regexppos, regexp2pos;
+      int regexppos;
       //CLog::Log(LOGDEBUG,"running expression %s on %s",expression[i].regexp.c_str(),strLabel.c_str());
       if ((regexppos = reg.RegFind(strLabel.c_str())) < 0)
         continue;
@@ -1079,6 +1078,7 @@ namespace VIDEO
         int offset = 0;
 
         // we want "long circuit" OR below so that both offsets are evaluated
+        int regexp2pos;
         while (((regexp2pos = reg2.RegFind(remainder.c_str() + offset)) > -1) | ((regexppos = reg.RegFind(remainder.c_str() + offset)) > -1))
         {
           if (((regexppos <= regexp2pos) && regexppos != -1) ||

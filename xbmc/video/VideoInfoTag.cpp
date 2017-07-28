@@ -1352,12 +1352,9 @@ void CVideoInfoTag::SetRating(float rating, const std::string& type /* = "" */, 
 
 void CVideoInfoTag::RemoveRating(const std::string& type)
 {
-  if (m_ratings.find(type) != m_ratings.end())
-  {
-    m_ratings.erase(type);
-    if (m_strDefaultRating == type && !m_ratings.empty())
-      m_strDefaultRating = m_ratings.begin()->first;
-  }
+  m_ratings.erase(type);
+  if (m_strDefaultRating == type && !m_ratings.empty())
+    m_strDefaultRating = m_ratings.begin()->first;
 }
 
 void CVideoInfoTag::SetRatings(RatingMap ratings)
@@ -1505,8 +1502,7 @@ void CVideoInfoTag::SetUniqueID(const std::string& uniqueid, const std::string& 
 
 void CVideoInfoTag::RemoveUniqueID(const std::string& type)
 {
-  if (m_uniqueIDs.find(type) != m_uniqueIDs.end())
-    m_uniqueIDs.erase(type);
+  m_uniqueIDs.erase(type);
 }
 
 void CVideoInfoTag::SetNamedSeasons(std::map<int, std::string> namedSeasons)

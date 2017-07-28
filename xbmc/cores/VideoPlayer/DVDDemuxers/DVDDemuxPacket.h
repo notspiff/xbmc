@@ -35,21 +35,26 @@ typedef struct DemuxPacket
   DemuxPacket(unsigned char *pData, int const iSize, double const pts, double const dts)
     : pData(pData)
     , iSize(iSize)
+    , iStreamId(-1)
+    , demuxerId(-1)
+    , iGroupId(0)
     , pts(pts)
     , dts(dts)
-  {};
+    , duration(0.0)
+    , dispTime(0)
+  {}
 
   unsigned char *pData;   // data
   int iSize;     // data size
-  int iStreamId = -1; // integer representing the stream index
-  int64_t demuxerId = -1; // id of the demuxer that created the packet
-  int iGroupId = -1;  // the group this data belongs to, used to group data from different streams together
+  int iStreamId; // integer representing the stream index
+  int64_t demuxerId; // id of the demuxer that created the packet
+  int iGroupId;  // the group this data belongs to, used to group data from different streams together
 
   double pts; // pts in DVD_TIME_BASE
   double dts; // dts in DVD_TIME_BASE
-  double duration = 0.0; // duration in DVD_TIME_BASE if available
+  double duration; // duration in DVD_TIME_BASE if available
 
-  int dispTime = 0;
+  int dispTime;
 
   std::shared_ptr<DemuxCryptoInfo> cryptoInfo;
 } DemuxPacket;

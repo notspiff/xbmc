@@ -240,61 +240,61 @@ void updateScreen (cc708_service_decoder *decoder)
 
   for (int i=0;i<visible;i++)
   {
-    int top,left;
+    int ltop,lleft;
     // For each window we calculate the top,left position depending on the
     // anchor
     switch (wnd[i]->anchor_point)
     {
     case anchorpoint_top_left:
-      top=wnd[i]->anchor_vertical;
-      left=wnd[i]->anchor_horizontal;
+      ltop=wnd[i]->anchor_vertical;
+      lleft=wnd[i]->anchor_horizontal;
       break;
     case anchorpoint_top_center:
-      top=wnd[i]->anchor_vertical;
-      left=wnd[i]->anchor_horizontal - wnd[i]->col_count/2;
+      ltop=wnd[i]->anchor_vertical;
+      lleft=wnd[i]->anchor_horizontal - wnd[i]->col_count/2;
       break;
     case anchorpoint_top_right:
-      top=wnd[i]->anchor_vertical;
-      left=wnd[i]->anchor_horizontal - wnd[i]->col_count;
+      ltop=wnd[i]->anchor_vertical;
+      lleft=wnd[i]->anchor_horizontal - wnd[i]->col_count;
       break;
     case anchorpoint_middle_left:
-      top=wnd[i]->anchor_vertical - wnd[i]->row_count/2;
-      left=wnd[i]->anchor_horizontal;
+      ltop=wnd[i]->anchor_vertical - wnd[i]->row_count/2;
+      lleft=wnd[i]->anchor_horizontal;
       break;
     case anchorpoint_middle_center:
-      top=wnd[i]->anchor_vertical - wnd[i]->row_count/2;
-      left=wnd[i]->anchor_horizontal - wnd[i]->col_count/2;
+      ltop=wnd[i]->anchor_vertical - wnd[i]->row_count/2;
+      lleft=wnd[i]->anchor_horizontal - wnd[i]->col_count/2;
       break;
     case anchorpoint_middle_right:
-      top=wnd[i]->anchor_vertical - wnd[i]->row_count/2;
-      left=wnd[i]->anchor_horizontal - wnd[i]->col_count;
+      ltop=wnd[i]->anchor_vertical - wnd[i]->row_count/2;
+      lleft=wnd[i]->anchor_horizontal - wnd[i]->col_count;
       break;
     case anchorpoint_bottom_left:
-      top=wnd[i]->anchor_vertical - wnd[i]->row_count;
-      left=wnd[i]->anchor_horizontal;
+      ltop=wnd[i]->anchor_vertical - wnd[i]->row_count;
+      lleft=wnd[i]->anchor_horizontal;
       break;
     case anchorpoint_bottom_center:
-      top=wnd[i]->anchor_vertical - wnd[i]->row_count;
-      left=wnd[i]->anchor_horizontal - wnd[i]->col_count/2;
+      ltop=wnd[i]->anchor_vertical - wnd[i]->row_count;
+      lleft=wnd[i]->anchor_horizontal - wnd[i]->col_count/2;
       break;
     case anchorpoint_bottom_right:
-      top=wnd[i]->anchor_vertical - wnd[i]->row_count;
-      left=wnd[i]->anchor_horizontal - wnd[i]->col_count;
+      ltop=wnd[i]->anchor_vertical - wnd[i]->row_count;
+      lleft=wnd[i]->anchor_horizontal - wnd[i]->col_count;
       break;
     default: // Shouldn't happen, but skip the window just in case
       continue;
     }
-    if (top<0)
-      top=0;
-    if (left<0)
-      left=0;
-    int copyrows=top + wnd[i]->row_count >= I708_SCREENGRID_ROWS ?
-        I708_SCREENGRID_ROWS - top : wnd[i]->row_count;
+    if (ltop<0)
+      ltop=0;
+    if (lleft<0)
+      lleft=0;
+    int copyrows=ltop + wnd[i]->row_count >= I708_SCREENGRID_ROWS ?
+        I708_SCREENGRID_ROWS - ltop : wnd[i]->row_count;
     int copycols=left + wnd[i]->col_count >= I708_SCREENGRID_COLUMNS ?
-        I708_SCREENGRID_COLUMNS - left : wnd[i]->col_count;
+        I708_SCREENGRID_COLUMNS - lleft : wnd[i]->col_count;
     for (int j=0;j<copyrows;j++)
     {
-      memcpy (decoder->tv.chars[top+j],wnd[i]->rows[j],copycols);
+      memcpy (decoder->tv.chars[ltop+j],wnd[i]->rows[j],copycols);
     }
   }
   printTVtoBuf(decoder);

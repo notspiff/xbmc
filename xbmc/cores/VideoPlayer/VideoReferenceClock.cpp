@@ -72,7 +72,6 @@ void CVideoReferenceClock::CBUpdateClock(int NrVBlanks, uint64_t time, void *clo
 void CVideoReferenceClock::Process()
 {
   bool SetupSuccess = false;
-  int64_t Now;
 
   while(!m_bStop)
   {
@@ -85,7 +84,7 @@ void CVideoReferenceClock::Process()
     }
 
     CSingleLock SingleLock(m_CritSection);
-    Now = CurrentHostCounter();
+    int64_t Now = CurrentHostCounter();
     m_CurrTime = Now + m_ClockOffset; //add the clock offset from the previous time we stopped
     m_LastIntTime = m_CurrTime;
     m_CurrTimeFract = 0.0;

@@ -488,7 +488,7 @@ bool CTeletextDecoder::HandleAction(const CAction &action)
       m_RenderInfo.PosY = 0;
       char ns[10];
       SetPosX(1);
-      sprintf(ns,"+%d    ", m_RenderInfo.SubtitleDelay);
+      sprintf(ns,"+%u    ", m_RenderInfo.SubtitleDelay);
       RenderCharFB(ns[0], &Text_AtrTable[ATR_WB]);
       RenderCharFB(ns[1], &Text_AtrTable[ATR_WB]);
       RenderCharFB(ns[2], &Text_AtrTable[ATR_WB]);
@@ -512,7 +512,7 @@ bool CTeletextDecoder::HandleAction(const CAction &action)
         m_RenderInfo.PosY = 0;
         char ns[10];
         SetPosX(1);
-        sprintf(ns,"+%d    ", m_RenderInfo.SubtitleDelay);
+        sprintf(ns,"+%u    ", m_RenderInfo.SubtitleDelay);
         RenderCharFB(ns[0], &Text_AtrTable[ATR_WB]);
         RenderCharFB(ns[1], &Text_AtrTable[ATR_WB]);
         RenderCharFB(ns[2], &Text_AtrTable[ATR_WB]);
@@ -1295,7 +1295,7 @@ void CTeletextDecoder::RenderPage()
         else
         {
           SetPosX(33+i);
-          m_RenderInfo.PageChar[32+i] = m_RenderInfo.PageChar[32+i];
+          //m_RenderInfo.PageChar[32+i] = m_RenderInfo.PageChar[32+i];
         }
       }
 
@@ -1596,12 +1596,12 @@ void CTeletextDecoder::Decode_BTT()
 
 void CTeletextDecoder::Decode_ADIP() /* additional information table */
 {
-  int i, p, j, b1, b2, b3, charfound;
+  int i,  j, b1, b2, b3, charfound;
   unsigned char padip[23*40];
 
   for (i = 0; i <= m_txtCache->ADIP_PgMax; i++)
   {
-    p = m_txtCache->ADIP_Pg[i];
+    int p = m_txtCache->ADIP_Pg[i];
     if (!p || m_txtCache->SubPageTable[p] == 0xff || 0 == m_txtCache->astCachetable[p][m_txtCache->SubPageTable[p]]) /* not cached (avoid segfault) */
       continue;
 
@@ -1814,7 +1814,7 @@ void CTeletextDecoder::RenderCharBB(int Char, TextPageAttr_t *Attribute)
 
 void CTeletextDecoder::CopyBB2FB()
 {
-  color_t *src, *dst, *topsrc;
+  color_t *src, *dst;
   int screenwidth;
   color_t fillcolor;
 
@@ -1837,7 +1837,7 @@ void CTeletextDecoder::CopyBB2FB()
     return;
   }
 
-  src = dst = topsrc = m_TextureBuffer + m_RenderInfo.Width;
+  src = dst = m_TextureBuffer + m_RenderInfo.Width;
 
   if (m_YOffset)
   {
@@ -1846,7 +1846,6 @@ void CTeletextDecoder::CopyBB2FB()
   else
   {
     src    += m_RenderInfo.Width * m_RenderInfo.Height;
-    topsrc += m_RenderInfo.Width * m_RenderInfo.Height;
   }
 
   if (!m_RenderInfo.PageCatching)
@@ -2021,12 +2020,11 @@ void CTeletextDecoder::FillRectMosaicSeparated(color_t *lfb, int xres,int x, int
 void CTeletextDecoder::FillTrapez(color_t *lfb, int xres,int x0, int y0, int l0, int xoffset1, int h, int l1, color_t color)
 {
   color_t *p = lfb + x0 + y0 * xres;
-  int xoffset, l;
 
   for (int yoffset = 0; yoffset < h; yoffset++)
   {
-    l = l0 + ((l1-l0) * yoffset + h/2) / h;
-    xoffset = (xoffset1 * yoffset + h/2) / h;
+    int l = l0 + ((l1-l0) * yoffset + h/2) / h;
+    int xoffset = (xoffset1 * yoffset + h/2) / h;
     if (l > 0)
       SDL_memset4(p + xoffset, color, l);
     p += xres;
@@ -2053,13 +2051,13 @@ void CTeletextDecoder::FlipHorz(color_t *lfb, int xres,int x, int y, int w, int 
 void CTeletextDecoder::FlipVert(color_t *lfb, int xres,int x, int y, int w, int h)
 {
   color_t buf[2048];
-  color_t *p = lfb + x + y * xres, *p1, *p2;
+  color_t *p = lfb + x + y * xres;
   int h1;
 
   for (h1 = 0 ; h1 < h/2 ; h1++)
   {
-    p1 = (p+(h1*xres));
-    p2 = (p+(h-(h1+1))*xres);
+    color_t* p1 = (p+(h1*xres));
+    color_t* p2 = (p+(h-(h1+1))*xres);
     SDL_memcpy4(buf, p1, w);
     SDL_memcpy4(p1, p2, w);
     SDL_memcpy4(p2, buf, w);
@@ -2520,7 +2518,7 @@ int CTeletextDecoder::RenderChar(color_t *buffer,    // pointer to render buffer
             {
               for (x=0; x<curfontwidth*xfactor;x++)
               {
-                c = (y&4 ? (x/3)&1 :((x+3)/3)&1);
+                c = ((y&4) ? (x/3)&1 :((x+3)/3)&1);
                 *(p+x) = (c ? fgcolor : bgcolor);
               }
               p += xres;
@@ -2733,10 +2731,6 @@ TextPageinfo_t* CTeletextDecoder::DecodePage(bool showl25,             // 1=deco
                                             bool HintMode,            // 1=show hidden information
                                             bool showflof)            // 1=decode FLOF-line
 {
-  int col;
-  int hold, dhset;
-  int foreground, background, doubleheight, doublewidth, charset, previous_charset, mosaictype, IgnoreAtBlackBgSubst, concealed, flashmode, boxwin;
-  unsigned char held_mosaic, *p;
   TextCachedPage_t *pCachedPage;
 
   /* copy page to decode buffer */
@@ -2788,9 +2782,11 @@ TextPageinfo_t* CTeletextDecoder::DecodePage(bool showl25,             // 1=deco
 
   if (!IsDec(m_txtCache->Page))
   {
+    unsigned char* p;
     TextPageAttr_t atr = { TXT_ColorWhite  , TXT_ColorBlack , C_G0P, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 0, 0x3f};
     if (PageInfo->function == FUNC_MOT) /* magazine organization table */
     {
+      int col;
       for (col = 0; col < 24*40; col++)
         PageAtrb[col] = atr;
       for (col = 40; col < 24*40; col++)
@@ -2830,7 +2826,7 @@ TextPageinfo_t* CTeletextDecoder::DecodePage(bool showl25,             // 1=deco
     }
     else
     {
-      int h, parityerror = 0;
+      int parityerror = 0;
 
       for (int i = 0; i < 8; i++)
         PageAtrb[i] = atr;
@@ -2840,7 +2836,7 @@ TextPageinfo_t* CTeletextDecoder::DecodePage(bool showl25,             // 1=deco
       {
         PageAtrb[i] = atr;
         p = PageChar + i;
-        h = dehamming[*p];
+        int h = dehamming[*p];
         if (parityerror && h != 0xFF)  /* if no regular page (after any parity error) */
           CDVDTeletextTools::Hex2Str((char*)p, h);  /* first try dehamming */
         else
@@ -2863,25 +2859,26 @@ TextPageinfo_t* CTeletextDecoder::DecodePage(bool showl25,             // 1=deco
       }
     }
   }
-  int mosaic_pending,esc_pending;
   /* decode */
   for (int row = 0; row < ((showflof && PageInfo->p24) ? 25 : 24); row++)
   {
     /* start-of-row default conditions */
-    foreground   = TXT_ColorWhite;
-    background   = TXT_ColorBlack;
-    doubleheight = 0;
-    doublewidth  = 0;
-    charset      = previous_charset = C_G0P; // remember charset for switching back after mosaic charset was used
-    mosaictype   = 0;
-    concealed    = 0;
-    flashmode    = 0;
-    hold         = 0;
-    boxwin       = 0;
-    held_mosaic  = ' ';
-    dhset        = 0;
-    IgnoreAtBlackBgSubst = 0;
-    mosaic_pending = esc_pending = 0; // we need to render at least one mosaic char if 'esc' is received immediately after mosaic charset switch on
+    int foreground   = TXT_ColorWhite;
+    int background   = TXT_ColorBlack;
+    int doubleheight = 0;
+    int doublewidth  = 0;
+    int previous_charset;
+    int charset      = previous_charset = C_G0P; // remember charset for switching back after mosaic charset was used
+    int mosaictype   = 0;
+    int concealed    = 0;
+    int flashmode    = 0;
+    int hold     = 0;
+    int boxwin       = 0;
+    unsigned char held_mosaic  = ' ';
+    int dhset    = 0;
+    int IgnoreAtBlackBgSubst = 0;
+    int esc_pending;
+    int mosaic_pending = esc_pending = 0; // we need to render at least one mosaic char if 'esc' is received immediately after mosaic charset switch on
 
     if (boxed && memchr(&PageChar[row*40], start_box, 40) == 0)
     {
@@ -3632,10 +3629,10 @@ int CTeletextDecoder::Eval_Triplet(int iOData, TextCachedPage_t *pstCachedPage,
     {
       int conc = (iData & 0x04);
       int inv  = (iData & 0x10);
-      int dw   = (iData & 0x40 ?1:0);
-      int dh   = (iData & 0x01 ?1:0);
+      int dw   = ((iData & 0x40) ?1:0);
+      int dh   = ((iData & 0x01) ?1:0);
       int sep  = (iData & 0x20);
-      int bw   = (iData & 0x02 ?1:0);
+      int bw   = ((iData & 0x02) ?1:0);
       if (*endcol < 0) /* passive object */
       {
         if (conc)

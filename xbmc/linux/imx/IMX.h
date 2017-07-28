@@ -86,7 +86,7 @@ public:
     while (!queue.size() && !m_abort)
       read.wait(m_lock);
 
-    T val;
+    T val {};
     if (!queue.empty())
     {
       val = queue.front();
@@ -171,7 +171,13 @@ private:
 // the IMX context, e.g. for blitting
 class CIMXBuffer {
 public:
-  CIMXBuffer() : m_iRefs(0) {}
+  CIMXBuffer() : m_iRefs(0)
+  {
+    iWidth = iHeight = 0;
+    pPhysAddr = iFormat = 0;
+    pVirtAddr = nullptr;
+    m_fps = 0.0;
+  }
 
   // Shared pointer interface
   virtual void Lock() = 0;

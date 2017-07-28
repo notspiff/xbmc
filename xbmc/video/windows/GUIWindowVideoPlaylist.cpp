@@ -329,7 +329,6 @@ bool CGUIWindowVideoPlaylist::OnPlayMedia(int iItem, const std::string &player)
   else
   {
     CFileItemPtr pItem = m_vecItems->Get(iItem);
-    std::string strPath = pItem->GetPath();
     CServiceBroker::GetPlaylistPlayer().SetCurrentPlaylist(PLAYLIST_VIDEO);
     // need to update Playlist FileItem's startOffset and resumePoint based on GUIWindowVideoPlaylist FileItem
     if (pItem->m_lStartOffset == STARTOFFSET_RESUME)

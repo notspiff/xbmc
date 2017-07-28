@@ -53,7 +53,6 @@ CDVDMsgGeneralSynchronize::CDVDMsgGeneralSynchronize(unsigned int timeout, unsig
 
 CDVDMsgGeneralSynchronize::~CDVDMsgGeneralSynchronize()
 {
-  delete m_p;
 }
 
 bool CDVDMsgGeneralSynchronize::Wait(unsigned int milliseconds, unsigned int source)

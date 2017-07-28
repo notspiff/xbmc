@@ -53,6 +53,20 @@ public:
   VideoPicture& CopyRef(const VideoPicture &pic);
   VideoPicture& SetParams(const VideoPicture &pic);
 
+  void Reset()
+  {
+    videoBuffer = nullptr;
+    pts = dts = 0.0;
+    iFlags = 0;
+    iRepeatPicture = 0.0;
+    iFrameType = color_matrix = color_range = chroma_position
+               = color_primaries = color_transfer = 0;
+    memset(stereo_mode,0,sizeof(stereo_mode));
+    qp_table = nullptr;
+    qstride = qscale_type = 0;
+    iWidth = iHeight = iDisplayWidth = iDisplayHeight = 0.0;
+  }
+
   CVideoBuffer *videoBuffer = nullptr;
 
   double pts; // timestamp in seconds, used in the CVideoPlayer class to keep track of pts

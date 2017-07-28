@@ -272,7 +272,7 @@ CStreamDetail *CStreamDetails::NewStream(CStreamDetail::StreamType type)
 
 std::string CStreamDetails::GetVideoLanguage(int idx) const
 {
-  CStreamDetailVideo *item = (CStreamDetailVideo*)GetNthStream(CStreamDetail::VIDEO, idx);
+  const CStreamDetailVideo *item = static_cast<const CStreamDetailVideo*>(GetNthStream(CStreamDetail::VIDEO, idx));
   if (item)
     return item->m_strLanguage;
   else

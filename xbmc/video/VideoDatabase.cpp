@@ -3858,7 +3858,7 @@ CVideoInfoTag CVideoDatabase::GetDetailsForMovie(const dbiplus::sql_record* cons
     if (getDetails & VideoDbDetailsCast)
     {
       GetCast(details.m_iDbId, MediaTypeMovie, details.m_cast);
-      castTime += XbmcThreads::SystemClockMillis() - time; time = XbmcThreads::SystemClockMillis();
+      castTime += XbmcThreads::SystemClockMillis() - time;
     }
 
     if (getDetails & VideoDbDetailsTag)
@@ -3938,7 +3938,7 @@ CVideoInfoTag CVideoDatabase::GetDetailsForTvShow(const dbiplus::sql_record* con
     if (getDetails & VideoDbDetailsCast)
     {
       GetCast(details.m_iDbId, "tvshow", details.m_cast);
-      castTime += XbmcThreads::SystemClockMillis() - time; time = XbmcThreads::SystemClockMillis();
+      castTime += XbmcThreads::SystemClockMillis() - time;
     }
 
     if (getDetails & VideoDbDetailsTag)
@@ -4017,7 +4017,7 @@ CVideoInfoTag CVideoDatabase::GetDetailsForEpisode(const dbiplus::sql_record* co
     {
       GetCast(details.m_iDbId, MediaTypeEpisode, details.m_cast);
       GetCast(details.m_iIdShow, MediaTypeTvShow, details.m_cast);
-      castTime += XbmcThreads::SystemClockMillis() - time; time = XbmcThreads::SystemClockMillis();
+      castTime += XbmcThreads::SystemClockMillis() - time;
     }
 
     if (getDetails & VideoDbDetailsRating)
@@ -4072,7 +4072,7 @@ CVideoInfoTag CVideoDatabase::GetDetailsForMusicVideo(const dbiplus::sql_record*
   else
     details.SetPremieredFromDBDate(premieredString);
   
-  movieTime += XbmcThreads::SystemClockMillis() - time; time = XbmcThreads::SystemClockMillis();
+  movieTime += XbmcThreads::SystemClockMillis() - time;
 
   if (getDetails)
   {
@@ -4583,7 +4583,6 @@ void CVideoDatabase::RemoveContentForPath(const std::string& strPath, CGUIDialog
     int iCurr = 0;
     for (const auto &i : paths)
     {
-      bool bMvidsChecked=false;
       if (progress)
       {
         progress->SetPercentage((int)((float)(iCurr++)/paths.size()*100.f));
@@ -4594,6 +4593,7 @@ void CVideoDatabase::RemoveContentForPath(const std::string& strPath, CGUIDialog
         DeleteTvShow(i.second);
       else
       {
+        bool bMvidsChecked=false;
         std::string strSQL = PrepareSQL("select files.strFilename from files join movie on movie.idFile=files.idFile where files.idPath=%i", i.first);
         m_pDS2->query(strSQL);
         if (m_pDS2->eof())
@@ -6175,8 +6175,7 @@ bool CVideoDatabase::GetPeopleNav(const std::string& strBaseDir, CFileItemList& 
       m_pDS->close();
     }
     CLog::Log(LOGDEBUG, "%s item retrieval took %i ms",
-              __FUNCTION__, XbmcThreads::SystemClockMillis() - time); time = XbmcThreads::SystemClockMillis();
-
+              __FUNCTION__, XbmcThreads::SystemClockMillis() - time);
     return true;
   }
   catch (...)
@@ -6218,7 +6217,6 @@ bool CVideoDatabase::GetYearsNav(const std::string& strBaseDir, CFileItemList& i
     }
     else
     {
-      std::string group;
       if (idContent == VIDEODB_CONTENT_MOVIES)
       {
         strSQL = "select movie_view.premiered, count(1), count(files.playCount) from movie_view ";
@@ -6870,7 +6868,6 @@ bool CVideoDatabase::GetEpisodesNav(const std::string& strBaseDir, CFileItemList
   if (!videoUrl.FromString(strBaseDir))
     return false;
 
-  std::string strIn;
   if (idShow != -1)
   {
     videoUrl.AddOption("tvshowid", idShow);
@@ -7273,7 +7270,6 @@ ScraperPtr CVideoDatabase::GetScraperForPath(const std::string& strPath, SScanSe
         std::string strSQL=PrepareSQL("select path.strContent,path.strScraper,path.scanRecursive,path.useFolderNames,path.strSettings,path.noUpdate, path.exclude from path where strPath='%s'",strParent.c_str());
         m_pDS->query(strSQL);
 
-        CONTENT_TYPE content = CONTENT_NONE;
         if (!m_pDS->eof())
         {
 
@@ -7287,7 +7283,7 @@ ScraperPtr CVideoDatabase::GetScraperForPath(const std::string& strPath, SScanSe
             break;
           }
 
-          content = TranslateContent(strcontent);
+          CONTENT_TYPE content = TranslateContent(strcontent);
 
           AddonPtr addon;
           if (content != CONTENT_NONE &&

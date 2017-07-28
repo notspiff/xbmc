@@ -269,14 +269,14 @@ double CPtsTracker::CalcFrameDuration()
   {
     //take the average of all diffs in the pattern
     double frameduration;
-    double current, currentmin, currentmax;
+    double currentmin, currentmax;
 
     currentmin = m_pattern[0];
     currentmax = currentmin;
     frameduration = currentmin;
     for (unsigned int i = 1; i < m_pattern.size(); i++)
     {
-      current = m_pattern[i];
+      double current = m_pattern[i];
       if (current>currentmax)
         currentmax = current;
       if (current<currentmin)

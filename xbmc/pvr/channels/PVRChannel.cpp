@@ -89,7 +89,6 @@ CPVRChannel::CPVRChannel(const PVR_CHANNEL &channel, unsigned int iClientId)
                            channel.iSubChannelNumber}
   , m_strClientChannelName(channel.strChannelName)
   , m_strInputFormat(channel.strInputFormat)
-  , m_strStreamURL(channel.strStreamURL)
   , m_iClientEncryptionSystem(channel.iEncryptionSystem)
 {
   m_iChannelId              = -1;

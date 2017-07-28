@@ -470,7 +470,11 @@ int CVideoSurfaces::Size()
 bool CDecoder::m_capGeneral = false;
 
 CDecoder::CDecoder(CProcessInfo& processInfo) :
-    m_vdpauOutput(*this, &m_inMsgEvent), m_processInfo(processInfo)
+    m_ErrorCount(0),
+    m_vdpauOutput(*this, &m_inMsgEvent),
+    m_bufferStats{},
+    m_codecControl(0),
+    m_processInfo(processInfo)
 {
   m_vdpauConfig.videoSurfaces = &m_videoSurfaces;
 
@@ -974,7 +978,7 @@ int CDecoder::FFGetBuffer(AVCodecContext *avctx, AVFrame *pic, int flags)
 
 void CDecoder::FFReleaseBuffer(void *opaque, uint8_t *data)
 {
-  CDecoder *vdp = (CDecoder*)opaque;
+  CDecoder *vdp = static_cast<CDecoder*>(opaque);
 
   VdpVideoSurface surf;
 
@@ -989,8 +993,8 @@ int CDecoder::Render(struct AVCodecContext *s, struct AVFrame *src,
                      const VdpPictureInfo *info, uint32_t buffers_used,
                      const VdpBitstreamBuffer *buffers)
 {
-  ICallbackHWAccel* ctx = (ICallbackHWAccel*)s->opaque;
-  CDecoder* vdp = (CDecoder*)ctx->GetHWAccel();
+  ICallbackHWAccel* ctx = static_cast<ICallbackHWAccel*>(s->opaque);
+  CDecoder* vdp = static_cast<CDecoder*>(ctx->GetHWAccel());
 
   // while we are waiting to recover we can't do anything
   CSingleLock lock(vdp->m_DecoderSection);
@@ -1079,7 +1083,7 @@ CDVDVideoCodec::VCReturn CDecoder::Decode(AVCodecContext *avctx, AVFrame *pFrame
     // send frame to output for processing
     CVdpauDecodedPicture pic;
     memset(&pic.DVDPic, 0, sizeof(pic.DVDPic));
-    ((ICallbackHWAccel*)avctx->opaque)->GetPictureCommon(&pic.DVDPic);
+    static_cast<ICallbackHWAccel*>(avctx->opaque)->GetPictureCommon(&pic.DVDPic);
     pic.videoSurface = surf;
     pic.DVDPic.color_matrix = avctx->colorspace;
     m_bufferStats.IncDecoded();
@@ -1284,7 +1288,7 @@ void CDecoder::Register()
 class VDPAU::CVdpauBufferPool : public IVideoBufferPool
 {
 public:
-  CVdpauBufferPool(CDecoder &decoder);
+  explicit CVdpauBufferPool(CDecoder &decoder);
   ~CVdpauBufferPool() override;
   CVideoBuffer* Get() override;
   void Return(int id) override;
@@ -1293,7 +1297,7 @@ public:
   void QueueReturnPicture(CVdpauRenderPicture *pic);
   CVdpauRenderPicture* ProcessSyncPicture();
 
-  unsigned short numOutputSurfaces;
+  unsigned short numOutputSurfaces = 0;
   std::vector<VdpOutputSurface> outputSurfaces;
   std::queue<CVdpauProcessedPicture> processedPics;
   std::deque<CVdpauProcessedPicture> processedPicsAway;
@@ -1312,10 +1316,9 @@ protected:
 CVdpauBufferPool::CVdpauBufferPool(CDecoder &decoder)
   : m_vdpau(decoder)
 {
-  CVdpauRenderPicture *pic;
   for (unsigned int i = 0; i < NUM_RENDER_PICS; i++)
   {
-    pic = new CVdpauRenderPicture(i);
+    CVdpauRenderPicture* pic = new CVdpauRenderPicture(i);
     allRenderPics.push_back(pic);
     freeRenderPics.push_back(i);
   }
@@ -1323,10 +1326,9 @@ CVdpauBufferPool::CVdpauBufferPool(CDecoder &decoder)
 
 CVdpauBufferPool::~CVdpauBufferPool()
 {
-  CVdpauRenderPicture *pic;
   for (unsigned int i = 0; i < NUM_RENDER_PICS; i++)
   {
-    pic = allRenderPics[i];
+    CVdpauRenderPicture* pic = allRenderPics[i];
     delete pic;
   }
   allRenderPics.clear();
@@ -1429,7 +1431,12 @@ CVdpauRenderPicture* CVdpauBufferPool::ProcessSyncPicture()
 CMixer::CMixer(CEvent *inMsgEvent) :
   CThread("Vdpau Mixer"),
   m_controlPort("ControlPort", inMsgEvent, &m_outMsgEvent),
-  m_dataPort("DataPort", inMsgEvent, &m_outMsgEvent)
+  m_dataPort("DataPort", inMsgEvent, &m_outMsgEvent), m_state(0),
+  m_bStateMachineSelfTrigger(false), m_extTimeout(0),
+  m_vdpError(false), m_config{}, m_PostProc(false),
+  m_Brightness(0.f), m_Contrast(0.f), m_NoiseReduction(0.f),
+  m_Sharpness(0.f), m_Deint(0), m_Upscale(0), m_SeenInterlaceFlag(false),
+  m_ColorMatrix(0), m_mixerstep(0), m_mixersteps(0)
 {
   m_inMsgEvent = inMsgEvent;
 }
@@ -1731,7 +1738,6 @@ void CMixer::Process()
 {
   Message *msg = NULL;
   Protocol *port = NULL;
-  bool gotMsg;
 
   m_state = M_TOP_UNCONFIGURED;
   m_extTimeout = 1000;
@@ -1739,7 +1745,7 @@ void CMixer::Process()
 
   while (!m_bStop)
   {
-    gotMsg = false;
+    bool gotMsg = false;
 
     if (m_bStateMachineSelfTrigger)
     {
@@ -2392,7 +2398,7 @@ void CMixer::Flush()
   {
     if (msg->signal == CMixerDataProtocol::FRAME)
     {
-      CVdpauDecodedPicture pic = *(CVdpauDecodedPicture*)msg->data;
+      CVdpauDecodedPicture pic = *reinterpret_cast<CVdpauDecodedPicture*>(msg->data);
       m_config.videoSurfaces->ClearRender(pic.videoSurface);
     }
     else if (msg->signal == CMixerDataProtocol::BUFFER)
@@ -2688,11 +2694,15 @@ COutput::COutput(CDecoder &decoder, CEvent *inMsgEvent) :
   CThread("Vdpau Output"),
   m_controlPort("OutputControlPort", inMsgEvent, &m_outMsgEvent),
   m_dataPort("OutputDataPort", inMsgEvent, &m_outMsgEvent),
+  m_inMsgEvent(inMsgEvent),
+  m_state(0), m_bStateMachineSelfTrigger(false),
   m_vdpau(decoder),
+  m_extTimeout(0),
+  m_vdpError(false),
+  m_config{},
+  m_bufferPool(std::make_shared<CVdpauBufferPool>(decoder)),
   m_mixer(&m_outMsgEvent)
 {
-  m_inMsgEvent = inMsgEvent;
-  m_bufferPool = std::make_shared<CVdpauBufferPool>(decoder);
 }
 
 void COutput::Start()
@@ -2950,7 +2960,6 @@ void COutput::Process()
 {
   Message *msg = NULL;
   Protocol *port = NULL;
-  bool gotMsg;
 
   m_state = O_TOP_UNCONFIGURED;
   m_extTimeout = 1000;
@@ -2958,7 +2967,7 @@ void COutput::Process()
 
   while (!m_bStop)
   {
-    gotMsg = false;
+    bool gotMsg = false;
 
     if (m_bStateMachineSelfTrigger)
     {
@@ -3061,7 +3070,7 @@ void COutput::Flush()
   {
     if (msg->signal == CMixerDataProtocol::PICTURE)
     {
-      CVdpauProcessedPicture pic = *(CVdpauProcessedPicture*)msg->data;
+      CVdpauProcessedPicture pic = *reinterpret_cast<CVdpauProcessedPicture*>(msg->data);
       m_bufferPool->processedPics.push(pic);
     }
     msg->Release();
@@ -3071,7 +3080,7 @@ void COutput::Flush()
   {
     if (msg->signal == COutputDataProtocol::NEWFRAME)
     {
-      CVdpauDecodedPicture pic = *(CVdpauDecodedPicture*)msg->data;
+      CVdpauDecodedPicture pic = *reinterpret_cast<CVdpauDecodedPicture*>(msg->data);
       m_config.videoSurfaces->ClearRender(pic.videoSurface);
     }
     else if (msg->signal == COutputDataProtocol::RETURNPIC)

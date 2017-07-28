@@ -67,7 +67,11 @@
 
 CGUIDialogAudioSubtitleSettings::CGUIDialogAudioSubtitleSettings()
   : CGUIDialogSettingsManualBase(WINDOW_DIALOG_AUDIO_OSD_SETTINGS, "DialogSettings.xml"),
+    m_volume(0.f),
+    m_audioStream(-1),
     m_passthrough(false),
+    m_subtitleStream(-1),
+    m_subtitleVisible(false),
     m_dspEnabled(false)
 { }
 

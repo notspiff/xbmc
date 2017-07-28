@@ -468,14 +468,14 @@ void CGUIViewState::AddAddonsSource(const std::string &content, const std::strin
 void CGUIViewState::AddLiveTVSources()
 {
   VECSOURCES *sources = CMediaSourceSettings::GetInstance().GetSources("video");
-  for (IVECSOURCES it = sources->begin(); it != sources->end(); it++)
+  for (const auto& it : *sources)
   {
-    if (URIUtils::IsLiveTV((*it).strPath))
+    if (URIUtils::IsLiveTV(it.strPath))
     {
       CMediaSource source;
-      source.strPath = (*it).strPath;
-      source.strName = (*it).strName;
-      source.vecPaths = (*it).vecPaths;
+      source.strPath = it.strPath;
+      source.strName = it.strName;
+      source.vecPaths = it.vecPaths;
       source.m_strThumbnailImage = "";
       source.FromNameAndPaths("video", source.strName, source.vecPaths);
       m_sources.push_back(source);

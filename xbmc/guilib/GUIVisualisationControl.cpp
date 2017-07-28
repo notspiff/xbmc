@@ -94,6 +94,13 @@ CGUIVisualisationControl::CGUIVisualisationControl(const CGUIVisualisationContro
     m_callStart(false),
     m_alreadyStarted(false),
     m_attemptedLoad(false),
+    m_updateTrack(false),
+    m_numBuffers(0),
+    m_wantsFreq(false),
+    m_freq{},
+    m_channels(0),
+    m_samplesPerSec(0),
+    m_bitsPerSample(0),
     m_instance(nullptr)
 {
   ControlType = GUICONTROL_VISUALISATION;

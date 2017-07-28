@@ -48,6 +48,7 @@ MysqlDatabase::MysqlDatabase() {
 
   active = false;
   _in_transaction = false;     // for transaction
+  last_err = 0;
 
   error = "Unknown database error";//S_NO_CONNECTION;
   host = "localhost";
@@ -1165,7 +1166,6 @@ void MysqlDatabase::mysqlVXPrintf(
       case etSQLESCAPE3: {
         int i, j, k, n, isnull;
         int needQuote;
-        char ch;
         char q = ((xtype==etSQLESCAPE3)?'"':'\'');   /* Quote character */
         std::string arg = va_arg(ap, char*);
         if (isLike)
@@ -1175,7 +1175,7 @@ void MysqlDatabase::mysqlVXPrintf(
         isnull = escarg==0;
         if( isnull ) escarg = (xtype==etSQLESCAPE2 ? "NULL" : "(NULL)");
         k = precision;
-        for(i=0; k!=0 && (ch=escarg[i])!=0; i++, k--);
+        for(i=0; k!=0 && escarg[i] !=0; i++, k--);
         needQuote = !isnull && xtype==etSQLESCAPE2;
         n = i*2 + 1 + needQuote*2;
         if( n>etBUFSIZE ){
@@ -1373,7 +1373,6 @@ MYSQL* MysqlDataset::handle(){
 
 void MysqlDataset::make_query(StringList &_sql) {
   std::string query;
-  int result = 0;
   if (db == NULL) throw DbErrors("No Database Connection");
   try
   {
@@ -1383,7 +1382,7 @@ void MysqlDataset::make_query(StringList &_sql) {
     {
       query = *i;
       Dataset::parse_sql(query);
-      if ((result = static_cast<MysqlDatabase *>(db)->query_with_reconnect(query.c_str())) != MYSQL_OK)
+      if ((static_cast<MysqlDatabase *>(db)->query_with_reconnect(query.c_str())) != MYSQL_OK)
       {
         throw DbErrors(db->getErrorMsg());
       }
@@ -1488,7 +1487,6 @@ static size_t ci_find(const std::string& where, const std::string& what)
 int MysqlDataset::exec(const std::string &sql) {
   if (!handle()) throw DbErrors("No Database Connection");
   std::string qry = sql;
-  int res = 0;
   exec_res.clear();
 
   // enforce the "auto_increment" keyword to be appended to "integer primary key"
@@ -1523,6 +1521,7 @@ int MysqlDataset::exec(const std::string &sql) {
   else
   {
     //! @todo collect results and store in exec_res
+    int res = 0;
     return res;
   }
 }

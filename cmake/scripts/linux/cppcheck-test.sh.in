@@ -57,6 +57,37 @@ ignorere=(\\[.*/threads/Event.h.*\\]:.*CEventGroup.*not.explicit
           \\[.*/AddonInstaller.h.*\\]:.*Unused.private.*CAddonUnInstallJob::ClearFavourites
           \\[.*/FFmpegImage.h.*\\]:.*Unused.private.*CFFmpegImage::CleanupLocalOutputBuffer
           \\[.*/FFmpegImage.h.*\\]:.*Unused.private.*CFFmpegImage::EncodeFFmpegFrame
+          \\[.*/mysqldataset.h.*\\]:.*Unused.private.*MysqlDatabase::mysql_vmprintf
+          \\[.*/dx/DeviceResources.h.*\\]:.*The.code.contains.unhandled.characters
+          \\[.*/GUIDialogKeyboardGeneric.h.*\\]:.*Unused.private.*CGUIDialogKeyboardGeneric::OnClickButton
+          \\[.*/GUIVisualisationControl.h.*\\]:.*Unused.private.*CGUIVisualisationControl::DeInitVisualization
+          \\[.*/GUIVisualisationControl.h.*\\]:.*Unused.private.*CGUIVisualisationControl::InitVisualization
+          \\[.*/StereoscopicsManager.h.*\\]:.*Unused.private.*CStereoscopicsManager::ApplyStereoMode
+          \\[.*/StereoscopicsManager.h.*\\]:.*Unused.private.*CStereoscopicsManager::OnPlaybackStarted
+          \\[.*/StereoscopicsManager.h.*\\]:.*Unused.private.*CStereoscopicsManager::OnPlaybackStopped
+          \\[.*/InputCodingTableBaiduPY.h.*\\]:.*Unused.private.*CInputCodingTableBaiduPY::HandleResponse
+          \\[.*/DirectoryProvider.h.*\\]:.*Unused.private.*CDirectoryProvider::UpdateLimit
+          \\[.*/DirectoryProvider.h.*\\]:.*Unused.private.*CDirectoryProvider::UpdateSort
+          \\[.*/DirectoryProvider.h.*\\]:.*Unused.private.*CDirectoryProvider::UpdateURL
+          \\[.*/PictureInfoTag.h.*\\]:.*Unused.private.*CPictureInfoTag::GetStringFromArchive
+          \\[.*/StreamDetails.h.*\\]:.*Unused.private.*CStreamDetails::NewStream
+          \\[.*/GUIWindowHome.h.*\\]:.*Unused.private.*CGUIWindowHome::AddRecentlyAddedJobs
+          \\[.*/GUIWindowSystemInfo.h.*\\]:.*Unused.private.*CGUIWindowSystemInfo::ResetLabels
+          \\[.*/GUIWindowSystemInfo.h.*\\]:.*Unused.private.*CGUIWindowSystemInfo::SetControlLabel
+          \\[.*/GUIDialogTeletext.h.*\\]:.*Unused.private.*CGUIDialogTeletext::SetCoordinates
+          \\[.*/GUIDialogVideoBookmarks.h.*]:.*Unused.private.*CGUIDialogVideoBookmarks::UpdateItem
+          \\[.*/GUIWindowFullScreen.h.*\\]:.*Unused.private.*CGUIWindowFullScreen::ToggleOSD
+          \\[.*/GUIWindowFullScreen.h.*\\]:.*Unused.private.*CGUIWindowFullScreen::TriggerOSD
+          \\[.*/GUIWindowVideoNav.h.*\\]:.*Unused.private.*CGUIWindowVideoNav::SelectFirstUnwatched
+          \\[.*/VideoPlayerRadioRDS.h.*\\]:.*Unused.private.*CDVDRadioRDSData::ProcessUECP
+          \\[.*/VideoPlayerRadioRDS.h.*\\]:.*Unused.private.*CDVDRadioRDSData::ResetRDSCache
+          \\[.*/VideoPlayerTeletext.h.*\\]:.*Unused.private.*CDVDTeletextData::AllocateCache
+          \\[.*/VideoPlayerTeletext.h.*\\]:.*Unused.private.*CDVDTeletextData::Decode_p2829
+          \\[.*/VideoPlayerTeletext.h.*\\]:.*Unused.private.*CDVDTeletextData::SavePage
+          \\[.*/VideoReferenceClock.h.*\\]:.*Unused.private.*CVideoReferenceClock::CBUpdateClock
+          \\[.*/VideoReferenceClock.h.*\\]:.*Unused.private.*CVideoReferenceClock::UpdateRefreshrate
+          \\[.*/DVDOverlayCodecSSA.cpp.*\\]:.*scanf.without.field.width
+          \\[.*/AddonVideoCodec.h.*\\]:.*Unused.private.*CAddonVideoCodec::CopyToInitData
           \\[.*\\]:.*Obsolete.function..alloca..called
           \\[.*\\]:.*Using.memset.*contains.a.floating.point
           \\[.*\\]:.*Skipping.configuration

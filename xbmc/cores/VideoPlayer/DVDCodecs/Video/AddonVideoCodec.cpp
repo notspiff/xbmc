@@ -33,10 +33,12 @@ using namespace kodi::addon;
 CAddonVideoCodec::CAddonVideoCodec(CProcessInfo &processInfo, ADDON::BinaryAddonBasePtr& addonInfo, kodi::addon::IAddonInstance* parentInstance)
   : CDVDVideoCodec(processInfo),
     IAddonInstanceHandler(ADDON_INSTANCE_VIDEOCODEC, addonInfo, parentInstance)
+  , m_struct { { 0 } }
   , m_codecFlags(0)
+  , m_formats{}
   , m_displayAspect(0.0f)
+  , m_width(0), m_height(0)
 {
-  m_struct = { { 0 } };
   m_struct.toKodi.kodiInstance = this;
   m_struct.toKodi.get_frame_buffer = get_frame_buffer;
   m_struct.toKodi.release_frame_buffer = release_frame_buffer;

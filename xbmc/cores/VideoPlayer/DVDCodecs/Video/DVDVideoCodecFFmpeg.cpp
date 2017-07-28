@@ -315,7 +315,8 @@ enum AVPixelFormat CDVDVideoCodecFFmpeg::GetFormat(struct AVCodecContext * avctx
 }
 
 CDVDVideoCodecFFmpeg::CDVDVideoCodecFFmpeg(CProcessInfo &processInfo)
-: CDVDVideoCodec(processInfo), m_postProc(processInfo)
+: CDVDVideoCodec(processInfo), m_postProc(processInfo),
+  m_videoBufferPool(std::make_shared<CVideoBufferPoolFFmpeg>())
 {
   m_pCodecContext = nullptr;
   m_pFrame = nullptr;
@@ -324,7 +325,6 @@ CDVDVideoCodecFFmpeg::CDVDVideoCodecFFmpeg(CProcessInfo &processInfo)
   m_pFilterIn = nullptr;
   m_pFilterOut = nullptr;
   m_pFilterFrame = nullptr;
-  m_videoBufferPool = std::make_shared<CVideoBufferPoolFFmpeg>();
 
   m_iPictureWidth = 0;
   m_iPictureHeight = 0;
@@ -379,7 +379,7 @@ bool CDVDVideoCodecFFmpeg::Open(CDVDStreamInfo &hints, CDVDCodecOptions &options
   if (!m_pCodecContext)
     return false;
 
-  m_pCodecContext->opaque = (ICallbackHWAccel*)this;
+  m_pCodecContext->opaque = static_cast<ICallbackHWAccel*>(this);
   m_pCodecContext->debug_mv = 0;
   m_pCodecContext->debug = 0;
   m_pCodecContext->workaround_bugs = FF_BUG_AUTODETECT;
