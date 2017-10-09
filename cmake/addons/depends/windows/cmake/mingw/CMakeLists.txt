@@ -8,7 +8,10 @@ endfunction()
 
 get_filename_component(CORE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/../../../../../.. REALPATH)
 
-if(NOT MSYS_PATH OR NOT MINGW_PATH)
+if($ENV{KODI_MSYS_PATH})
+  set(MSYS_PATH $ENV{KODI_MSYS_PATH})
+  set(MINGW_PATH $ENV{KODI_MINGW_PATH})
+else()
   set(MSYS_PATH "${CORE_SOURCE_DIR}/project/BuildDependencies/msys64")
   if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     set(MINGW_PATH "${MSYS_PATH}/mingw32")
