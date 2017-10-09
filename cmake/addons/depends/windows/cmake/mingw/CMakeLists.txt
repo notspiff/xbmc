@@ -8,11 +8,13 @@ endfunction()
 
 get_filename_component(CORE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/../../../../../.. REALPATH)
 
-set(MSYS_PATH "${CORE_SOURCE_DIR}/project/BuildDependencies/msys64")
-if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-  set(MINGW_PATH "${MSYS_PATH}/mingw32")
-elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  set(MINGW_PATH "${MSYS_PATH}/mingw64")
+if(NOT MSYS_PATH OR NOT MINGW_PATH)
+  set(MSYS_PATH "${CORE_SOURCE_DIR}/project/BuildDependencies/msys64")
+  if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(MINGW_PATH "${MSYS_PATH}/mingw32")
+  elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(MINGW_PATH "${MSYS_PATH}/mingw64")
+  endif()
 endif()
 
 # configure the MinGW toolchain file
