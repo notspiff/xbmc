@@ -20,11 +20,15 @@ else()
   endif()
 endif()
 
+message("horerier ${MSYS_PATH} ${MINGW_PATH}")
+
 # configure the MinGW toolchain file
 configure_file(${PROJECT_SOURCE_DIR}/Toolchain_mingw32.cmake.in ${CMAKE_INSTALL_PREFIX}/Toolchain_mingw32.cmake @ONLY)
 
 # configure MinGWConfig.cmake
 configure_file(${PROJECT_SOURCE_DIR}/MinGWConfig.cmake.in ${CMAKE_INSTALL_PREFIX}/MinGWConfig.cmake)
+file(STRINGS ${CMAKE_INSTALL_PREFIX}/MinGWConfig.cmake conffile)
+message("hmm ${conffile}")
 
 # TODO: MinGW GCC 5.3.0-1 comes without cc.exe, Remove this once package is bumped to 5.3.0-p2
 # See https://github.com/Alexpux/MINGW-packages/pull/1034
