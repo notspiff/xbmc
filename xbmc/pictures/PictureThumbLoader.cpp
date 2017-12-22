@@ -97,6 +97,7 @@ bool CPictureThumbLoader::LoadItemCached(CFileItem* pItem)
       {
         CFileItem item(*pItem);
         CThumbExtractor* extract = new CThumbExtractor(item, pItem->GetPath(), true, thumbURL);
+        extract->DoWork();
         AddJob(extract);
         thumb.clear();
       }
@@ -108,7 +109,7 @@ bool CPictureThumbLoader::LoadItemCached(CFileItem* pItem)
   }
   if (!thumb.empty())
   {
-    CTextureCache::GetInstance().BackgroundCacheImage(thumb);
+    CTextureCache::GetInstance().BackgroundCacheImage(thumb, true);
     pItem->SetArt("thumb", thumb);
   }
   pItem->FillInDefaultIcon();

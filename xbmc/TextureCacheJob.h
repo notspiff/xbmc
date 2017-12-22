@@ -84,6 +84,7 @@ public:
   std::string m_url;
   std::string m_oldHash;
   CTextureDetails m_details;
+  bool sendUpdateMsg = false;
 private:
   /*! \brief retrieve a hash for the given image
    Combines the size, ctime and mtime of the image file into a "unique" hash

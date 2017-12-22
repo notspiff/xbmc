@@ -76,9 +76,10 @@ public:
    cache the image and add to the database [see CTextureCacheJob]
 
    \param image url of the image to cache
+   \param updateWindows If true, send message to media windows to update listing on success
    \sa CacheImage
    */
-  void BackgroundCacheImage(const std::string &image);
+  void BackgroundCacheImage(const std::string &image, bool updateWindows = false);
 
   /*! \brief Cache an image to image cache, optionally return the texture
 
