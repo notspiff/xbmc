@@ -155,7 +155,6 @@ set(optional_deps Alsa
                   Python
                   SmbClient
                   Sndio
-                  SSH
                   UDEV
                   XSLT
                   ${PLATFORM_OPTIONAL_DEPS})
