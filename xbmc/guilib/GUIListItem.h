@@ -163,6 +163,17 @@ public:
   void       ClearProperty(const std::string &strKey);
 
   const CVariant &GetProperty(const std::string &strKey) const;
+protected:
+  struct icompare
+  {
+    bool operator()(const std::string &s1, const std::string &s2) const;
+  };
+
+  typedef std::map<std::string, CVariant, icompare> PropertyMap;
+  PropertyMap m_mapProperties;
+
+public:
+  const PropertyMap& GetProperties() const { return m_mapProperties; }
 
 protected:
   std::string m_strLabel2;     // text of column2
@@ -173,13 +184,6 @@ protected:
   CGUIListItemLayoutPtr m_focusedLayout;
   bool m_bSelected;     // item is selected or not
 
-  struct icompare
-  {
-    bool operator()(const std::string &s1, const std::string &s2) const;
-  };
-
-  typedef std::map<std::string, CVariant, icompare> PropertyMap;
-  PropertyMap m_mapProperties;
 private:
   std::wstring m_sortLabel;    // text for sorting. Need to be UTF16 for proper sorting
   std::string m_strLabel;      // text of column1
