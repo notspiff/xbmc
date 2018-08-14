@@ -611,6 +611,17 @@ static void CFileItemListToVFSDirEntries(VFSDirEntry* entries,
     entries[i].path = strdup(items[i]->GetPath().c_str());
     entries[i].size = items[i]->m_dwSize;
     entries[i].folder = items[i]->m_bIsFolder;
+    entries[i].num_props = items[i]->GetProperties().size();
+    entries[i].properties = new VFSProperty[items[i]->GetProperties().size()];
+    size_t j = 0;
+    for (const auto& it : items[i]->GetProperties())
+    {
+      entries[i].properties[j].name = strdup(it.first.c_str());
+      if (it.second.isString())
+        entries[i].properties[j].val = strdup(it.second.asString().c_str());
+      else if (it.second.isBoolean())
+        entries[i].properties[j].val = strdup(it.second.asBoolean() ? "true" : "false");
+    }
   }
 }
 
@@ -649,6 +660,11 @@ void CAddonCallbacksAddon::FreeDirectory(const void* addonData, VFSDirEntry* ite
   {
     free(items[i].label);
     free(items[i].path);
+    for (int j = 0; j < items[i].num_props; ++j)
+    {
+      free(items[i].properties[j].name);
+      free(items[i].properties[j].val);
+    }
   }
   delete[] items;
 }
