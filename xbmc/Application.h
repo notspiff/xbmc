@@ -16,18 +16,13 @@
 #include "application/ApplicationPowerHandling.h"
 #include "application/ApplicationSkinHandling.h"
 #include "application/ApplicationVolumeHandling.h"
-#include "cores/IPlayerCallback.h"
 #include "guilib/IMsgTargetCallback.h"
 #include "guilib/IWindowManagerCallback.h"
 #include "messaging/IMessageTarget.h"
 #include "settings/ISubSettings.h"
 #include "settings/lib/ISettingCallback.h"
 #include "settings/lib/ISettingsHandler.h"
-#if !defined(TARGET_WINDOWS) && defined(HAS_DVD_DRIVE)
-#include "storage/DetectDVDType.h"
-#endif
 #include "threads/SystemClock.h"
-#include "threads/Thread.h"
 #include "utils/GlobalsHandling.h"
 #include "utils/Stopwatch.h"
 #include "windowing/Resolution.h"
@@ -43,14 +38,9 @@
 class CAction;
 class CFileItem;
 class CFileItemList;
-class CKey;
-class CSeekHandler;
 class CInertialScrollingHandler;
-class CSplash;
-class CBookmark;
 class CGUIComponent;
 class CAppInboundProtocol;
-class CSettingsComponent;
 
 namespace ADDON
 {
@@ -77,11 +67,6 @@ namespace PLAYLIST
 namespace ActiveAE
 {
   class CActiveAE;
-}
-
-namespace VIDEO
-{
-  class CVideoInfoScanner;
 }
 
 namespace MUSIC_INFO
