@@ -49,11 +49,6 @@ namespace ADDON
   typedef std::shared_ptr<IAddon> AddonPtr;
 }
 
-namespace ANNOUNCEMENT
-{
-  class CAnnouncementManager;
-}
-
 namespace MEDIA_DETECT
 {
   class CAutorun;
@@ -239,7 +234,6 @@ protected:
   // inbound protocol
   bool OnEvent(XBMC_Event& newEvent);
 
-  std::shared_ptr<ANNOUNCEMENT::CAnnouncementManager> m_pAnnouncementManager;
   std::unique_ptr<CGUIComponent> m_pGUI;
   std::unique_ptr<CWinSystemBase> m_pWinSystem;
   std::unique_ptr<ActiveAE::CActiveAE> m_pActiveAE;

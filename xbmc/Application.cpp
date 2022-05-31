@@ -402,9 +402,8 @@ bool CApplication::Create()
   CServiceBroker::RegisterJobManager(std::make_shared<CJobManager>());
 
   // Announcement service
-  m_pAnnouncementManager = std::make_shared<ANNOUNCEMENT::CAnnouncementManager>();
-  m_pAnnouncementManager->Start();
-  CServiceBroker::RegisterAnnouncementManager(m_pAnnouncementManager);
+  CServiceBroker::RegisterAnnouncementManager(std::make_shared<ANNOUNCEMENT::CAnnouncementManager>());
+  CServiceBroker::GetAnnouncementManager()->Start();
 
   const auto appMessenger = std::make_shared<CApplicationMessenger>();
   CServiceBroker::RegisterAppMessenger(appMessenger);
@@ -2235,8 +2234,6 @@ bool CApplication::Cleanup()
     CServiceBroker::UnregisterAppMessenger();
 
     CServiceBroker::UnregisterAnnouncementManager();
-    m_pAnnouncementManager->Deinitialize();
-    m_pAnnouncementManager.reset();
 
     CServiceBroker::UnregisterJobManager();
     CServiceBroker::UnregisterCPUInfo();

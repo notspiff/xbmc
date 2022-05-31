@@ -30,6 +30,7 @@ const std::string CAnnouncementManager::ANNOUNCEMENT_SENDER = "xbmc";
 
 CAnnouncementManager::CAnnouncementManager() : CThread("Announce")
 {
+  Create();
 }
 
 CAnnouncementManager::~CAnnouncementManager()
