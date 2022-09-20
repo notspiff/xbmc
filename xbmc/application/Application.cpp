@@ -17,6 +17,8 @@
 #include "Util.h"
 #include "addons/Skin.h"
 #include "addons/VFSEntry.h"
+#include "application/ApplicationActionListeners.h"
+#include "application/ApplicationComponents.h"
 #include "application/AppInboundProtocol.h"
 #include "application/AppParams.h"
 #include "cores/AudioEngine/Engines/ActiveAE/ActiveAE.h"
@@ -222,8 +224,7 @@ using namespace std::chrono_literals;
 #define MAX_FFWD_SPEED 5
 
 CApplication::CApplication(void)
-  : CApplicationActionListeners(m_critSection),
-    CApplicationPlayerCallback(m_appPlayer, m_stackHelper),
+  : CApplicationPlayerCallback(m_appPlayer, m_stackHelper),
     CApplicationPowerHandling(m_appPlayer),
     CApplicationSettingsHandling(m_appPlayer, *this, *this, *this),
     CApplicationSkinHandling(m_appPlayer),
@@ -241,11 +242,17 @@ CApplication::CApplication(void)
 #ifdef HAVE_X11
   XInitThreads();
 #endif
+
+  // register application components
+  const auto appActionListener = std::make_shared<CApplicationActionListeners>(m_critSection);
+  m_components.RegisterComponent(appActionListener);
+
 }
 
 CApplication::~CApplication(void)
 {
   delete m_pInertialScrollingHandler;
+  m_components.DeregisterComponent(typeid(CApplicationActionListeners));
 }
 
 bool CApplication::OnEvent(XBMC_Event& newEvent)
@@ -806,8 +813,9 @@ bool CApplication::Initialize()
   m_slowTimer.StartZero();
 
   // register action listeners
-  RegisterActionListener(&m_appPlayer.GetSeekHandler());
-  RegisterActionListener(&CPlayerController::GetInstance());
+  CApplicationActionListeners& appListen = *m_components.GetComponent<CApplicationActionListeners>();
+  appListen.RegisterActionListener(&m_appPlayer.GetSeekHandler());
+  appListen.RegisterActionListener(&CPlayerController::GetInstance());
 
   CServiceBroker::GetRepositoryUpdater().Start();
   if (!profileManager->UsingLoginScreen())
@@ -975,7 +983,7 @@ bool CApplication::OnAction(const CAction &action)
   // handle extra global presses
 
   // notify action listeners
-  if (NotifyActionListeners(action))
+  if (m_components.GetComponent<CApplicationActionListeners>()->NotifyActionListeners(action))
     return true;
 
   // screenshot : take a screenshot :)
@@ -2109,8 +2117,9 @@ bool CApplication::Stop(int exitCode)
     CScriptInvocationManager::GetInstance().StopRunningScripts();
 
     // unregister action listeners
-    UnregisterActionListener(&m_appPlayer.GetSeekHandler());
-    UnregisterActionListener(&CPlayerController::GetInstance());
+    auto& appListener = *m_components.GetComponent<CApplicationActionListeners>();
+    appListener.UnregisterActionListener(&m_appPlayer.GetSeekHandler());
+    appListener.UnregisterActionListener(&CPlayerController::GetInstance());
 
     CGUIComponent *gui = CServiceBroker::GetGUI();
     if (gui)

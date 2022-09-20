@@ -10,6 +10,8 @@
 
 #include "ServiceBroker.h"
 #include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationActionListeners.h"
 #include "dialogs/GUIDialogNumeric.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
@@ -37,7 +39,9 @@ namespace PVR
 
 CPVRGUIActionListener::CPVRGUIActionListener()
 {
-  g_application.RegisterActionListener(this);
+  auto appListener = CServiceBroker::GetAppComponents().GetComponent<CApplicationActionListeners>();
+  if (appListener)
+    appListener->RegisterActionListener(this);
   CServiceBroker::GetSettingsComponent()->GetSettings()->RegisterCallback(
       this,
       {CSettings::SETTING_PVRPARENTAL_ENABLED, CSettings::SETTING_PVRMANAGER_RESETDB,
@@ -51,7 +55,9 @@ CPVRGUIActionListener::CPVRGUIActionListener()
 CPVRGUIActionListener::~CPVRGUIActionListener()
 {
   CServiceBroker::GetSettingsComponent()->GetSettings()->UnregisterCallback(this);
-  g_application.UnregisterActionListener(this);
+  auto appListener = CServiceBroker::GetAppComponents().GetComponent<CApplicationActionListeners>();
+  if (appListener)
+    appListener->UnregisterActionListener(this);
 }
 
 void CPVRGUIActionListener::Init(CPVRManager& mgr)

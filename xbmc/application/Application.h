@@ -9,10 +9,8 @@
 #pragma once
 
 #include "ServiceManager.h"
-#include "application/ApplicationActionListeners.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationEnums.h"
-#include "application/ApplicationPlayer.h"
 #include "application/ApplicationPlayerCallback.h"
 #include "application/ApplicationPowerHandling.h"
 #include "application/ApplicationSettingsHandling.h"
@@ -89,7 +87,6 @@ namespace MUSIC_INFO
 class CApplication : public IWindowManagerCallback,
                      public IMsgTargetCallback,
                      public KODI::MESSAGING::IMessageTarget,
-                     public CApplicationActionListeners,
                      public CApplicationPlayerCallback,
                      public CApplicationPowerHandling,
                      public CApplicationSettingsHandling,
