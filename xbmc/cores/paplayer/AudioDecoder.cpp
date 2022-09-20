@@ -11,7 +11,8 @@
 #include "CodecFactory.h"
 #include "FileItem.h"
 #include "ServiceBroker.h"
-#include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationVolumeHandling.h"
 #include "music/tags/MusicInfoTag.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -328,10 +329,13 @@ int CAudioDecoder::ReadSamples(int numsamples)
   return RET_SLEEP; // nothing to do
 }
 
-float CAudioDecoder::GetReplayGain(float &peakVal)
+float CAudioDecoder::GetReplayGain(float& peakVal)
 {
 #define REPLAY_GAIN_DEFAULT_LEVEL 89.0f
-  const auto& replayGainSettings = g_application.GetReplayGainSettings();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+
+  const auto& replayGainSettings = appVolume->GetReplayGainSettings();
   if (replayGainSettings.iType == ReplayGain::NONE)
     return 1.0f;
 

@@ -27,6 +27,7 @@
 #include "application/ApplicationPlayer.h"
 #include "application/ApplicationPowerHandling.h"
 #include "application/ApplicationSkinHandling.h"
+#include "application/ApplicationVolumeHandling.h"
 #include "cores/AudioEngine/Engines/ActiveAE/ActiveAE.h"
 #include "cores/IPlayer.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
@@ -226,8 +227,7 @@ using namespace std::chrono_literals;
 #define MAX_FFWD_SPEED 5
 
 CApplication::CApplication(void)
-  : CApplicationPlayerCallback(m_stackHelper),
-    CApplicationSettingsHandling(static_cast<CApplicationVolumeHandling&>(*this))
+  : CApplicationPlayerCallback(m_stackHelper)
 #ifdef HAS_DVD_DRIVE
     ,
     m_Autorun(new CAutorun())
@@ -247,10 +247,12 @@ CApplication::CApplication(void)
   RegisterComponent(std::make_shared<CApplicationPlayer>());
   RegisterComponent(std::make_shared<CApplicationPowerHandling>());
   RegisterComponent(std::make_shared<CApplicationSkinHandling>(this, this, m_bInitializing));
+  RegisterComponent(std::make_shared<CApplicationVolumeHandling>());
 }
 
 CApplication::~CApplication(void)
 {
+  DeregisterComponent(typeid(CApplicationVolumeHandling));
   DeregisterComponent(typeid(CApplicationSkinHandling));
   DeregisterComponent(typeid(CApplicationPowerHandling));
   DeregisterComponent(typeid(CApplicationPlayer));
@@ -431,7 +433,7 @@ bool CApplication::Create()
   CServiceBroker::RegisterAE(m_pActiveAE.get());
 
   // initialize m_replayGainSettings
-  CacheReplayGainSettings(*settings);
+  GetComponent<CApplicationVolumeHandling>()->CacheReplayGainSettings(*settings);
 
   // load the keyboard layouts
   if (!keyboardLayoutManager->Load())
@@ -612,8 +614,12 @@ bool CApplication::Initialize()
 {
   m_pActiveAE->Start();
   // restore AE's previous volume state
-  SetHardwareVolume(m_volumeLevel);
-  CServiceBroker::GetActiveAE()->SetMute(m_muted);
+
+  const auto appVolume = GetComponent<CApplicationVolumeHandling>();
+  const auto level = appVolume->m_volumeLevel;
+  const auto muted = appVolume->m_muted;
+  appVolume->SetHardwareVolume(level);
+  CServiceBroker::GetActiveAE()->SetMute(muted);
 
 #if defined(HAS_DVD_DRIVE) && !defined(TARGET_WINDOWS) // somehow this throws an "unresolved external symbol" on win32
   // turn off cdio logging
@@ -1362,8 +1368,9 @@ bool CApplication::OnAction(const CAction &action)
 
   if (action.GetID() == ACTION_MUTE)
   {
-    ToggleMute();
-    ShowVolumeBar(&action);
+    const auto appVolume = GetComponent<CApplicationVolumeHandling>();
+    appVolume->ToggleMute();
+    appVolume->ShowVolumeBar(&action);
     return true;
   }
 
@@ -1384,11 +1391,12 @@ bool CApplication::OnAction(const CAction &action)
   // Check for global volume control
   if ((action.GetAmount() && (action.GetID() == ACTION_VOLUME_UP || action.GetID() == ACTION_VOLUME_DOWN)) || action.GetID() == ACTION_VOLUME_SET)
   {
+    const auto appVolume = GetComponent<CApplicationVolumeHandling>();
     if (!appPlayer->IsPassthrough())
     {
-      if (m_muted)
-        UnMute();
-      float volume = m_volumeLevel;
+      if (appVolume->m_muted)
+        appVolume->UnMute();
+      float volume = appVolume->m_volumeLevel;
       int volumesteps = CServiceBroker::GetSettingsComponent()->GetSettings()->GetInt(CSettings::SETTING_AUDIOOUTPUT_VOLUMESTEPS);
       // sanity check
       if (volumesteps == 0)
@@ -1396,9 +1404,13 @@ bool CApplication::OnAction(const CAction &action)
 
 // Android has steps based on the max available volume level
 #if defined(TARGET_ANDROID)
-      float step = (VOLUME_MAXIMUM - VOLUME_MINIMUM) / CXBMCApp::GetMaxSystemVolume();
+      float step = (CApplicationVolumeHandling::VOLUME_MAXIMUM -
+                    CApplicationVolumeHandling::VOLUME_MINIMUM) /
+                   CXBMCApp::GetMaxSystemVolume();
 #else
-      float step   = (VOLUME_MAXIMUM - VOLUME_MINIMUM) / volumesteps;
+      float step = (CApplicationVolumeHandling::VOLUME_MAXIMUM -
+                    CApplicationVolumeHandling::VOLUME_MINIMUM) /
+                   volumesteps;
 
       if (action.GetRepeat())
         step *= action.GetRepeat() * 50; // 50 fps
@@ -1409,13 +1421,14 @@ bool CApplication::OnAction(const CAction &action)
         volume -= action.GetAmount() * action.GetAmount() * step;
       else
         volume = action.GetAmount() * step;
-      if (volume != m_volumeLevel)
-        SetVolume(volume, false);
+      if (volume != appVolume->m_volumeLevel)
+        appVolume->SetVolume(volume, false);
     }
     // show visual feedback of volume or passthrough indicator
-    ShowVolumeBar(&action);
+    appVolume->ShowVolumeBar(&action);
     return true;
   }
+
   if (action.GetID() == ACTION_GUIPROFILE_BEGIN)
   {
     CGUIControlProfiler::Instance().SetOutputFile(CSpecialProtocol::TranslatePath("special://home/guiprofiler.xml"));
@@ -1517,7 +1530,7 @@ void CApplication::OnApplicationMessage(ThreadMessage* pMsg)
   case TMSG_VOLUME_SHOW:
   {
     CAction action(pMsg->param1);
-    ShowVolumeBar(&action);
+    GetComponent<CApplicationVolumeHandling>()->ShowVolumeBar(&action);
   }
   break;
 
@@ -2521,9 +2534,10 @@ bool CApplication::PlayFile(CFileItem item, const std::string& player, bool bRes
       CLog::LogF(LOGDEBUG, "Ignored {} playback thread messages", dMsgCount);
   }
 
+  const auto appVolume = GetComponent<CApplicationVolumeHandling>();
   appPlayer->OpenFile(item, options, m_ServiceManager->GetPlayerCoreFactory(), player, *this);
-  appPlayer->SetVolume(m_volumeLevel);
-  appPlayer->SetMute(m_muted);
+  appPlayer->SetVolume(appVolume->m_volumeLevel);
+  appPlayer->SetMute(appVolume->m_muted);
 
 #if !defined(TARGET_POSIX)
   CGUIComponent *gui = CServiceBroker::GetGUI();
@@ -2662,8 +2676,10 @@ bool CApplication::OnMessage(CGUIMessage& message)
         CServiceBroker::GetGUI()->GetWindowManager().Delete(WINDOW_SPLASH);
 
         // show the volumebar if the volume is muted
-        if (IsMuted() || GetVolumeRatio() <= VOLUME_MINIMUM)
-          ShowVolumeBar();
+        const auto appVolume = GetComponent<CApplicationVolumeHandling>();
+        if (appVolume->IsMuted() ||
+            appVolume->GetVolumeRatio() <= CApplicationVolumeHandling::VOLUME_MINIMUM)
+          appVolume->ShowVolumeBar();
 
         if (!m_incompatibleAddons.empty())
         {

@@ -40,12 +40,6 @@ bool IsPlaying(const std::string& condition,
 }
 } // namespace
 
-CApplicationSettingsHandling::CApplicationSettingsHandling(
-    CApplicationVolumeHandling& volumeHandling)
-  : m_volumeHandling(volumeHandling)
-{
-}
-
 void CApplicationSettingsHandling::RegisterSettings()
 {
   const std::shared_ptr<CSettings> settings = CServiceBroker::GetSettingsComponent()->GetSettings();
@@ -204,10 +198,14 @@ bool CApplicationSettingsHandling::OnSettingUpdate(const std::shared_ptr<CSettin
 
 bool CApplicationSettingsHandling::Load(const TiXmlNode* settings)
 {
-  return m_volumeHandling.Load(settings);
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+  return appVolume ? appVolume->Load(settings) : false;
 }
 
 bool CApplicationSettingsHandling::Save(TiXmlNode* settings) const
 {
-  return m_volumeHandling.Save(settings);
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+  return appVolume ? appVolume->Save(settings) : false;
 }
