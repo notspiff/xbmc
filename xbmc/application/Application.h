@@ -14,7 +14,6 @@
 #include "application/ApplicationPlayerCallback.h"
 #include "application/ApplicationSettingsHandling.h"
 #include "application/ApplicationStackHelper.h"
-#include "application/ApplicationVolumeHandling.h"
 #include "cores/IPlayerCallback.h"
 #include "guilib/IMsgTargetCallback.h"
 #include "guilib/IWindowManagerCallback.h"
@@ -87,8 +86,7 @@ class CApplication : public IWindowManagerCallback,
                      public IMsgTargetCallback,
                      public KODI::MESSAGING::IMessageTarget,
                      public CApplicationPlayerCallback,
-                     public CApplicationSettingsHandling,
-                     public CApplicationVolumeHandling
+                     public CApplicationSettingsHandling
 {
 friend class CAppInboundProtocol;
 

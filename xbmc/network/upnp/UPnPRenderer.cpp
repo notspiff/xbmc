@@ -20,6 +20,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationVolumeHandling.h"
 #include "filesystem/SpecialProtocol.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
@@ -687,7 +688,10 @@ CUPnPRenderer::OnSetVolume(PLT_ActionReference& action)
 {
     NPT_String volume;
     NPT_CHECK_SEVERE(action->GetArgumentValue("DesiredVolume", volume));
-    g_application.SetVolume((float)strtod((const char*)volume, NULL));
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+    if (appVolume)
+      appVolume->SetVolume((float)strtod((const char*)volume, NULL));
     return NPT_SUCCESS;
 }
 
@@ -699,8 +703,11 @@ CUPnPRenderer::OnSetMute(PLT_ActionReference& action)
 {
     NPT_String mute;
     NPT_CHECK_SEVERE(action->GetArgumentValue("DesiredMute",mute));
-    if((mute == "1") ^ g_application.IsMuted())
-        g_application.ToggleMute();
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+    if (appVolume)
+      if((mute == "1") ^ appVolume->IsMuted())
+          appVolume->ToggleMute();
     return NPT_SUCCESS;
 }
 

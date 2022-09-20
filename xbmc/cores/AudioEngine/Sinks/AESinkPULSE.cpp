@@ -8,7 +8,8 @@
 #include "AESinkPULSE.h"
 
 #include "ServiceBroker.h"
-#include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationVolumeHandling.h"
 #include "cores/AudioEngine/AESinkFactory.h"
 #include "guilib/LocalizeStrings.h"
 #include "threads/SingleLock.h"
@@ -1184,7 +1185,10 @@ void CAESinkPULSE::SetVolume(float volume)
        per_cent_volume = (float) n_vol / PA_VOLUME_NORM;
        // only update internal volume
        pa_threaded_mainloop_unlock(m_MainLoop);
-       g_application.SetVolume(per_cent_volume, false);
+       auto& components = CServiceBroker::GetAppComponents();
+       const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+       if (appVolume)
+         appVolume->SetVolume(per_cent_volume, false);
        return;
     }
 

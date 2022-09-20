@@ -16,6 +16,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationVolumeHandling.h"
 #include "cores/AudioEngine/Utils/AEUtil.h"
 #include "cores/DataCacheCore.h"
 #include "cores/EdlEdit.h"
@@ -189,9 +190,13 @@ bool CPlayerGUIInfo::GetLabel(std::string& value, const CFileItem *item, int con
       value = std::to_string(std::lrintf(g_application.GetCachePercentage()));
       return true;
     case PLAYER_VOLUME:
+    {
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
       value =
-          StringUtils::Format("{:2.1f} dB", CAEUtil::PercentToGain(g_application.GetVolumeRatio()));
+          StringUtils::Format("{:2.1f} dB", CAEUtil::PercentToGain(appVolume ? appVolume->GetVolumeRatio() : 0.f));
       return true;
+    }
     case PLAYER_SUBTITLE_DELAY:
       value = StringUtils::Format("{:2.3f} s",
                                   appPlayer->GetVideoSettings().m_SubtitleDelay);
@@ -372,8 +377,12 @@ bool CPlayerGUIInfo::GetInt(int& value, const CGUIListItem *gitem, int contextWi
     // PLAYER_*
     ///////////////////////////////////////////////////////////////////////////////////////////////
     case PLAYER_VOLUME:
-      value = static_cast<int>(g_application.GetVolumePercent());
+    {
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+      value = appVolume ? static_cast<int>(appVolume->GetVolumePercent()) : 0;
       return true;
+    }
     case PLAYER_SUBTITLE_DELAY:
       value = g_application.GetSubtitleDelay();
       return true;
@@ -440,9 +449,16 @@ bool CPlayerGUIInfo::GetBool(bool& value, const CGUIListItem *gitem, int context
       value = m_playerShowTime;
       return true;
     case PLAYER_MUTED:
-      value = (g_application.IsMuted() ||
-               g_application.GetVolumeRatio() <= CApplicationVolumeHandling::VOLUME_MINIMUM);
+    {
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+      if (appVolume)
+        value = (appVolume->IsMuted() ||
+                 appVolume->GetVolumeRatio() <= CApplicationVolumeHandling::VOLUME_MINIMUM);
+      else
+        value = false;
       return true;
+    }
     case PLAYER_HAS_MEDIA:
       value = appPlayer->IsPlaying();
       return true;

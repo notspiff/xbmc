@@ -8,6 +8,9 @@
 
 #include "GUIDialogVolumeBar.h"
 
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationVolumeHandling.h"
+#include "guilib/GUIMessage.h"
 #include "IGUIVolumeBarCallback.h"
 #include "application/Application.h"
 #include "input/Key.h"
@@ -28,8 +31,11 @@ bool CGUIDialogVolumeBar::OnAction(const CAction &action)
 {
   if (action.GetID() == ACTION_VOLUME_UP || action.GetID() == ACTION_VOLUME_DOWN || action.GetID() == ACTION_VOLUME_SET || action.GetID() == ACTION_MUTE)
   {
-    if (g_application.IsMuted() ||
-        g_application.GetVolumeRatio() <= CApplicationVolumeHandling::VOLUME_MINIMUM)
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+    if (appVolume &&
+        (appVolume->IsMuted() ||
+         appVolume->GetVolumeRatio() <= CApplicationVolumeHandling::VOLUME_MINIMUM))
     { // cancel the timer, dialog needs to stay visible
       CancelAutoClose();
     }
@@ -45,7 +51,7 @@ bool CGUIDialogVolumeBar::OnAction(const CAction &action)
 
 bool CGUIDialogVolumeBar::OnMessage(CGUIMessage& message)
 {
-  switch ( message.GetMessage() )
+  switch (message.GetMessage())
   {
   case GUI_MSG_WINDOW_INIT:
   case GUI_MSG_WINDOW_DEINIT:

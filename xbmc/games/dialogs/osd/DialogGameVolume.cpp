@@ -9,7 +9,8 @@
 #include "DialogGameVolume.h"
 
 #include "ServiceBroker.h"
-#include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationVolumeHandling.h"
 #include "dialogs/GUIDialogVolumeBar.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIDialog.h"
@@ -96,7 +97,10 @@ void CDialogGameVolume::OnSliderChange(void* data, CGUISliderControl* slider)
   if (std::fabs(volumePercent - m_volumePercent) > 0.1f)
   {
     m_volumePercent = volumePercent;
-    g_application.SetVolume(volumePercent, true);
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+    if (appVolume)
+      appVolume->SetVolume(volumePercent, true);
   }
 }
 
@@ -135,7 +139,9 @@ void CDialogGameVolume::OnStateChanged()
 
 float CDialogGameVolume::GetVolumePercent() const
 {
-  return g_application.GetVolumePercent();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appVolume = components.GetComponent<CApplicationVolumeHandling>();
+  return appVolume ? appVolume->GetVolumePercent() : 0.f;
 }
 
 std::string CDialogGameVolume::GetLabel()
