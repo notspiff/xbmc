@@ -41,8 +41,8 @@ bool IsPlaying(const std::string& condition,
 } // namespace
 
 CApplicationSettingsHandling::CApplicationSettingsHandling(
-    CApplicationSkinHandling& skinHandling, CApplicationVolumeHandling& volumeHandling)
-  : m_skinHandling(skinHandling), m_volumeHandling(volumeHandling)
+    CApplicationVolumeHandling& volumeHandling)
+  : m_volumeHandling(volumeHandling)
 {
 }
 
@@ -115,15 +115,12 @@ void CApplicationSettingsHandling::OnSettingChanged(const std::shared_ptr<const 
   if (!setting)
     return;
 
-  if (m_skinHandling.OnSettingChanged(*setting))
-    return;
-
   auto& components = CServiceBroker::GetAppComponents();
-  const auto appPower = components.GetComponent<CApplicationPowerHandling>();
-
-  if (appPower->OnSettingChanged(*setting))
+  const auto appSkin = components.GetComponent<CApplicationSkinHandling>();
+  if (appSkin->OnSettingChanged(*setting))
     return;
 
+  const auto appPower = components.GetComponent<CApplicationPowerHandling>();
   if (appPower->OnSettingChanged(*setting))
     return;
 

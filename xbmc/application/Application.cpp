@@ -26,6 +26,7 @@
 #include "application/ApplicationActionListeners.h"
 #include "application/ApplicationPlayer.h"
 #include "application/ApplicationPowerHandling.h"
+#include "application/ApplicationSkinHandling.h"
 #include "cores/AudioEngine/Engines/ActiveAE/ActiveAE.h"
 #include "cores/IPlayer.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
@@ -226,8 +227,7 @@ using namespace std::chrono_literals;
 
 CApplication::CApplication(void)
   : CApplicationPlayerCallback(m_stackHelper),
-    CApplicationSettingsHandling(*this, *this),
-    CApplicationSkinHandling(this, this, m_bInitializing)
+    CApplicationSettingsHandling(static_cast<CApplicationVolumeHandling&>(*this))
 #ifdef HAS_DVD_DRIVE
     ,
     m_Autorun(new CAutorun())
@@ -246,10 +246,12 @@ CApplication::CApplication(void)
   RegisterComponent(std::make_shared<CApplicationActionListeners>(m_critSection));
   RegisterComponent(std::make_shared<CApplicationPlayer>());
   RegisterComponent(std::make_shared<CApplicationPowerHandling>());
+  RegisterComponent(std::make_shared<CApplicationSkinHandling>(this, this, m_bInitializing));
 }
 
 CApplication::~CApplication(void)
 {
+  DeregisterComponent(typeid(CApplicationSkinHandling));
   DeregisterComponent(typeid(CApplicationPowerHandling));
   DeregisterComponent(typeid(CApplicationPlayer));
   DeregisterComponent(typeid(CApplicationActionListeners));
@@ -683,15 +685,17 @@ bool CApplication::Initialize()
   // GUI depends on seek handler
   GetComponent<CApplicationPlayer>()->GetSeekHandler().Configure();
 
+  const auto skinHandling = GetComponent<CApplicationSkinHandling>();
+
   bool uiInitializationFinished = false;
 
   if (CServiceBroker::GetGUI()->GetWindowManager().Initialized())
   {
-    const std::shared_ptr<CSettings> settings = CServiceBroker::GetSettingsComponent()->GetSettings();
+    const auto settings = CServiceBroker::GetSettingsComponent()->GetSettings();
 
     CServiceBroker::GetGUI()->GetWindowManager().CreateWindows();
 
-    m_confirmSkinChange = false;
+    skinHandling->m_confirmSkinChange = false;
 
     std::vector<AddonInfoPtr> incompatibleAddons;
     event.Reset();
@@ -733,7 +737,7 @@ bool CApplication::Initialize()
 
     // Start splashscreen and load skin
     CServiceBroker::GetRenderSystem()->ShowSplash("");
-    m_confirmSkinChange = true;
+    skinHandling->m_confirmSkinChange = true;
 
     auto setting = settings->GetSetting(CSettings::SETTING_LOOKANDFEEL_SKIN);
     if (!setting)
@@ -745,12 +749,12 @@ bool CApplication::Initialize()
     CServiceBroker::RegisterTextureCache(std::make_shared<CTextureCache>());
 
     std::string skinId = settings->GetString(CSettings::SETTING_LOOKANDFEEL_SKIN);
-    if (!CApplicationSkinHandling::LoadSkin(skinId))
+    if (!skinHandling->LoadSkin(skinId))
     {
       CLog::Log(LOGERROR, "Failed to load skin '{}'", skinId);
       std::string defaultSkin =
           std::static_pointer_cast<const CSettingString>(setting)->GetDefault();
-      if (!CApplicationSkinHandling::LoadSkin(defaultSkin))
+      if (!skinHandling->LoadSkin(defaultSkin))
       {
         CLog::Log(LOGFATAL, "Default skin '{}' could not be loaded! Terminating..", defaultSkin);
         return false;
@@ -1921,7 +1925,7 @@ bool CApplication::Cleanup()
     CServiceBroker::UnregisterSpeechRecognition();
 
     CLog::Log(LOGINFO, "unload skin");
-    UnloadSkin();
+    GetComponent<CApplicationSkinHandling>()->UnloadSkin();
 
     CServiceBroker::UnregisterTextureCache();
 
@@ -2688,7 +2692,7 @@ bool CApplication::OnMessage(CGUIMessage& message)
         m_bInitializing = false;
 
         if (message.GetSenderId() == WINDOW_SETTINGS_PROFILES)
-          g_application.ReloadSkin(false);
+          GetComponent<CApplicationSkinHandling>()->ReloadSkin(false);
       }
       else if (message.GetParam1() == GUI_MSG_UPDATE_ITEM && message.GetItem())
       {
@@ -3098,7 +3102,7 @@ void CApplication::Process()
 void CApplication::ProcessSlow()
 {
   // process skin resources (skin timers)
-  ProcessSkin();
+  GetComponent<CApplicationSkinHandling>()->ProcessSkin();
 
   CServiceBroker::GetPowerManager().ProcessEvents();
 
@@ -3551,7 +3555,7 @@ void CApplication::SetLoggingIn(bool switchingProfiles)
   // because in that case we have already loaded the new profile and
   // would therefore write the previous skin's settings into the new profile
   // instead of into the previous one
-  m_saveSkinOnUnloading = !switchingProfiles;
+  GetComponent<CApplicationSkinHandling>()->m_saveSkinOnUnloading = !switchingProfiles;
 }
 
 void CApplication::PrintStartupLog()
