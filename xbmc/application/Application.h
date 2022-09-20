@@ -12,7 +12,6 @@
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationEnums.h"
 #include "application/ApplicationPlayerCallback.h"
-#include "application/ApplicationStackHelper.h"
 #include "cores/IPlayerCallback.h"
 #include "guilib/IMsgTargetCallback.h"
 #include "guilib/IWindowManagerCallback.h"
@@ -118,7 +117,6 @@ public:
   const CFileItem& CurrentUnstackedItem();
   bool OnMessage(CGUIMessage& message) override;
   std::string GetCurrentPlayer();
-  const CApplicationStackHelper& GetAppStackHelper() const;
   CApplicationComponents& GetAppComponents() { return m_components; }
 
   int  GetMessageMask() override;
@@ -259,7 +257,6 @@ private:
   std::atomic_uint m_WaitingExternalCalls;        /*!< counts threads which are waiting to be processed in FrameMove */
   unsigned int m_ProcessedExternalCalls = 0;      /*!< counts calls which are processed during one "door open" cycle in FrameMove */
   unsigned int m_ProcessedExternalDecay = 0;      /*!< counts to close door after a few frames of no python activity */
-  CApplicationStackHelper m_stackHelper;
   int m_ExitCode{EXITCODE_QUIT};
 };
 

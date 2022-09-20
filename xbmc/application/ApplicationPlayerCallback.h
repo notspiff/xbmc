@@ -17,7 +17,7 @@ class CApplicationStackHelper;
 class CApplicationPlayerCallback : public IPlayerCallback
 {
 public:
-  CApplicationPlayerCallback(CApplicationStackHelper& stackHelper);
+  CApplicationPlayerCallback();
 
   void OnPlayBackEnded() override;
   void OnPlayBackStarted(const CFileItem& file) override;
@@ -36,7 +36,6 @@ public:
   void StoreVideoSettings(const CFileItem& fileItem, const CVideoSettings& vs) override;
 
 protected:
-  CApplicationStackHelper& m_stackHelper; //!< Reference to application stack helper
   CFileItemPtr m_itemCurrentFile; //!< Currently playing file
   CEvent m_playerEvent;
 };
