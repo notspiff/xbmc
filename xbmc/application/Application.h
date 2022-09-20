@@ -10,6 +10,7 @@
 
 #include "ServiceManager.h"
 #include "application/ApplicationActionListeners.h"
+#include "application/ApplicationComponents.h"
 #include "application/ApplicationEnums.h"
 #include "application/ApplicationPlayer.h"
 #include "application/ApplicationPlayerCallback.h"
@@ -130,6 +131,7 @@ public:
   CApplicationPlayer& GetAppPlayer();
   std::string GetCurrentPlayer();
   const CApplicationStackHelper& GetAppStackHelper() const;
+  CApplicationComponents& GetAppComponents() { return m_components; }
 
   int  GetMessageMask() override;
   void OnApplicationMessage(KODI::MESSAGING::ThreadMessage* pMsg) override;
@@ -215,6 +217,7 @@ protected:
   // inbound protocol
   bool OnEvent(XBMC_Event& newEvent);
 
+  CApplicationComponents m_components;
   std::shared_ptr<ANNOUNCEMENT::CAnnouncementManager> m_pAnnouncementManager;
   std::unique_ptr<CGUIComponent> m_pGUI;
   std::unique_ptr<CWinSystemBase> m_pWinSystem;

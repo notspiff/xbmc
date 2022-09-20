@@ -281,6 +281,11 @@ CEventLog* CServiceBroker::GetEventLog()
 CMediaManager& CServiceBroker::GetMediaManager()
 {
   return g_application.m_ServiceManager->GetMediaManager();
+
+}
+CApplicationComponents& CServiceBroker::GetAppComponents()
+{
+  return g_application.GetAppComponents();
 }
 
 CGUIComponent* CServiceBroker::GetGUI()
