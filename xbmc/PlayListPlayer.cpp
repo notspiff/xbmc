@@ -15,6 +15,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPowerHandling.h"
 #include "dialogs/GUIDialogKaiToast.h"
 #include "filesystem/PluginDirectory.h"
 #include "filesystem/VideoDatabaseFile.h"
@@ -807,6 +808,13 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
 
+  auto wakeScreensaver = []() {
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPower = components.GetComponent<CApplicationPowerHandling>();
+    appPower->ResetScreenSaver();
+    appPower->WakeUpScreenSaverAndDPMS();
+  };
+
   switch (pMsg->dwMessage)
   {
   case TMSG_PLAYLISTPLAYER_PLAY:
@@ -893,8 +901,7 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
 
   case TMSG_MEDIA_PLAY:
   {
-    g_application.ResetScreenSaver();
-    g_application.WakeUpScreenSaverAndDPMS();
+    wakeScreensaver();
 
     // first check if we were called from the PlayFile() function
     if (pMsg->lpVoid && pMsg->param2 == 0)
@@ -995,8 +1002,7 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
       (stopMusic && CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow() == WINDOW_VISUALISATION))
       CServiceBroker::GetGUI()->GetWindowManager().PreviousWindow();
 
-    g_application.ResetScreenSaver();
-    g_application.WakeUpScreenSaverAndDPMS();
+    wakeScreensaver();
 
     // stop playing file
     if (appPlayer->IsPlaying())
@@ -1007,8 +1013,7 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
   case TMSG_MEDIA_PAUSE:
     if (appPlayer->HasPlayer())
     {
-      g_application.ResetScreenSaver();
-      g_application.WakeUpScreenSaverAndDPMS();
+      wakeScreensaver();
       appPlayer->Pause();
     }
     break;
@@ -1016,8 +1021,7 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
   case TMSG_MEDIA_UNPAUSE:
     if (appPlayer->IsPausedPlayback())
     {
-      g_application.ResetScreenSaver();
-      g_application.WakeUpScreenSaverAndDPMS();
+      wakeScreensaver();
       appPlayer->Pause();
     }
     break;
@@ -1025,8 +1029,7 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
   case TMSG_MEDIA_PAUSE_IF_PLAYING:
     if (appPlayer->IsPlaying() && !appPlayer->IsPaused())
     {
-      g_application.ResetScreenSaver();
-      g_application.WakeUpScreenSaverAndDPMS();
+      wakeScreensaver();
       appPlayer->Pause();
     }
     break;

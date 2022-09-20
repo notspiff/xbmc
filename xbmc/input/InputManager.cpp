@@ -20,6 +20,8 @@
 #include "application/AppInboundProtocol.h"
 #include "application/AppParamParser.h"
 #include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPowerHandling.h"
 #include "guilib/GUIAudioManager.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIControl.h"
@@ -121,10 +123,12 @@ bool CInputManager::ProcessMouse(int windowId)
     return true;
 
   // Reset the screensaver and idle timers
-  g_application.ResetSystemIdleTimer();
-  g_application.ResetScreenSaver();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPower = components.GetComponent<CApplicationPowerHandling>();
+  appPower->ResetSystemIdleTimer();
+  appPower->ResetScreenSaver();
 
-  if (g_application.WakeUpScreenSaverAndDPMS())
+  if (appPower->WakeUpScreenSaverAndDPMS())
     return true;
 
   // Retrieve the corresponding action
@@ -177,9 +181,11 @@ bool CInputManager::ProcessEventServer(int windowId, float frameTime)
   if (es->ExecuteNextAction())
   {
     // reset idle timers
-    g_application.ResetSystemIdleTimer();
-    g_application.ResetScreenSaver();
-    g_application.WakeUpScreenSaverAndDPMS();
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPower = components.GetComponent<CApplicationPowerHandling>();
+    appPower->ResetSystemIdleTimer();
+    appPower->ResetScreenSaver();
+    appPower->WakeUpScreenSaverAndDPMS();
   }
 
   // now handle any buttons or axis
@@ -214,11 +220,13 @@ bool CInputManager::ProcessEventServer(int windowId, float frameTime)
                 windowId, strMapName, wKeyID, actionID, actionName))
         {
           // break screensaver
-          g_application.ResetSystemIdleTimer();
-          g_application.ResetScreenSaver();
+          auto& components = CServiceBroker::GetAppComponents();
+          const auto appPower = components.GetComponent<CApplicationPowerHandling>();
+          appPower->ResetSystemIdleTimer();
+          appPower->ResetScreenSaver();
 
           // in case we wokeup the screensaver or screen - eat that action...
-          if (g_application.WakeUpScreenSaverAndDPMS())
+          if (appPower->WakeUpScreenSaverAndDPMS())
             return true;
 
           m_Mouse.SetActive(false);
@@ -519,7 +527,9 @@ bool CInputManager::HandleKey(const CKey& key)
 
   // a key has been pressed.
   // reset Idle Timer
-  g_application.ResetSystemIdleTimer();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPower = components.GetComponent<CApplicationPowerHandling>();
+  appPower->ResetSystemIdleTimer();
   bool processKey = AlwaysProcess(action);
 
   if (StringUtils::StartsWithNoCase(action.GetName(), "CECToggleState") ||
@@ -543,10 +553,10 @@ bool CInputManager::HandleKey(const CKey& key)
     }
   }
 
-  g_application.ResetScreenSaver();
+  appPower->ResetScreenSaver();
 
   // allow some keys to be processed while the screensaver is active
-  if (g_application.WakeUpScreenSaverAndDPMS(processKey) && !processKey)
+  if (appPower->WakeUpScreenSaverAndDPMS(processKey) && !processKey)
   {
     CLog::LogF(LOGDEBUG, "{} pressed, screen saver/dpms woken up",
                m_Keyboard.GetKeyName((int)key.GetButtonCode()));

@@ -25,6 +25,7 @@
 #include "application/AppParams.h"
 #include "application/ApplicationActionListeners.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPowerHandling.h"
 #include "cores/AudioEngine/Engines/ActiveAE/ActiveAE.h"
 #include "cores/IPlayer.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
@@ -225,7 +226,7 @@ using namespace std::chrono_literals;
 
 CApplication::CApplication(void)
   : CApplicationPlayerCallback(m_stackHelper),
-    CApplicationSettingsHandling(*this, *this, *this)
+    CApplicationSettingsHandling(*this, *this)
 #ifdef HAS_DVD_DRIVE
     ,
     m_Autorun(new CAutorun())
@@ -243,10 +244,12 @@ CApplication::CApplication(void)
   // register application components
   RegisterComponent(std::make_shared<CApplicationActionListeners>(m_critSection));
   RegisterComponent(std::make_shared<CApplicationPlayer>());
+  RegisterComponent(std::make_shared<CApplicationPowerHandling>());
 }
 
 CApplication::~CApplication(void)
 {
+  DeregisterComponent(typeid(CApplicationPowerHandling));
   DeregisterComponent(typeid(CApplicationPlayer));
   DeregisterComponent(typeid(CApplicationActionListeners));
 }
@@ -310,12 +313,15 @@ void CApplication::HandlePortEvents()
         CServiceBroker::GetAppMessenger()->PostMsg(static_cast<uint32_t>(newEvent.user.code));
         break;
       case XBMC_SETFOCUS:
+      {
         // Reset the screensaver
-        ResetScreenSaver();
-        WakeUpScreenSaverAndDPMS();
+        const auto appPower = GetComponent<CApplicationPowerHandling>();
+        appPower->ResetScreenSaver();
+        appPower->WakeUpScreenSaverAndDPMS();
         // Send a mouse motion event with no dx,dy for getting the current guiitem selected
         OnAction(CAction(ACTION_MOUSE_MOVE, 0, static_cast<float>(newEvent.focus.x), static_cast<float>(newEvent.focus.y), 0, 0));
         break;
+      }
       default:
         CServiceBroker::GetInputManager().OnEvent(newEvent);
     }
@@ -458,7 +464,8 @@ bool CApplication::CreateGUI()
 {
   m_frameMoveGuard.lock();
 
-  m_renderGUI = true;
+  const auto appPower = GetComponent<CApplicationPowerHandling>();
+  appPower->SetRenderGUI(true);
 
   auto windowSystems = KODI::WINDOWING::CWindowSystemFactory::GetWindowSystems();
 
@@ -820,9 +827,10 @@ bool CApplication::Initialize()
 
   CLog::Log(LOGINFO, "initialize done");
 
-  CheckOSScreenSaverInhibitionSetting();
+  const auto appPower = GetComponent<CApplicationPowerHandling>();
+  appPower->CheckOSScreenSaverInhibitionSetting();
   // reset our screensaver (starts timers etc.)
-  ResetScreenSaver();
+  appPower->ResetScreenSaver();
 
   // if the user interfaces has been fully initialized let everyone know
   if (uiInitializationFinished)
@@ -857,6 +865,7 @@ void CApplication::Render()
     return;
 
   const auto appPlayer = GetComponent<CApplicationPlayer>();
+  const auto appPower = GetComponent<CApplicationPowerHandling>();
 
   bool hasRendered = false;
 
@@ -866,14 +875,14 @@ void CApplication::Render()
   if (!extPlayerActive && CServiceBroker::GetWinSystem()->GetGfxContext().IsFullScreenVideo() &&
       !appPlayer->IsPausedPlayback())
   {
-    ResetScreenSaver();
+    appPower->ResetScreenSaver();
   }
 
-  if(!CServiceBroker::GetRenderSystem()->BeginRender())
+  if (!CServiceBroker::GetRenderSystem()->BeginRender())
     return;
 
   // render gui layer
-  if (m_renderGUI && !m_skipGuiRender)
+  if (appPower->GetRenderGUI() && !m_skipGuiRender)
   {
     if (CServiceBroker::GetWinSystem()->GetGfxContext().GetStereoMode())
     {
@@ -930,7 +939,7 @@ bool CApplication::OnAction(const CAction &action)
     {
       if (gui->GetWindowManager().SwitchToFullScreen())
       {
-        m_navigationTimer.StartZero();
+        GetComponent<CApplicationPowerHandling>()->m_navigationTimer.StartZero();
         return true;
       }
     }
@@ -978,7 +987,7 @@ bool CApplication::OnAction(const CAction &action)
     // just pass the action to the current window and let it handle it
     if (CServiceBroker::GetGUI()->GetWindowManager().OnAction(action))
     {
-      m_navigationTimer.StartZero();
+      GetComponent<CApplicationPowerHandling>()->ResetNavigationTimer();
       return true;
     }
   }
@@ -1064,7 +1073,7 @@ bool CApplication::OnAction(const CAction &action)
         CServiceBroker::GetPVRManager().Get<PVR::GUI::PowerManagement>().CanSystemPowerdown())
     {
       CBuiltins::GetInstance().Execute(action.GetName());
-      m_navigationTimer.StartZero();
+      GetComponent<CApplicationPowerHandling>()->ResetNavigationTimer();
     }
     return true;
   }
@@ -1465,7 +1474,7 @@ void CApplication::OnApplicationMessage(ThreadMessage* pMsg)
     break;
 
   case TMSG_SHUTDOWN:
-    HandleShutdownMessage();
+    GetComponent<CApplicationPowerHandling>()->HandleShutdownMessage();
     break;
 
   case TMSG_RENDERER_FLUSH:
@@ -1493,19 +1502,19 @@ void CApplication::OnApplicationMessage(ThreadMessage* pMsg)
     break;
 
   case TMSG_INHIBITIDLESHUTDOWN:
-    InhibitIdleShutdown(pMsg->param1 != 0);
+    GetComponent<CApplicationPowerHandling>()->InhibitIdleShutdown(pMsg->param1 != 0);
     break;
 
   case TMSG_INHIBITSCREENSAVER:
-    InhibitScreenSaver(pMsg->param1 != 0);
+    GetComponent<CApplicationPowerHandling>()->InhibitScreenSaver(pMsg->param1 != 0);
     break;
 
   case TMSG_ACTIVATESCREENSAVER:
-    ActivateScreenSaver();
+    GetComponent<CApplicationPowerHandling>()->ActivateScreenSaver();
     break;
 
   case TMSG_RESETSCREENSAVER:
-    m_bResetScreenSaver = true;
+    GetComponent<CApplicationPowerHandling>()->m_bResetScreenSaver = true;
     break;
 
   case TMSG_VOLUME_SHOW:
@@ -1519,12 +1528,12 @@ void CApplication::OnApplicationMessage(ThreadMessage* pMsg)
   case TMSG_DISPLAY_SETUP:
     // We might come from a refresh rate switch destroying the native window; use the context resolution
     *static_cast<bool*>(pMsg->lpVoid) = InitWindow(CServiceBroker::GetWinSystem()->GetGfxContext().GetVideoResolution());
-    SetRenderGUI(true);
+    GetComponent<CApplicationPowerHandling>()->SetRenderGUI(true);
     break;
 
   case TMSG_DISPLAY_DESTROY:
     *static_cast<bool*>(pMsg->lpVoid) = CServiceBroker::GetWinSystem()->DestroyWindow();
-    SetRenderGUI(false);
+    GetComponent<CApplicationPowerHandling>()->SetRenderGUI(false);
     break;
 #endif
 
@@ -1638,8 +1647,9 @@ void CApplication::OnApplicationMessage(ThreadMessage* pMsg)
     if (CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow() == WINDOW_FULLSCREEN_VIDEO)
       CServiceBroker::GetGUI()->GetWindowManager().PreviousWindow();
 
-    ResetScreenSaver();
-    WakeUpScreenSaverAndDPMS();
+    const auto appPower = GetComponent<CApplicationPowerHandling>();
+    appPower->ResetScreenSaver();
+    appPower->WakeUpScreenSaverAndDPMS();
 
     if (CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow() != WINDOW_SLIDESHOW)
       CServiceBroker::GetGUI()->GetWindowManager().ActivateWindow(WINDOW_SLIDESHOW);
@@ -1702,7 +1712,7 @@ void CApplication::OnApplicationMessage(ThreadMessage* pMsg)
       if (items.Size() == 0)
       {
         CServiceBroker::GetSettingsComponent()->GetSettings()->SetString(CSettings::SETTING_SCREENSAVER_MODE, "screensaver.xbmc.builtin.dim");
-        ActivateScreenSaver();
+        GetComponent<CApplicationPowerHandling>()->ActivateScreenSaver();
       }
       else
         CServiceBroker::GetGUI()->GetWindowManager().ActivateWindow(WINDOW_SLIDESHOW);
@@ -1755,6 +1765,7 @@ void CApplication::UnlockFrameMoveGuard()
 void CApplication::FrameMove(bool processEvents, bool processGUI)
 {
   const auto appPlayer = GetComponent<CApplicationPlayer>();
+  bool renderGUI = GetComponent<CApplicationPowerHandling>()->GetRenderGUI();
   if (processEvents)
   {
     // currently we calculate the repeat time (ie time from last similar keypress) just global as fps
@@ -1764,7 +1775,7 @@ void CApplication::FrameMove(bool processEvents, bool processGUI)
     if (frameTime > 0.5f)
       frameTime = 0.5f;
 
-    if (processGUI && m_renderGUI)
+    if (processGUI && renderGUI)
     {
       std::unique_lock<CCriticalSection> lock(CServiceBroker::GetWinSystem()->GetGfxContext());
       // check if there are notifications to display
@@ -1781,7 +1792,7 @@ void CApplication::FrameMove(bool processEvents, bool processGUI)
     HandlePortEvents();
     CServiceBroker::GetInputManager().Process(CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindowOrDialog(), frameTime);
 
-    if (processGUI && m_renderGUI)
+    if (processGUI && renderGUI)
     {
       m_pInertialScrollingHandler->ProcessInertialScroll(frameTime);
       appPlayer->GetSeekHandler().FrameMove();
@@ -1808,7 +1819,7 @@ void CApplication::FrameMove(bool processEvents, bool processGUI)
       m_ProcessedExternalCalls = 0;
   }
 
-  if (processGUI && m_renderGUI)
+  if (processGUI && renderGUI)
   {
     m_skipGuiRender = false;
 
@@ -1879,16 +1890,17 @@ int CApplication::Run()
     lastFrameTime = std::chrono::steady_clock::now();
     Process();
 
+    bool renderGUI = GetComponent<CApplicationPowerHandling>()->GetRenderGUI();
     if (!m_bStop)
     {
-      FrameMove(true, m_renderGUI);
+      FrameMove(true, renderGUI);
     }
 
-    if (m_renderGUI && !m_bStop)
+    if (renderGUI && !m_bStop)
     {
       Render();
     }
-    else if (!m_renderGUI)
+    else if (!renderGUI)
     {
       auto now = std::chrono::steady_clock::now();
       frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastFrameTime);
@@ -1925,8 +1937,9 @@ bool CApplication::Cleanup()
     // unloading
     CScriptInvocationManager::GetInstance().Uninitialize();
 
-    m_globalScreensaverInhibitor.Release();
-    m_screensaverInhibitor.Release();
+    const auto appPower = GetComponent<CApplicationPowerHandling>();
+    appPower->m_globalScreensaverInhibitor.Release();
+    appPower->m_screensaverInhibitor.Release();
 
     CRenderSystemBase *renderSystem = CServiceBroker::GetRenderSystem();
     if (renderSystem)
@@ -2059,7 +2072,7 @@ bool CApplication::Stop(int exitCode)
     CServiceBroker::GetAnnouncementManager()->Announce(ANNOUNCEMENT::System, "OnQuit", vExitCode);
 
     // Abort any active screensaver
-    WakeUpScreenSaverAndDPMS();
+    GetComponent<CApplicationPowerHandling>()->WakeUpScreenSaverAndDPMS();
 
     g_alarmClock.StopThread();
 
@@ -2555,12 +2568,14 @@ void CApplication::PlaybackCleanup()
 #endif
   }
 
+  const auto appPower = GetComponent<CApplicationPowerHandling>();
+
   if (!appPlayer->IsPlayingAudio() &&
       CServiceBroker::GetPlaylistPlayer().GetCurrentPlaylist() == PLAYLIST::TYPE_NONE &&
       CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow() == WINDOW_VISUALISATION)
   {
     CServiceBroker::GetSettingsComponent()->GetSettings()->Save();  // save vis settings
-    WakeUpScreenSaverAndDPMS();
+    appPower->WakeUpScreenSaverAndDPMS();
     CServiceBroker::GetGUI()->GetWindowManager().PreviousWindow();
   }
 
@@ -2572,7 +2587,7 @@ void CApplication::PlaybackCleanup()
   {
     // yes, disable vis
     CServiceBroker::GetSettingsComponent()->GetSettings()->Save();    // save vis settings
-    WakeUpScreenSaverAndDPMS();
+    appPower->WakeUpScreenSaverAndDPMS();
     CServiceBroker::GetGUI()->GetWindowManager().PreviousWindow();
   }
 
@@ -3120,7 +3135,8 @@ void CApplication::ProcessSlow()
   }
 
   // Check if we need to activate the screensaver / DPMS.
-  CheckScreenSaverAndDPMS();
+  const auto appPower = GetComponent<CApplicationPowerHandling>();
+  appPower->CheckScreenSaverAndDPMS();
 
   // Check if we need to shutdown (if enabled).
 #if defined(TARGET_DARWIN)
@@ -3130,7 +3146,7 @@ void CApplication::ProcessSlow()
   if (CServiceBroker::GetSettingsComponent()->GetSettings()->GetInt(CSettings::SETTING_POWERMANAGEMENT_SHUTDOWNTIME))
 #endif
   {
-    CheckShutdown();
+    appPower->CheckShutdown();
   }
 
 #if defined(TARGET_POSIX)
@@ -3189,8 +3205,8 @@ void CApplication::ProcessSlow()
   // if we don't render the gui there's no reason to start the screensaver.
   // that way the screensaver won't kick in if we maximize the XBMC window
   // after the screensaver start time.
-  if (!m_renderGUI)
-    ResetScreenSaverTimer();
+  if (!appPower->GetRenderGUI())
+    appPower->ResetScreenSaverTimer();
 }
 
 void CApplication::DelayedPlayerRestart()
