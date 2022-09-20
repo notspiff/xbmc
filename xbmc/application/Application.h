@@ -13,7 +13,6 @@
 #include "application/ApplicationEnums.h"
 #include "application/ApplicationPlayerCallback.h"
 #include "application/ApplicationSettingsHandling.h"
-#include "application/ApplicationSkinHandling.h"
 #include "application/ApplicationStackHelper.h"
 #include "application/ApplicationVolumeHandling.h"
 #include "cores/IPlayerCallback.h"
@@ -89,7 +88,6 @@ class CApplication : public IWindowManagerCallback,
                      public KODI::MESSAGING::IMessageTarget,
                      public CApplicationPlayerCallback,
                      public CApplicationSettingsHandling,
-                     public CApplicationSkinHandling,
                      public CApplicationVolumeHandling
 {
 friend class CAppInboundProtocol;
