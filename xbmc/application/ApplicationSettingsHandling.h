@@ -8,9 +8,12 @@
 
 #pragma once
 
+#include "application/IApplicationComponent.h"
 #include "settings/ISubSettings.h"
 #include "settings/lib/ISettingCallback.h"
 #include "settings/lib/ISettingsHandler.h"
+
+class CApplication;
 
 /*!
  * \brief Class handling application support for settings.
@@ -18,8 +21,10 @@
 
 class CApplicationSettingsHandling : public ISettingCallback,
                                      public ISettingsHandler,
-                                     public ISubSettings
+                                     public ISubSettings,
+                                     public IApplicationComponent
 {
+  friend class CApplication;
 public:
   explicit CApplicationSettingsHandling(bool& m_stop);
 

@@ -22,6 +22,7 @@
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
 #include "application/ApplicationPowerHandling.h"
+#include "application/ApplicationSettingsHandling.h"
 #include "application/ApplicationSkinHandling.h"
 #include "application/ApplicationVolumeHandling.h"
 #include "application/AppParams.h"
@@ -228,8 +229,7 @@ using namespace std::chrono_literals;
 #define MAX_FFWD_SPEED 5
 
 CApplication::CApplication(void)
-  : CApplicationPlayerCallback(m_stackHelper),
-    CApplicationSettingsHandling(m_bStop)
+  : CApplicationPlayerCallback(m_stackHelper)
 #ifdef HAS_DVD_DRIVE
     ,
     m_Autorun(new CAutorun())
@@ -257,6 +257,8 @@ CApplication::CApplication(void)
   m_components.RegisterComponent(appSkinHandling);
   const auto appVolumeHandling = std::make_shared<CApplicationVolumeHandling>();
   m_components.RegisterComponent(appVolumeHandling);
+  const auto sHandling = std::make_shared<CApplicationSettingsHandling>(m_bStop);
+  m_components.RegisterComponent(sHandling);
 }
 
 CApplication::~CApplication(void)
@@ -265,6 +267,7 @@ CApplication::~CApplication(void)
   m_components.DeregisterComponent(typeid(CApplicationSkinHandling));
   m_components.DeregisterComponent(typeid(CApplicationPowerHandling));
   m_components.DeregisterComponent(typeid(CApplicationVolumeHandling));
+  m_components.DeregisterComponent(typeid(CApplicationSettingsHandling));
   m_components.DeregisterComponent(typeid(CApplicationActionListeners));
   m_components.DeregisterComponent(typeid(CApplicationPlayer));
 }
@@ -348,7 +351,7 @@ bool CApplication::Create()
 {
   m_bStop = false;
 
-  RegisterSettings();
+  m_components.GetComponent<CApplicationSettingsHandling>()->RegisterSettings();
 
   CServiceBroker::RegisterCPUInfo(CCPUInfo::GetCPUInfo());
 
@@ -2006,7 +2009,7 @@ bool CApplication::Cleanup()
     CServiceBroker::UnregisterJobManager();
     CServiceBroker::UnregisterCPUInfo();
 
-    UnregisterSettings();
+    m_components.GetComponent<CApplicationSettingsHandling>()->UnregisterSettings();
 
     m_bInitializing = true;
 

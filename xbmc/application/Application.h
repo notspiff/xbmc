@@ -12,7 +12,6 @@
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationEnums.h"
 #include "application/ApplicationPlayerCallback.h"
-#include "application/ApplicationSettingsHandling.h"
 #include "application/ApplicationStackHelper.h"
 #include "cores/IPlayerCallback.h"
 #include "guilib/IMsgTargetCallback.h"
@@ -85,8 +84,7 @@ namespace MUSIC_INFO
 class CApplication : public IWindowManagerCallback,
                      public IMsgTargetCallback,
                      public KODI::MESSAGING::IMessageTarget,
-                     public CApplicationPlayerCallback,
-                     public CApplicationSettingsHandling
+                     public CApplicationPlayerCallback
 {
 friend class CAppInboundProtocol;
 
