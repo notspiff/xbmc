@@ -12,9 +12,9 @@
 #include "GUIWindowManager.h"
 #include "ServiceBroker.h"
 #include "WindowIDs.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPowerHandling.h"
 #include "input/Key.h"
 #include "utils/ColorUtils.h"
 
@@ -44,7 +44,12 @@ void CGUIVideoControl::Render()
   if (appPlayer && appPlayer->IsRenderingVideo())
   {
     if (!appPlayer->IsPausedPlayback())
-      g_application.ResetScreenSaver();
+    {
+      auto& appComponents = CServiceBroker::GetAppComponents();
+      const auto appPower = appComponents.GetComponent<CApplicationPowerHandling>();
+      if (appPower)
+        appPower->ResetScreenSaver();
+    }
 
     CServiceBroker::GetWinSystem()->GetGfxContext().SetViewWindow(m_posX, m_posY, m_posX + m_width, m_posY + m_height);
     TransformMatrix mat;

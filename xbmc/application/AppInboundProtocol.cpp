@@ -9,6 +9,9 @@
 #include "AppInboundProtocol.h"
 
 #include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPowerHandling.h"
+#include "ServiceBroker.h"
 
 CAppInboundProtocol::CAppInboundProtocol(CApplication &app) : m_pApp(app)
 {
@@ -22,5 +25,8 @@ bool CAppInboundProtocol::OnEvent(XBMC_Event &event)
 
 void CAppInboundProtocol::SetRenderGUI(bool renderGUI)
 {
-  m_pApp.SetRenderGUI(renderGUI);
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPower = components.GetComponent<CApplicationPowerHandling>();
+  if (appPower)
+    appPower->SetRenderGUI(renderGUI);
 }

@@ -13,6 +13,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPowerHandling.h"
 #include "application/AppParams.h"
 #include "cores/AudioEngine/Interfaces/AE.h"
 #include "dialogs/GUIDialogBusyNoCancel.h"
@@ -197,8 +198,13 @@ void CPowerManager::OnSleep()
 
   g_application.StopPlaying();
   CServiceBroker::GetPVRManager().OnSleep();
-  g_application.StopShutdownTimer();
-  g_application.StopScreenSaverTimer();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPower = components.GetComponent<CApplicationPowerHandling>();
+  if (appPower)
+  {
+    appPower->StopShutdownTimer();
+    appPower->StopScreenSaverTimer();
+  }
   g_application.CloseNetworkShares();
   CServiceBroker::GetActiveAE()->Suspend();
 }
@@ -210,7 +216,10 @@ void CPowerManager::OnWake()
   CServiceBroker::GetNetwork().WaitForNet();
 
   // reset out timers
-  g_application.ResetShutdownTimers();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPower = components.GetComponent<CApplicationPowerHandling>();
+  if (appPower)
+    appPower->ResetShutdownTimers();
 
   CGUIDialogBusyNoCancel* dialog =
       CServiceBroker::GetGUI()->GetWindowManager().GetWindow<CGUIDialogBusyNoCancel>(
