@@ -8,10 +8,10 @@
 
 #include "Win10App.h"
 
-#include "AppParams.h"
 #include "Application.h"
-#include "application/AppParamParser.h"
 #include "pch.h"
+#include "application/AppParamParser.h"
+#include "application/AppParams.h"
 #include "platform/Environment.h"
 #include "platform/xbmc.h"
 #include "rendering/dx/RenderContext.h"

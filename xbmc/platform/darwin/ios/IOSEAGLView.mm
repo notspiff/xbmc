@@ -9,7 +9,7 @@
 #import "IOSEAGLView.h"
 
 #include "AppInboundProtocol.h"
-#include "AppParams.h"
+#include "application/AppParams.h"
 #include "Application.h"
 #import "IOSScreenManager.h"
 #include "ServiceBroker.h"
