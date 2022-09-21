@@ -9,8 +9,8 @@
 #include "XBMCApp.h"
 
 #include "AndroidKey.h"
-#include "Application.h"
 #include "CompileInfo.h"
+#include "application/Application.h"
 #include "application/AppParams.h"
 #include "guilib/GUIWindowManager.h"
 #include "interfaces/AnnouncementManager.h"

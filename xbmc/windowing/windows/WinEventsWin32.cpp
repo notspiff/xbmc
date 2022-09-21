@@ -16,6 +16,7 @@
 #include "Util.h"
 #include "WinKeyMap.h"
 #include "application/AppInboundProtocol.h"
+#include "application/Application.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIControl.h" // for EVENT_RESULT
 #include "guilib/GUIWindowManager.h"

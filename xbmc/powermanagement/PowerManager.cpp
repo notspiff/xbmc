@@ -8,9 +8,9 @@
 
 #include "PowerManager.h"
 
-#include "Application.h"
 #include "PowerTypes.h"
 #include "ServiceBroker.h"
+#include "application/Application.h"
 #include "application/AppParams.h"
 #include "cores/AudioEngine/Interfaces/AE.h"
 #include "dialogs/GUIDialogBusyNoCancel.h"
