@@ -8,14 +8,14 @@
 
 #import "IOSEAGLView.h"
 
-#include "AppInboundProtocol.h"
-#include "application/AppParams.h"
 #include "Application.h"
 #import "IOSScreenManager.h"
 #include "ServiceBroker.h"
 #include "Util.h"
 #import "XBMCController.h"
 #include "application/AppEnvironment.h"
+#include "application/AppInboundProtocol.h"
+#include "application/AppParams.h"
 #include "messaging/ApplicationMessenger.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/SettingsComponent.h"
