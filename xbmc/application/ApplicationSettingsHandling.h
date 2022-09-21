@@ -20,6 +20,9 @@ class CApplicationSettingsHandling : public ISettingCallback,
                                      public ISettingsHandler,
                                      public ISubSettings
 {
+public:
+  explicit CApplicationSettingsHandling(bool& m_stop);
+
 protected:
   void RegisterSettings();
   void UnregisterSettings();
@@ -31,4 +34,7 @@ protected:
   bool OnSettingUpdate(const std::shared_ptr<CSetting>& setting,
                        const char* oldSettingId,
                        const TiXmlNode* oldSettingNode) override;
+  bool OnSettingsSaving() const override;
+
+  bool& m_bStop;
 };
