@@ -16,6 +16,8 @@
 #include "TextureDatabase.h"
 #include "URL.h"
 #include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayer.h"
 #include "filesystem/Directory.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUILabelControl.h"
@@ -545,6 +547,9 @@ void CGUIWindowSlideShow::Process(unsigned int currentTime, CDirtyRegionList &re
     }
   }
 
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+
   // render the next image
   if (m_Image[m_iCurrentPic].DrawNextImage())
   {
@@ -554,8 +559,8 @@ void CGUIWindowSlideShow::Process(unsigned int currentTime, CDirtyRegionList &re
     }
     else if (m_Image[1 - m_iCurrentPic].IsLoaded())
     {
-      if (g_application.GetAppPlayer().IsPlayingVideo())
-        g_application.GetAppPlayer().ClosePlayer();
+      if (appPlayer && appPlayer->IsPlayingVideo())
+        appPlayer->ClosePlayer();
       m_bPlayingVideo = false;
       m_iVideoSlide = -1;
 
@@ -632,7 +637,7 @@ void CGUIWindowSlideShow::Process(unsigned int currentTime, CDirtyRegionList &re
 
   RenderPause();
   if (m_slides.at(m_iCurrentSlide)->IsVideo() &&
-      g_application.GetAppPlayer().IsRenderingGuiLayer())
+      appPlayer && appPlayer->IsRenderingGuiLayer())
   {
     MarkDirtyRegion();
   }
@@ -653,7 +658,10 @@ void CGUIWindowSlideShow::Render()
     gfxCtx.SetViewWindow(0, 0, m_coordsRes.iWidth, m_coordsRes.iHeight);
     gfxCtx.SetRenderingResolution(gfxCtx.GetVideoResolution(), false);
 
-    if (g_application.GetAppPlayer().IsRenderingVideoLayer())
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+
+    if (appPlayer && appPlayer->IsRenderingVideoLayer())
     {
       const CRect old = gfxCtx.GetScissors();
       CRect region = GetRenderRegion();
@@ -662,10 +670,10 @@ void CGUIWindowSlideShow::Render()
       gfxCtx.Clear(0);
       gfxCtx.SetScissors(old);
     }
-    else
+    else if (appPlayer)
     {
       const UTILS::COLOR::Color alpha = gfxCtx.MergeAlpha(0xff000000) >> 24;
-      g_application.GetAppPlayer().Render(false, alpha);
+      appPlayer->Render(false, alpha);
     }
 
     gfxCtx.SetRenderingResolution(m_coordsRes, m_needsScaling);
@@ -686,7 +694,12 @@ void CGUIWindowSlideShow::Render()
 void CGUIWindowSlideShow::RenderEx()
 {
   if (m_slides.at(m_iCurrentSlide)->IsVideo())
-    g_application.GetAppPlayer().Render(false, 255, false);
+  {
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+    if (appPlayer)
+      appPlayer->Render(false, 255, false);
+  }
 
   CGUIWindow::RenderEx();
 }
@@ -797,12 +810,16 @@ bool CGUIWindowSlideShow::OnAction(const CAction &action)
     }
     break;
   case ACTION_STOP:
+  {
     if (m_slides.size())
       AnnouncePlayerStop(m_slides.at(m_iCurrentSlide));
-    if (g_application.GetAppPlayer().IsPlayingVideo())
-      g_application.GetAppPlayer().ClosePlayer();
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+    if (appPlayer && appPlayer->IsPlayingVideo())
+      appPlayer->ClosePlayer();
     Close();
     break;
+  }
 
   case ACTION_NEXT_PICTURE:
       ShowNext();
@@ -1247,7 +1264,9 @@ void CGUIWindowSlideShow::RunSlideShow(const std::string &strPath,
                                        const std::string &strExtensions)
 {
   // stop any video
-  if (g_application.GetAppPlayer().IsPlayingVideo())
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+  if (appPlayer && appPlayer->IsPlayingVideo())
     g_application.StopPlaying();
 
   AddFromPath(strPath, bRecursive, method, order, sortAttributes, strExtensions);

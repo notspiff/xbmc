@@ -21,6 +21,7 @@
 #include "guilib/IMsgTargetCallback.h"
 #include "guilib/IWindowManagerCallback.h"
 #include "messaging/IMessageTarget.h"
+#include "playlists/PlayListTypes.h"
 #include "threads/SystemClock.h"
 #include "threads/Thread.h"
 #include "utils/GlobalsHandling.h"
@@ -125,7 +126,6 @@ public:
   std::shared_ptr<CFileItem> CurrentFileItemPtr();
   const CFileItem& CurrentUnstackedItem();
   bool OnMessage(CGUIMessage& message) override;
-  CApplicationPlayer& GetAppPlayer();
   std::string GetCurrentPlayer();
   const CApplicationStackHelper& GetAppStackHelper() const;
   CApplicationComponents& GetAppComponents() { return m_components; }
@@ -271,7 +271,6 @@ private:
   std::atomic_uint m_WaitingExternalCalls;        /*!< counts threads which are waiting to be processed in FrameMove */
   unsigned int m_ProcessedExternalCalls = 0;      /*!< counts calls which are processed during one "door open" cycle in FrameMove */
   unsigned int m_ProcessedExternalDecay = 0;      /*!< counts to close door after a few frames of no python activity */
-  CApplicationPlayer m_appPlayer;
   CApplicationStackHelper m_stackHelper;
   int m_ExitCode{EXITCODE_QUIT};
 };

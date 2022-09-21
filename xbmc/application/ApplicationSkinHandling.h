@@ -21,8 +21,6 @@ class IWindowManagerCallback;
 class CApplicationSkinHandling
 {
 public:
-  explicit CApplicationSkinHandling(CApplicationPlayer& appPlayer);
-
   void UnloadSkin();
 
   bool OnSettingChanged(const CSetting& setting);
@@ -37,7 +35,6 @@ protected:
  */
   void ProcessSkin() const;
 
-  CApplicationPlayer& m_appPlayer;
   bool m_saveSkinOnUnloading = true;
   bool m_confirmSkinChange = true;
   bool m_ignoreSkinSettingChanges = false;

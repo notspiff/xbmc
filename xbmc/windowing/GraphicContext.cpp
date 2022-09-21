@@ -10,7 +10,8 @@
 
 #include "ServiceBroker.h"
 #include "WinSystem.h"
-#include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayer.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
 #include "guilib/TextureManager.h"
@@ -324,6 +325,8 @@ void CGraphicContext::SetFullScreenVideo(bool bOnOff)
   if (m_bFullScreenRoot)
   {
     bool bTriggerUpdateRes = false;
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayer = components.GetComponent<CApplicationPlayer>();
     if (m_bFullScreenVideo)
       bTriggerUpdateRes = true;
     else
@@ -331,15 +334,15 @@ void CGraphicContext::SetFullScreenVideo(bool bOnOff)
       bool allowDesktopRes = CServiceBroker::GetSettingsComponent()->GetSettings()->GetInt(CSettings::SETTING_VIDEOPLAYER_ADJUSTREFRESHRATE) == ADJUST_REFRESHRATE_ALWAYS;
       if (!allowDesktopRes)
       {
-        if (g_application.GetAppPlayer().IsPlayingVideo())
+        if (appPlayer && appPlayer->IsPlayingVideo())
           bTriggerUpdateRes = true;
       }
     }
 
     bool allowResolutionChangeOnStop = CServiceBroker::GetSettingsComponent()->GetSettings()->GetInt(CSettings::SETTING_VIDEOPLAYER_ADJUSTREFRESHRATE) != ADJUST_REFRESHRATE_ON_START;
     RESOLUTION targetResolutionOnStop = RES_DESKTOP;
-    if (bTriggerUpdateRes)
-      g_application.GetAppPlayer().TriggerUpdateResolution();
+    if (bTriggerUpdateRes && appPlayer)
+      appPlayer->TriggerUpdateResolution();
     else if (CDisplaySettings::GetInstance().GetCurrentResolution() > RES_DESKTOP)
     {
       targetResolutionOnStop = CDisplaySettings::GetInstance().GetCurrentResolution();

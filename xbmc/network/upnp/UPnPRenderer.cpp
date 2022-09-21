@@ -18,6 +18,8 @@
 #include "UPnPInternal.h"
 #include "URL.h"
 #include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayer.h"
 #include "filesystem/SpecialProtocol.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
@@ -317,8 +319,9 @@ CUPnPRenderer::UpdateState()
         return;
 
     avt->SetStateVariable("TransportStatus", "OK");
-
-    if (g_application.GetAppPlayer().IsPlaying() || g_application.GetAppPlayer().IsPausedPlayback()) {
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+    if (appPlayer && (appPlayer->IsPlaying() || appPlayer->IsPausedPlayback())) {
         avt->SetStateVariable("NumberOfTracks", "1");
         avt->SetStateVariable("CurrentTrack", "1");
 
@@ -477,8 +480,12 @@ CUPnPRenderer::OnPause(PLT_ActionReference& action)
       CServiceBroker::GetAppMessenger()->SendMsg(
           TMSG_GUI_ACTION, WINDOW_SLIDESHOW, -1,
           static_cast<void*>(new CAction(ACTION_NEXT_PICTURE)));
-    } else if (!g_application.GetAppPlayer().IsPausedPlayback())
-      CServiceBroker::GetAppMessenger()->SendMsg(TMSG_MEDIA_PAUSE);
+    } else {
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+      if (appPlayer && !appPlayer->IsPausedPlayback())
+        CServiceBroker::GetAppMessenger()->SendMsg(TMSG_MEDIA_PAUSE);
+    }
     return NPT_SUCCESS;
 }
 
@@ -488,11 +495,14 @@ CUPnPRenderer::OnPause(PLT_ActionReference& action)
 NPT_Result
 CUPnPRenderer::OnPlay(PLT_ActionReference& action)
 {
-    if (CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow() == WINDOW_SLIDESHOW) {
+    if (CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow() == WINDOW_SLIDESHOW)
         return NPT_SUCCESS;
-    } else if (g_application.GetAppPlayer().IsPausedPlayback()) {
-      CServiceBroker::GetAppMessenger()->SendMsg(TMSG_MEDIA_PAUSE);
-    } else if (!g_application.GetAppPlayer().IsPlaying()) {
+
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+    if (appPlayer && appPlayer->IsPausedPlayback()) {
+        CServiceBroker::GetAppMessenger()->SendMsg(TMSG_MEDIA_PAUSE);
+    } else if (appPlayer && !appPlayer->IsPlaying()) {
         NPT_String uri, meta;
         PLT_Service* service;
         // look for value set previously by SetAVTransportURI
@@ -553,7 +563,10 @@ CUPnPRenderer::OnSetAVTransportURI(PLT_ActionReference& action)
 
     // if not playing already, just keep around uri & metadata
     // and wait for play command
-    if (!g_application.GetAppPlayer().IsPlaying() && CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow() != WINDOW_SLIDESHOW) {
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+    if (appPlayer && !appPlayer->IsPlaying() &&
+        CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow() != WINDOW_SLIDESHOW) {
         service->SetStateVariable("TransportState", "STOPPED");
         service->SetStateVariable("TransportStatus", "OK");
         service->SetStateVariable("TransportPlaySpeed", "1");
@@ -587,7 +600,9 @@ CUPnPRenderer::OnSetNextAVTransportURI(PLT_ActionReference& action)
         return NPT_FAILURE;
     }
 
-    if (g_application.GetAppPlayer().IsPlaying()) {
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+    if (appPlayer && appPlayer->IsPlaying()) {
 
       PLAYLIST::Id playlistId = PLAYLIST::TYPE_MUSIC;
       if (item->IsVideo())
@@ -695,7 +710,10 @@ CUPnPRenderer::OnSetMute(PLT_ActionReference& action)
 NPT_Result
 CUPnPRenderer::OnSeek(PLT_ActionReference& action)
 {
-    if (!g_application.GetAppPlayer().IsPlaying()) return NPT_ERROR_INVALID_STATE;
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+    if (!appPlayer || !appPlayer->IsPlaying())
+        return NPT_ERROR_INVALID_STATE;
 
     NPT_String unit, target;
     NPT_CHECK_SEVERE(action->GetArgumentValue("Unit", unit));

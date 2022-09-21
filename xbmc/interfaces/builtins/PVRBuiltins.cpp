@@ -11,6 +11,8 @@
 #include "GUIInfoManager.h"
 #include "ServiceBroker.h"
 #include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayer.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
 #include "guilib/guiinfo/GUIInfoLabels.h"
@@ -61,24 +63,29 @@ static int SeekPercentage(const std::vector<std::string>& params)
       CLog::Log(LOGERROR, "PVR.SeekPercentage(n) - Invalid argument ({:f}), must be in range 0-100",
                 fTimeshiftPercentage);
     }
-    else if (g_application.GetAppPlayer().IsPlaying())
+    else
     {
-      CGUIInfoManager& infoMgr = CServiceBroker::GetGUI()->GetInfoManager();
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+      if (appPlayer && appPlayer->IsPlaying())
+      {
+        CGUIInfoManager& infoMgr = CServiceBroker::GetGUI()->GetInfoManager();
 
-      int iTimeshiftProgressDuration = 0;
-      infoMgr.GetInt(iTimeshiftProgressDuration, PVR_TIMESHIFT_PROGRESS_DURATION,
-                     INFO::DEFAULT_CONTEXT);
+        int iTimeshiftProgressDuration = 0;
+        infoMgr.GetInt(iTimeshiftProgressDuration, PVR_TIMESHIFT_PROGRESS_DURATION,
+                       INFO::DEFAULT_CONTEXT);
 
-      int iTimeshiftBufferStart = 0;
-      infoMgr.GetInt(iTimeshiftBufferStart, PVR_TIMESHIFT_PROGRESS_BUFFER_START,
-                     INFO::DEFAULT_CONTEXT);
+        int iTimeshiftBufferStart = 0;
+        infoMgr.GetInt(iTimeshiftBufferStart, PVR_TIMESHIFT_PROGRESS_BUFFER_START,
+                       INFO::DEFAULT_CONTEXT);
 
-      float fPlayerPercentage = static_cast<float>(iTimeshiftProgressDuration) /
-                                static_cast<float>(g_application.GetTotalTime()) *
-                                (fTimeshiftPercentage - static_cast<float>(iTimeshiftBufferStart));
-      fPlayerPercentage = std::max(0.0f, std::min(fPlayerPercentage, 100.0f));
+        float fPlayerPercentage = static_cast<float>(iTimeshiftProgressDuration) /
+                                  static_cast<float>(g_application.GetTotalTime()) *
+                                  (fTimeshiftPercentage - static_cast<float>(iTimeshiftBufferStart));
+        fPlayerPercentage = std::max(0.0f, std::min(fPlayerPercentage, 100.0f));
 
-      g_application.SeekPercentage(fPlayerPercentage);
+        g_application.SeekPercentage(fPlayerPercentage);
+      }
     }
   }
   return 0;

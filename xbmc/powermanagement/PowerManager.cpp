@@ -11,6 +11,8 @@
 #include "PowerTypes.h"
 #include "ServiceBroker.h"
 #include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayer.h"
 #include "application/AppParams.h"
 #include "cores/AudioEngine/Interfaces/AE.h"
 #include "dialogs/GUIDialogBusyNoCancel.h"
@@ -247,8 +249,10 @@ void CPowerManager::OnLowBattery()
 
 void CPowerManager::StorePlayerState()
 {
-  CApplicationPlayer &appPlayer = g_application.GetAppPlayer();
-  if (appPlayer.IsPlaying())
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appP = components.GetComponent<CApplicationPlayer>();
+  CApplicationPlayer& appPlayer = *appP;
+  if (!appP || appPlayer.IsPlaying())
   {
     m_lastUsedPlayer = appPlayer.GetCurrentPlayer();
     m_lastPlayedFileItem.reset(new CFileItem(g_application.CurrentFileItem()));

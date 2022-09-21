@@ -11,6 +11,8 @@
 #include "GUIInfoManager.h"
 #include "ServiceBroker.h"
 #include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayer.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
 #include "guilib/LocalizeStrings.h"
@@ -847,9 +849,14 @@ bool CPVRGUIInfo::GetPVRLabel(const CFileItem* item, const CGUIInfo& info, std::
       strValue = m_timesInfo.GetTimeshiftProgressEndTime(static_cast<TIME_FORMAT>(info.GetData1()));
       return true;
     case PVR_EPG_EVENT_SEEK_TIME:
-      strValue = m_timesInfo.GetEpgEventSeekTime(g_application.GetAppPlayer().GetSeekHandler().GetSeekSize(),
-                                                     static_cast<TIME_FORMAT>(info.GetData1()));
+    {
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+      if (appPlayer)
+        strValue = m_timesInfo.GetEpgEventSeekTime(appPlayer->GetSeekHandler().GetSeekSize(),
+                                                   static_cast<TIME_FORMAT>(info.GetData1()));
       return true;
+    }
     case PVR_NOW_RECORDING_TITLE:
       strValue = m_anyTimersInfo.GetActiveTimerTitle();
       return true;
@@ -1640,8 +1647,12 @@ bool CPVRGUIInfo::GetRadioRDSBool(const CFileItem* item, const CGUIInfo& info, b
   switch (info.m_info)
   {
     case RDS_HAS_RDS:
-      bValue = g_application.GetAppPlayer().IsPlayingRDS();
+    {
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+      bValue = appPlayer ? appPlayer->IsPlayingRDS() : false;
       return true;
+    }
   }
 
   return false;
@@ -1916,7 +1927,9 @@ int CPVRGUIInfo::GetTimeShiftSeekPercent() const
 {
   int progress = m_timesInfo.GetTimeshiftProgressPlayPosition();
 
-  int seekSize = g_application.GetAppPlayer().GetSeekHandler().GetSeekSize();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+  int seekSize = appPlayer ? appPlayer->GetSeekHandler().GetSeekSize() : 0;
   if (seekSize != 0)
   {
     int total = m_timesInfo.GetTimeshiftProgressDuration();
