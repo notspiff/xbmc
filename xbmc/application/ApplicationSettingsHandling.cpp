@@ -40,6 +40,11 @@ bool IsPlaying(const std::string& condition,
 }
 } // namespace
 
+CApplicationSettingsHandling::CApplicationSettingsHandling(bool& stop)
+  : m_bStop(stop)
+{
+}
+
 void CApplicationSettingsHandling::RegisterSettings()
 {
   const std::shared_ptr<CSettings> settings = CServiceBroker::GetSettingsComponent()->GetSettings();
@@ -195,6 +200,14 @@ bool CApplicationSettingsHandling::OnSettingUpdate(const std::shared_ptr<CSettin
 #endif
 
   return false;
+}
+
+bool CApplicationSettingsHandling::OnSettingsSaving() const
+{
+  // don't save settings when we're busy stopping the application
+  // a lot of screens try to save settings on deinit and deinit is
+  // called for every screen when the application is stopping
+  return !m_bStop;
 }
 
 bool CApplicationSettingsHandling::Load(const TiXmlNode* settings)

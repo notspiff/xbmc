@@ -228,7 +228,8 @@ using namespace std::chrono_literals;
 #define MAX_FFWD_SPEED 5
 
 CApplication::CApplication(void)
-  : CApplicationPlayerCallback(m_stackHelper)
+  : CApplicationPlayerCallback(m_stackHelper),
+    CApplicationSettingsHandling(m_bStop)
 #ifdef HAS_DVD_DRIVE
     ,
     m_Autorun(new CAutorun())
@@ -852,14 +853,6 @@ bool CApplication::Initialize()
   }
 
   return true;
-}
-
-bool CApplication::OnSettingsSaving() const
-{
-  // don't save settings when we're busy stopping the application
-  // a lot of screens try to save settings on deinit and deinit is
-  // called for every screen when the application is stopping
-  return !m_bStop;
 }
 
 void CApplication::Render()

@@ -199,7 +199,6 @@ public:
   void UnlockFrameMoveGuard();
 
 protected:
-  bool OnSettingsSaving() const override;
   void PlaybackCleanup();
 
   // inbound protocol
