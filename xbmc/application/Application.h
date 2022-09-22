@@ -8,17 +8,14 @@
 
 #pragma once
 
-#include "ServiceManager.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationEnums.h"
 #include "application/ApplicationPlayerCallback.h"
-#include "cores/IPlayerCallback.h"
 #include "guilib/IMsgTargetCallback.h"
 #include "guilib/IWindowManagerCallback.h"
 #include "messaging/IMessageTarget.h"
 #include "playlists/PlayListTypes.h"
 #include "threads/SystemClock.h"
-#include "threads/Thread.h"
 #include "utils/GlobalsHandling.h"
 #include "utils/Stopwatch.h"
 #include "windowing/Resolution.h"
@@ -41,7 +38,9 @@ class CSplash;
 class CBookmark;
 class CGUIComponent;
 class CAppInboundProtocol;
+class CServiceManager;
 class CSettingsComponent;
+class CWinSystemBase;
 
 namespace ADDON
 {

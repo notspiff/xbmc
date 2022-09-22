@@ -13,6 +13,7 @@
 #include "HDRStatus.h"
 #include "LangInfo.h"
 #include "PlayListPlayer.h"
+#include "ServiceManager.h"
 #include "URL.h"
 #include "Util.h"
 #include "addons/Skin.h"
@@ -50,6 +51,7 @@
 #include "utils/ContentUtils.h"
 #include "utils/JobManager.h"
 #include "utils/LangCodeExpander.h"
+#include "utils/RegExp.h"
 #include "utils/Screenshot.h"
 #include "utils/Variant.h"
 #include "video/Bookmark.h"
@@ -71,10 +73,8 @@
 #include "filesystem/DllLibCurl.h"
 #include "filesystem/PluginDirectory.h"
 #include "filesystem/SpecialProtocol.h"
-#include "filesystem/StackDirectory.h"
 #include "guilib/GUIAudioManager.h"
 #include "guilib/LocalizeStrings.h"
-#include "input/ButtonTranslator.h"
 #include "input/InertialScrollingHandler.h"
 #include "input/KeyboardLayoutManager.h"
 #include "input/actions/ActionTranslator.h"
@@ -84,17 +84,13 @@
 #include "messaging/helpers/DialogOKHelper.h"
 #include "playlists/PlayList.h"
 #include "playlists/SmartPlayList.h"
-#include "powermanagement/DPMSSupport.h"
 #include "powermanagement/PowerManager.h"
-#include "powermanagement/PowerTypes.h"
 #include "profiles/ProfileManager.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/DisplaySettings.h"
 #include "settings/MediaSettings.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
-#include "settings/SkinSettings.h"
-#include "settings/lib/SettingsManager.h"
 #include "speech/ISpeechRecognition.h"
 #include "threads/SingleLock.h"
 #include "utils/CPUInfo.h"
@@ -113,7 +109,7 @@
 #include "filesystem/UPnPDirectory.h"
 #endif
 #if defined(TARGET_POSIX) && defined(HAS_FILESYSTEM_SMB)
-#include "platform/posix/filesystem/SMBDirectory.h"
+#include "platform/posix/filesystem/SMBFile.h"
 #endif
 #ifdef HAS_FILESYSTEM_NFS
 #include "filesystem/NFSFile.h"
@@ -132,8 +128,6 @@
 
 // Windows includes
 #include "guilib/GUIWindowManager.h"
-#include "video/dialogs/GUIDialogVideoInfo.h"
-#include "windows/GUIWindowScreensaver.h"
 #include "video/PlayerController.h"
 
 // Dialog includes
@@ -148,8 +142,6 @@
 
 #include "dialogs/GUIDialogCache.h"
 #include "utils/URIUtils.h"
-#include "utils/XMLUtils.h"
-#include "addons/AddonInstaller.h"
 #include "addons/AddonManager.h"
 #include "addons/RepositoryUpdater.h"
 #include "music/tags/MusicInfoTag.h"
