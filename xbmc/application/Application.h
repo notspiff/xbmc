@@ -110,12 +110,9 @@ public:
   bool InitWindow(RESOLUTION res = RES_INVALID);
 
   bool Stop(int exitCode);
-  const std::string& CurrentFile();
   CFileItem& CurrentFileItem();
   std::shared_ptr<CFileItem> CurrentFileItemPtr();
-  const CFileItem& CurrentUnstackedItem();
   bool OnMessage(CGUIMessage& message) override;
-  std::string GetCurrentPlayer();
   CApplicationComponents& GetAppComponents() { return m_components; }
 
   int  GetMessageMask() override;
@@ -140,24 +137,6 @@ public:
   void ShowAppMigrationMessage();
   void Process() override;
   void ProcessSlow();
-  int GetSubtitleDelay();
-  int GetAudioDelay();
-  /*!
-   \brief Returns the total time in fractional seconds of the currently playing media
-
-   Beware that this method returns fractional seconds whereas IPlayer::GetTotalTime() returns milliseconds.
-   */
-  double GetTotalTime() const;
-  /*!
-   \brief Returns the current time in fractional seconds of the currently playing media
-
-   Beware that this method returns fractional seconds whereas IPlayer::GetTime() returns milliseconds.
-   */
-  double GetTime() const;
-  float GetPercentage() const;
-
-  // Get the percentage of data currently cached/buffered (aq/vq + FileCache) from the input stream if applicable.
-  float GetCachePercentage() const;
 
   void SeekPercentage(float percent);
   void SeekTime( double dTime = 0.0 );

@@ -13,6 +13,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "cores/DataCacheCore.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
@@ -140,7 +141,9 @@ void CSeekHandler::Seek(bool forward, float amount, float duration /* = 0 */, bo
     else
       speed /= CServiceBroker::GetWinSystem()->GetGfxContext().GetFPS();
 
-    double totalTime = g_application.GetTotalTime();
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+    double totalTime = appPlayerInfo ? appPlayerInfo->GetTotalTime() : 0.0;
     if (totalTime < 0)
       totalTime = 0;
 
@@ -275,10 +278,11 @@ bool CSeekHandler::OnAction(const CAction &action)
 {
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  if (!appPlayer || !appPlayer->IsPlaying() || !appPlayer->CanSeek())
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayer || !appPlayer->IsPlaying() || !appPlayer->CanSeek() || !appPlayerInfo)
     return false;
 
-  SeekType type = g_application.CurrentFileItem().IsAudio() ? SEEK_TYPE_MUSIC : SEEK_TYPE_VIDEO;
+  SeekType type = appPlayerInfo->CurrentFileItem().IsAudio() ? SEEK_TYPE_MUSIC : SEEK_TYPE_VIDEO;
 
   if (SeekTimeCode(action))
     return true;
@@ -344,7 +348,7 @@ bool CSeekHandler::OnAction(const CAction &action)
     case ACTION_JUMP_SMS8:
     case ACTION_JUMP_SMS9:
     {
-      if (!g_application.CurrentFileItem().IsLiveTV())
+      if (!appPlayerInfo->CurrentFileItem().IsLiveTV())
       {
         ChangeTimeCode(action.GetID());
         return true;

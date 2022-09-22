@@ -15,9 +15,9 @@
 #include "URL.h"
 #include "addons/Skin.h"
 #include "addons/VFSEntry.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "cores/IPlayer.h"
 #include "dialogs/GUIDialogFileBrowser.h"
 #include "dialogs/GUIDialogYesNo.h"
@@ -124,20 +124,27 @@ std::string CGUIDialogSubtitleSettings::BrowseForSubtitle()
       extras += '|' + vfsAddon->GetExtensions();
   }
 
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayer || !appPlayerInfo)
+    return "";
+
   std::string strPath;
-  if (URIUtils::IsInRAR(g_application.CurrentFileItem().GetPath()) || URIUtils::IsInZIP(g_application.CurrentFileItem().GetPath()))
+  if (URIUtils::IsInRAR(appPlayerInfo->CurrentFileItem().GetPath()) ||
+      URIUtils::IsInZIP(appPlayerInfo->CurrentFileItem().GetPath()))
   {
-    strPath = CURL(g_application.CurrentFileItem().GetPath()).GetHostName();
+    strPath = CURL(appPlayerInfo->CurrentFileItem().GetPath()).GetHostName();
   }
-  else if (!URIUtils::IsPlugin(g_application.CurrentFileItem().GetPath()))
+  else if (!URIUtils::IsPlugin(appPlayerInfo->CurrentFileItem().GetPath()))
   {
-    strPath = g_application.CurrentFileItem().GetPath();
+    strPath = appPlayerInfo->CurrentFileItem().GetPath();
   }
 
   std::string strMask =
       ".utf|.utf8|.utf-8|.sub|.srt|.smi|.rt|.txt|.ssa|.aqt|.jss|.ass|.vtt|.idx|.zip|.sup";
 
-  if (g_application.GetCurrentPlayer() == "VideoPlayer")
+  if (appPlayer->GetCurrentPlayer() == "VideoPlayer")
     strMask = ".srt|.zip|.ifo|.smi|.sub|.idx|.ass|.ssa|.vtt|.txt|.sup";
 
   strMask += extras;

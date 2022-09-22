@@ -20,6 +20,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "application/ApplicationVolumeHandling.h"
 #include "filesystem/SpecialProtocol.h"
 #include "guilib/GUIComponent.h"
@@ -253,8 +254,13 @@ void CUPnPRenderer::Announce(ANNOUNCEMENT::AnnouncementFlag flag,
 
     if (message == "OnPlay" || message == "OnResume")
     {
-      avt->SetStateVariable("AVTransportURI", g_application.CurrentFile().c_str());
-      avt->SetStateVariable("CurrentTrackURI", g_application.CurrentFile().c_str());
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+      if (appPlayerInfo)
+      {
+        avt->SetStateVariable("AVTransportURI", appPlayerInfo->CurrentFile().c_str());
+        avt->SetStateVariable("CurrentTrackURI", appPlayerInfo->CurrentFile().c_str());
+      }
 
       NPT_String meta;
       if (NPT_SUCCEEDED(GetMetadata(meta)))
@@ -322,17 +328,18 @@ CUPnPRenderer::UpdateState()
     avt->SetStateVariable("TransportStatus", "OK");
     auto& components = CServiceBroker::GetAppComponents();
     const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+    const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
     if (appPlayer && (appPlayer->IsPlaying() || appPlayer->IsPausedPlayback())) {
         avt->SetStateVariable("NumberOfTracks", "1");
         avt->SetStateVariable("CurrentTrack", "1");
 
         // get elapsed time
-        std::string buffer = StringUtils::SecondsToTimeString(std::lrint(g_application.GetTime()), TIME_FORMAT_HH_MM_SS);
+        std::string buffer = StringUtils::SecondsToTimeString(std::lrint(appPlayerInfo->GetTime()), TIME_FORMAT_HH_MM_SS);
         avt->SetStateVariable("RelativeTimePosition", buffer.c_str());
         avt->SetStateVariable("AbsoluteTimePosition", buffer.c_str());
 
         // get duration
-        buffer = StringUtils::SecondsToTimeString(std::lrint(g_application.GetTotalTime()), TIME_FORMAT_HH_MM_SS);
+        buffer = StringUtils::SecondsToTimeString(std::lrint(appPlayerInfo->GetTotalTime()), TIME_FORMAT_HH_MM_SS);
         if (buffer.length() > 0) {
           avt->SetStateVariable("CurrentTrackDuration", buffer.c_str());
           avt->SetStateVariable("CurrentMediaDuration", buffer.c_str());

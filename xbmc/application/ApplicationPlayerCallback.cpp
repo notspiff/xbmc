@@ -349,3 +349,8 @@ void CApplicationPlayerCallback::StoreVideoSettings(const CFileItem& fileItem,
     dbs.Close();
   }
 }
+
+const CFileItem& CApplicationPlayerCallback::CurrentFileItem() const
+{
+  return *m_itemCurrentFile;
+}

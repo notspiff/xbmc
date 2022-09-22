@@ -18,6 +18,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "cores/AudioEngine/Engines/ActiveAE/ActiveAE.h"
 #include "filesystem/SpecialProtocol.h"
 #include "guilib/guiinfo/GUIInfoLabels.h"
@@ -144,7 +145,8 @@ void CGUIVisualisationControl::Process(unsigned int currentTime, CDirtyRegionLis
 {
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  if (appPlayer && appPlayer->IsPlayingAudio())
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (appPlayer && appPlayer->IsPlayingAudio() && appPlayerInfo)
   {
     if (m_bInvalidated)
       FreeResources(true);
@@ -166,7 +168,7 @@ void CGUIVisualisationControl::Process(unsigned int currentTime, CDirtyRegionLis
         m_alreadyStarted = false;
       }
 
-      std::string songTitle = URIUtils::GetFileName(g_application.CurrentFile());
+      std::string songTitle = URIUtils::GetFileName(appPlayerInfo->CurrentFile());
       const MUSIC_INFO::CMusicInfoTag* tag =
           CServiceBroker::GetGUI()->GetInfoManager().GetCurrentSongTag();
       if (tag && !tag->GetTitle().empty())

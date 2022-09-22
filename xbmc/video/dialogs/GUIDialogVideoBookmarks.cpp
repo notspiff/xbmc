@@ -15,6 +15,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "dialogs/GUIDialogContextMenu.h"
 #include "dialogs/GUIDialogKaiToast.h"
 #include "filesystem/File.h"
@@ -190,10 +191,14 @@ void CGUIDialogVideoBookmarks::Delete(int item)
   {
     CVideoDatabase videoDatabase;
     videoDatabase.Open();
-    std::string path(g_application.CurrentFile());
-    if (g_application.CurrentFileItem().HasProperty("original_listitem_url") &&
-       !URIUtils::IsVideoDb(g_application.CurrentFileItem().GetProperty("original_listitem_url").asString()))
-      path = g_application.CurrentFileItem().GetProperty("original_listitem_url").asString();
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+    if (!appPlayerInfo)
+      return;
+    std::string path(appPlayerInfo->CurrentFile());
+    if (appPlayerInfo->CurrentFileItem().HasProperty("original_listitem_url") &&
+       !URIUtils::IsVideoDb(appPlayerInfo->CurrentFileItem().GetProperty("original_listitem_url").asString()))
+      path = appPlayerInfo->CurrentFileItem().GetProperty("original_listitem_url").asString();
     videoDatabase.ClearBookMarkOfFile(path, m_bookmarks[item], m_bookmarks[item].type);
     videoDatabase.Close();
     CUtil::DeleteVideoDatabaseDirectoryCache();
@@ -231,10 +236,13 @@ void CGUIDialogVideoBookmarks::OnRefreshList()
   std::vector<CFileItemPtr> items;
 
   // open the d/b and retrieve the bookmarks for the current movie
-  m_filePath = g_application.CurrentFile();
-  if (g_application.CurrentFileItem().HasProperty("original_listitem_url") &&
-     !URIUtils::IsVideoDb(g_application.CurrentFileItem().GetProperty("original_listitem_url").asString()))
-     m_filePath = g_application.CurrentFileItem().GetProperty("original_listitem_url").asString();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  m_filePath = appPlayerInfo? appPlayerInfo->CurrentFile() : "";
+  if (appPlayerInfo &&
+      appPlayerInfo->CurrentFileItem().HasProperty("original_listitem_url") &&
+      !URIUtils::IsVideoDb(appPlayerInfo->CurrentFileItem().GetProperty("original_listitem_url").asString()))
+     m_filePath = appPlayerInfo->CurrentFileItem().GetProperty("original_listitem_url").asString();
 
   CVideoDatabase videoDatabase;
   videoDatabase.Open();
@@ -266,7 +274,6 @@ void CGUIDialogVideoBookmarks::OnRefreshList()
   }
 
   // add chapters if around
-  auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
   for (int i = 1; appPlayer && i <= appPlayer->GetChapterCount(); ++i)
   {
@@ -311,7 +318,7 @@ void CGUIDialogVideoBookmarks::OnRefreshList()
 
   // add items to file list and mark the proper item as selected if the current playtime is above
   int selectedItemIndex = 0;
-  double playTime = g_application.GetTime();
+  double playTime = appPlayerInfo ? appPlayerInfo->GetTime() : 0.0;
   for (auto& item : items)
   {
     m_vecItems->Add(item);
@@ -327,11 +334,17 @@ void CGUIDialogVideoBookmarks::Update()
 {
   CVideoDatabase videoDatabase;
   videoDatabase.Open();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayerInfo)
+    return;
 
-  if (g_application.CurrentFileItem().HasVideoInfoTag() && g_application.CurrentFileItem().GetVideoInfoTag()->m_iEpisode > -1)
+  if (appPlayerInfo->CurrentFileItem().HasVideoInfoTag() &&
+      appPlayerInfo->CurrentFileItem().GetVideoInfoTag()->m_iEpisode > -1)
   {
     std::vector<CVideoInfoTag> episodes;
-    videoDatabase.GetEpisodesByFile(g_application.CurrentFile(),episodes);
+
+    videoDatabase.GetEpisodesByFile(appPlayerInfo->CurrentFile(),episodes);
     if (episodes.size() > 1)
     {
       CONTROL_ENABLE(CONTROL_ADD_EPISODE_BOOKMARK);
@@ -387,10 +400,14 @@ void CGUIDialogVideoBookmarks::ClearBookmarks()
 {
   CVideoDatabase videoDatabase;
   videoDatabase.Open();
-  std::string path = g_application.CurrentFile();
-  if (g_application.CurrentFileItem().HasProperty("original_listitem_url") &&
-     !URIUtils::IsVideoDb(g_application.CurrentFileItem().GetProperty("original_listitem_url").asString()))
-    path = g_application.CurrentFileItem().GetProperty("original_listitem_url").asString();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayerInfo)
+    return;
+  std::string path = appPlayerInfo->CurrentFile();
+  if (appPlayerInfo->CurrentFileItem().HasProperty("original_listitem_url") &&
+     !URIUtils::IsVideoDb(appPlayerInfo->CurrentFileItem().GetProperty("original_listitem_url").asString()))
+    path = appPlayerInfo->CurrentFileItem().GetProperty("original_listitem_url").asString();
   videoDatabase.ClearBookMarksOfFile(path, CBookmark::STANDARD);
   videoDatabase.ClearBookMarksOfFile(path, CBookmark::RESUME);
   videoDatabase.ClearBookMarksOfFile(path, CBookmark::EPISODE);
@@ -402,10 +419,13 @@ bool CGUIDialogVideoBookmarks::AddBookmark(CVideoInfoTag* tag)
 {
   CVideoDatabase videoDatabase;
   CBookmark bookmark;
-  bookmark.timeInSeconds = (int)g_application.GetTime();
-  bookmark.totalTimeInSeconds = (int)g_application.GetTotalTime();
-
   auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayerInfo)
+    return false;
+  bookmark.timeInSeconds = static_cast<int>(appPlayerInfo->GetTime());
+  bookmark.totalTimeInSeconds = static_cast<int>(appPlayerInfo->GetTotalTime());
+
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
   if (!appPlayer)
     return false;
@@ -415,7 +435,7 @@ bool CGUIDialogVideoBookmarks::AddBookmark(CVideoInfoTag* tag)
   else
     bookmark.playerState.clear();
 
-  bookmark.player = g_application.GetCurrentPlayer();
+  bookmark.player = appPlayer->GetCurrentPlayer();
 
   // create the thumbnail image
   float aspectRatio = appPlayer->GetRenderAspectRatio();
@@ -438,7 +458,7 @@ bool CGUIDialogVideoBookmarks::AddBookmark(CVideoInfoTag* tag)
   {
     const std::shared_ptr<CProfileManager> profileManager = CServiceBroker::GetSettingsComponent()->GetProfileManager();
 
-    auto crc = Crc32::ComputeFromLowerCase(g_application.CurrentFile());
+    auto crc = Crc32::ComputeFromLowerCase(appPlayerInfo->CurrentFile());
     bookmark.thumbNailImage =
         StringUtils::Format("{:08x}_{}.jpg", crc, (int)bookmark.timeInSeconds);
     bookmark.thumbNailImage = URIUtils::AddFileToFolder(profileManager->GetBookmarksThumbFolder(), bookmark.thumbNailImage);
@@ -463,7 +483,7 @@ bool CGUIDialogVideoBookmarks::AddBookmark(CVideoInfoTag* tag)
     videoDatabase.AddBookMarkForEpisode(*tag, bookmark);
   else
   {
-    std::string path = g_application.CurrentFile();
+    std::string path = appPlayerInfo->CurrentFile();
     if (g_application.CurrentFileItem().HasProperty("original_listitem_url") &&
        !URIUtils::IsVideoDb(g_application.CurrentFileItem().GetProperty("original_listitem_url").asString()))
       path = g_application.CurrentFileItem().GetProperty("original_listitem_url").asString();
@@ -503,10 +523,15 @@ CGUIControl *CGUIDialogVideoBookmarks::GetFirstFocusableControl(int id)
 
 bool CGUIDialogVideoBookmarks::AddEpisodeBookmark()
 {
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayerInfo)
+    return false;
+
   std::vector<CVideoInfoTag> episodes;
   CVideoDatabase videoDatabase;
   videoDatabase.Open();
-  videoDatabase.GetEpisodesByFile(g_application.CurrentFile(), episodes);
+  videoDatabase.GetEpisodesByFile(appPlayerInfo->CurrentFile(), episodes);
   videoDatabase.Close();
   if (!episodes.empty())
   {
@@ -549,13 +574,19 @@ bool CGUIDialogVideoBookmarks::OnAddBookmark()
 
 bool CGUIDialogVideoBookmarks::OnAddEpisodeBookmark()
 {
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayerInfo)
+    return false;
+
   bool bReturn = false;
-  if (g_application.CurrentFileItem().HasVideoInfoTag() && g_application.CurrentFileItem().GetVideoInfoTag()->m_iEpisode > -1)
+  if (appPlayerInfo->CurrentFileItem().HasVideoInfoTag() &&
+      appPlayerInfo->CurrentFileItem().GetVideoInfoTag()->m_iEpisode > -1)
   {
     CVideoDatabase videoDatabase;
     videoDatabase.Open();
     std::vector<CVideoInfoTag> episodes;
-    videoDatabase.GetEpisodesByFile(g_application.CurrentFile(),episodes);
+    videoDatabase.GetEpisodesByFile(appPlayerInfo->CurrentFile(), episodes);
     if (episodes.size() > 1)
     {
       bReturn = CGUIDialogVideoBookmarks::AddEpisodeBookmark();

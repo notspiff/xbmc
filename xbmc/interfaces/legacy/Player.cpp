@@ -18,6 +18,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "cores/IPlayer.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
@@ -33,6 +34,18 @@ std::shared_ptr<CApplicationPlayer> getAppPlayer()
   auto res = components.GetComponent<CApplicationPlayer>();
   if (!res)
     return std::make_shared<CApplicationPlayer>(); // extremely unlikely to happen
+  return res;
+}
+
+std::shared_ptr<CApplicationPlayerInfo> getAppPlayerInfo()
+{
+  auto& components = CServiceBroker::GetAppComponents();
+  auto res = components.GetComponent<CApplicationPlayerInfo>();
+  if (!res)
+  {
+    static CApplicationPlayerCallback cb;
+    return std::make_shared<CApplicationPlayerInfo>(cb); // extremely unlikely to happen
+  }
   return res;
 }
 
@@ -363,7 +376,7 @@ namespace XBMCAddon
       if (!getAppPlayer()->IsPlaying())
         throw PlayerException("Kodi is not playing any file");
 
-      return g_application.CurrentFileItem().GetDynPath();
+      return getAppPlayerInfo()->CurrentFileItem().GetDynPath();
     }
 
     XBMCAddon::xbmcgui::ListItem* Player::getPlayingItem()
@@ -372,7 +385,7 @@ namespace XBMCAddon
       if (!getAppPlayer()->IsPlaying())
         throw PlayerException("Kodi is not playing any item");
 
-      CFileItemPtr itemPtr = std::make_shared<CFileItem>(g_application.CurrentFileItem());
+      CFileItemPtr itemPtr = std::make_shared<CFileItem>(getAppPlayerInfo()->CurrentFileItem());
       return new XBMCAddon::xbmcgui::ListItem(itemPtr);
     }
 
@@ -418,9 +431,9 @@ namespace XBMCAddon
       if (getAppPlayer()->IsPlayingVideo() || !getAppPlayer()->IsPlayingRDS())
         throw PlayerException("Kodi is not playing any music file with RDS");
 
-      std::shared_ptr<CFileItem> item = g_application.CurrentFileItemPtr();
-      if (item && item->HasPVRChannelInfoTag())
-        return new InfoTagRadioRDS(item->GetPVRChannelInfoTag());
+      const auto appPlayerInfo = getAppPlayerInfo();
+      if (appPlayerInfo->CurrentFileItem().HasPVRChannelInfoTag())
+        return new InfoTagRadioRDS(appPlayerInfo->CurrentFileItem().GetPVRChannelInfoTag());
 
       return new InfoTagRadioRDS();
     }
@@ -431,7 +444,7 @@ namespace XBMCAddon
       if (!getAppPlayer()->IsPlaying())
         throw PlayerException("Kodi is not playing any media file");
 
-      return g_application.GetTotalTime();
+      return getAppPlayerInfo()->GetTotalTime();
     }
 
     double Player::getTime()
@@ -440,7 +453,7 @@ namespace XBMCAddon
       if (!getAppPlayer()->IsPlaying())
         throw PlayerException("Kodi is not playing any media file");
 
-      return g_application.GetTime();
+      return getAppPlayerInfo()->GetTime();
     }
 
     void Player::seekTime(double pTime)

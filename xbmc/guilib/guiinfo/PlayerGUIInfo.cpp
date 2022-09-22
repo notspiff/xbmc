@@ -16,6 +16,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "application/ApplicationVolumeHandling.h"
 #include "cores/AudioEngine/Utils/AEUtil.h"
 #include "cores/DataCacheCore.h"
@@ -47,17 +48,23 @@ CPlayerGUIInfo::~CPlayerGUIInfo() = default;
 
 int CPlayerGUIInfo::GetTotalPlayTime() const
 {
-  return std::lrint(g_application.GetTotalTime());
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  return appPlayerInfo ? std::lrint(appPlayerInfo->GetTotalTime()) : 0;
 }
 
 int CPlayerGUIInfo::GetPlayTime() const
 {
-  return std::lrint(g_application.GetTime());
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  return appPlayerInfo ? std::lrint(appPlayerInfo->GetTime()) : 0;
 }
 
 int CPlayerGUIInfo::GetPlayTimeRemaining() const
 {
-  int iReverse = GetTotalPlayTime() - std::lrint(g_application.GetTime());
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  int iReverse = GetTotalPlayTime() - (appPlayerInfo ? std::lrint(appPlayerInfo->GetTime()) : 0);
   return iReverse > 0 ? iReverse : 0;
 }
 
@@ -115,7 +122,8 @@ std::string CPlayerGUIInfo::GetCurrentSeekTime(TIME_FORMAT format) const
 
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  return StringUtils::SecondsToTimeString(g_application.GetTime() +
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayer>();
+  return StringUtils::SecondsToTimeString((appPlayerInfo ? appPlayerInfo->GetTime() : 0) +
                                           (appPlayer ? appPlayer->GetSeekHandler().GetSeekSize() : 0), format);
 }
 
@@ -164,7 +172,8 @@ bool CPlayerGUIInfo::GetLabel(std::string& value, const CFileItem *item, int con
 {
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  if (!appPlayer)
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayer || !appPlayerInfo)
     return false;
 
   switch (info.m_info)
@@ -184,10 +193,10 @@ bool CPlayerGUIInfo::GetLabel(std::string& value, const CFileItem *item, int con
       return true;
     }
     case PLAYER_PROGRESS:
-      value = std::to_string(std::lrintf(g_application.GetPercentage()));
+      value = std::to_string(std::lrintf(appPlayerInfo->GetPercentage()));
       return true;
     case PLAYER_PROGRESS_CACHE:
-      value = std::to_string(std::lrintf(g_application.GetCachePercentage()));
+      value = std::to_string(std::lrintf(appPlayerInfo->GetCachePercentage()));
       return true;
     case PLAYER_VOLUME:
     {
@@ -384,17 +393,32 @@ bool CPlayerGUIInfo::GetInt(int& value, const CGUIListItem *gitem, int contextWi
       return true;
     }
     case PLAYER_SUBTITLE_DELAY:
-      value = g_application.GetSubtitleDelay();
-      return true;
     case PLAYER_AUDIO_DELAY:
-      value = g_application.GetAudioDelay();
-      return true;
     case PLAYER_PROGRESS:
-      value = std::lrintf(g_application.GetPercentage());
-      return true;
     case PLAYER_PROGRESS_CACHE:
-      value = std::lrintf(g_application.GetCachePercentage());
-      return true;
+    {
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+      if (!appPlayerInfo)
+        return false;
+      switch (info.m_info)
+      {
+        case PLAYER_SUBTITLE_DELAY:
+          value = appPlayerInfo->GetSubtitleDelay();
+          return true;
+        case PLAYER_AUDIO_DELAY:
+          value = appPlayerInfo->GetAudioDelay();
+          return true;
+        case PLAYER_PROGRESS:
+          value = std::lrintf(appPlayerInfo->GetPercentage());
+          return true;
+        case PLAYER_PROGRESS_CACHE:
+          value = std::lrintf(appPlayerInfo->GetCachePercentage());
+          return true;
+        default:
+          return false;
+      }
+    }
     case PLAYER_SEEKBAR:
       value = std::lrintf(GetSeekPercent());
       return true;
@@ -434,7 +458,8 @@ bool CPlayerGUIInfo::GetBool(bool& value, const CGUIListItem *gitem, int context
 
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  if (!appPlayer)
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayer || !appPlayerInfo)
     return false;
 
   switch (info.m_info)
@@ -573,7 +598,7 @@ bool CPlayerGUIInfo::GetBool(bool& value, const CGUIListItem *gitem, int context
               CResolutionUtils::HasWhitelist();
       return true;
     case PLAYER_HASDURATION:
-      value = g_application.GetTotalTime() > 0;
+      value = appPlayerInfo->GetTotalTime() > 0;
       return true;
     case PLAYER_FRAMEADVANCE:
       value = CServiceBroker::GetDataCacheCore().IsFrameAdvance();

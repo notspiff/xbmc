@@ -17,6 +17,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "cores/IPlayer.h"
 #include "dialogs/GUIDialogContextMenu.h"
 #include "dialogs/GUIDialogKaiToast.h"
@@ -267,8 +268,12 @@ void CGUIDialogSubtitles::FillServices()
     return;
   }
 
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayerInfo)
+    return;
   std::string defaultService;
-  const CFileItem &item = g_application.CurrentUnstackedItem();
+  const CFileItem& item = appPlayerInfo->CurrentUnstackedItem();
   if (item.GetVideoContentType() == VIDEODB_CONTENT_TVSHOWS ||
       item.GetVideoContentType() == VIDEODB_CONTENT_EPISODES)
     // Set default service for tv shows
@@ -411,14 +416,18 @@ void CGUIDialogSubtitles::OnSearchComplete(const CFileItemList *items)
 
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayerInfo)
+    return;
+
   if (!items->IsEmpty() && appPlayer && appPlayer->GetSubtitleCount() == 0 &&
-    m_LastAutoDownloaded != g_application.CurrentFile() &&
+    m_LastAutoDownloaded != appPlayerInfo->CurrentFile() &&
     CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_SUBTITLES_DOWNLOADFIRST))
   {
     CFileItemPtr item = items->Get(0);
     CLog::Log(LOGDEBUG, "{} - Automatically download first subtitle: {}", __FUNCTION__,
               item->GetLabel2());
-    m_LastAutoDownloaded = g_application.CurrentFile();
+    m_LastAutoDownloaded = appPlayerInfo->CurrentFile();
     Download(*item);
   }
 
@@ -537,7 +546,11 @@ void CGUIDialogSubtitles::OnDownloadComplete(const CFileItemList *items, const s
   SUBTITLE_STORAGEMODE storageMode = (SUBTITLE_STORAGEMODE) CServiceBroker::GetSettingsComponent()->GetSettings()->GetInt(CSettings::SETTING_SUBTITLES_STORAGEMODE);
 
   // Get (unstacked) path
-  std::string strCurrentFile = g_application.CurrentUnstackedItem().GetDynPath();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  if (!appPlayerInfo)
+    return;
+  std::string strCurrentFile = appPlayerInfo->CurrentUnstackedItem().GetDynPath();
 
   std::string strDownloadPath = "special://temp";
   std::string strDestPath;

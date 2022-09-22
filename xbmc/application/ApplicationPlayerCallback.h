@@ -12,10 +12,12 @@
 #include "cores/IPlayerCallback.h"
 #include "threads/Event.h"
 
-class CApplicationStackHelper;
+class CApplicationPlayerInfo;
 
 class CApplicationPlayerCallback : public IPlayerCallback
 {
+  friend class CApplicationPlayerInfo;
+
 public:
   CApplicationPlayerCallback();
 
@@ -34,6 +36,8 @@ public:
   void OnAVStarted(const CFileItem& file) override;
   void RequestVideoSettings(const CFileItem& fileItem) override;
   void StoreVideoSettings(const CFileItem& fileItem, const CVideoSettings& vs) override;
+
+  const CFileItem& CurrentFileItem() const;
 
 protected:
   CFileItemPtr m_itemCurrentFile; //!< Currently playing file

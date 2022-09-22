@@ -22,6 +22,7 @@
 #include "application/ApplicationActionListeners.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "application/ApplicationPowerHandling.h"
 #include "application/ApplicationSettingsHandling.h"
 #include "application/ApplicationSkinHandling.h"
@@ -240,6 +241,8 @@ CApplication::CApplication(void)
   m_components.RegisterComponent(appStack);
   const auto appPlayer = std::make_shared<CApplicationPlayer>();
   m_components.RegisterComponent(appPlayer);
+  const auto appPlayerInfo = std::make_shared<CApplicationPlayerInfo>(*this);
+  m_components.RegisterComponent(appPlayerInfo);
   const auto appActionListener = std::make_shared<CApplicationActionListeners>(m_critSection);
   m_components.RegisterComponent(appActionListener);
   const auto appPowerHandling = std::make_shared<CApplicationPowerHandling>();
@@ -262,6 +265,7 @@ CApplication::~CApplication(void)
   m_components.DeregisterComponent(typeid(CApplicationSettingsHandling));
   m_components.DeregisterComponent(typeid(CApplicationActionListeners));
   m_components.DeregisterComponent(typeid(CApplicationPlayer));
+  m_components.DeregisterComponent(typeid(CApplicationPlayerInfo));
   m_components.DeregisterComponent(typeid(CApplicationStackHelper));
 }
 
@@ -1167,7 +1171,10 @@ bool CApplication::OnAction(const CAction &action)
 
   // Now check with the playlist player if action can be handled.
   // In case of ACTION_PREV_ITEM, we only allow the playlist player to take it if we're less than ACTION_PREV_ITEM_THRESHOLD seconds into playback.
-  if (!(action.GetID() == ACTION_PREV_ITEM && appPlayer->CanSeek() && GetTime() > ACTION_PREV_ITEM_THRESHOLD))
+  const auto appPlayerInfo = m_components.GetComponent<CApplicationPlayerInfo>();
+  if (!(action.GetID() == ACTION_PREV_ITEM &&
+        appPlayer->CanSeek() &&
+        appPlayerInfo->GetTime() > ACTION_PREV_ITEM_THRESHOLD))
   {
     if (CServiceBroker::GetPlaylistPlayer().OnAction(action))
       return true;
@@ -1331,7 +1338,7 @@ bool CApplication::OnAction(const CAction &action)
       std::string player = playerCoreFactory.SelectPlayerDialog(players);
       if (!player.empty())
       {
-        item.SetStartOffset(CUtil::ConvertSecsToMilliSecs(GetTime()));
+        item.SetStartOffset(CUtil::ConvertSecsToMilliSecs(appPlayerInfo->GetTime()));
         PlayFile(item, player, true);
       }
     }
@@ -3235,7 +3242,8 @@ void CApplication::Restart(bool bSamePosition)
   }
 
   // else get current position
-  double time = GetTime();
+  const auto appPlayerInfo = m_components.GetComponent<CApplicationPlayerInfo>();
+  double time = appPlayerInfo->GetTime();
 
   // get player state, needed for dvd's
   std::string state = appPlayer->GetPlayerState();
@@ -3248,11 +3256,6 @@ void CApplication::Restart(bool bSamePosition)
     appPlayer->SetPlayerState(state);
 }
 
-const std::string& CApplication::CurrentFile()
-{
-  return m_itemCurrentFile->GetPath();
-}
-
 std::shared_ptr<CFileItem> CApplication::CurrentFileItemPtr()
 {
   return m_itemCurrentFile;
@@ -3261,75 +3264,6 @@ std::shared_ptr<CFileItem> CApplication::CurrentFileItemPtr()
 CFileItem& CApplication::CurrentFileItem()
 {
   return *m_itemCurrentFile;
-}
-
-const CFileItem& CApplication::CurrentUnstackedItem()
-{
-  const auto stackHelper = m_components.GetComponent<CApplicationStackHelper>();
-
-  if (stackHelper->IsPlayingISOStack() || stackHelper->IsPlayingRegularStack())
-    return stackHelper->GetCurrentStackPartFileItem();
-  else
-    return *m_itemCurrentFile;
-}
-
-int CApplication::GetSubtitleDelay()
-{
-  // converts subtitle delay to a percentage
-  const auto appPlayer = m_components.GetComponent<CApplicationPlayer>();
-  return int(((appPlayer->GetVideoSettings().m_SubtitleDelay + CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_videoSubsDelayRange)) / (2 * CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_videoSubsDelayRange)*100.0f + 0.5f);
-}
-
-int CApplication::GetAudioDelay()
-{
-  // converts audio delay to a percentage
-  const auto appPlayer = m_components.GetComponent<CApplicationPlayer>();
-  return int(((appPlayer->GetVideoSettings().m_AudioDelay + CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_videoAudioDelayRange)) / (2 * CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_videoAudioDelayRange)*100.0f + 0.5f);
-}
-
-// Returns the total time in seconds of the current media.  Fractional
-// portions of a second are possible - but not necessarily supported by the
-// player class.  This returns a double to be consistent with GetTime() and
-// SeekTime().
-double CApplication::GetTotalTime() const
-{
-  double rc = 0.0;
-
-  const auto appPlayer = m_components.GetComponent<CApplicationPlayer>();
-  const auto stackHelper = m_components.GetComponent<CApplicationStackHelper>();
-
-  if (appPlayer->IsPlaying())
-  {
-    if (stackHelper->IsPlayingRegularStack())
-      rc = stackHelper->GetStackTotalTimeMs() * 0.001;
-    else
-      rc = appPlayer->GetTotalTime() * 0.001;
-  }
-
-  return rc;
-}
-
-// Returns the current time in seconds of the currently playing media.
-// Fractional portions of a second are possible.  This returns a double to
-// be consistent with GetTotalTime() and SeekTime().
-double CApplication::GetTime() const
-{
-  double rc = 0.0;
-
-  const auto appPlayer = m_components.GetComponent<CApplicationPlayer>();
-  const auto stackHelper = m_components.GetComponent<CApplicationStackHelper>();
-  if (appPlayer->IsPlaying())
-  {
-    if (stackHelper->IsPlayingRegularStack())
-    {
-      uint64_t startOfCurrentFile = stackHelper->GetCurrentStackPartStartTimeMs();
-      rc = (startOfCurrentFile + appPlayer->GetTime()) * 0.001;
-    }
-    else
-      rc = appPlayer->GetTime() * 0.001;
-  }
-
-  return rc;
 }
 
 // Sets the current position of the currently playing media to the specified
@@ -3373,56 +3307,10 @@ void CApplication::SeekTime( double dTime )
   }
 }
 
-float CApplication::GetPercentage() const
-{
-  const auto appPlayer = m_components.GetComponent<CApplicationPlayer>();
-  const auto stackHelper = m_components.GetComponent<CApplicationStackHelper>();
-
-  if (appPlayer->IsPlaying())
-  {
-    if (appPlayer->GetTotalTime() == 0 && appPlayer->IsPlayingAudio() && m_itemCurrentFile->HasMusicInfoTag())
-    {
-      const CMusicInfoTag& tag = *m_itemCurrentFile->GetMusicInfoTag();
-      if (tag.GetDuration() > 0)
-        return (float)(GetTime() / tag.GetDuration() * 100);
-    }
-
-    if (stackHelper->IsPlayingRegularStack())
-    {
-      double totalTime = GetTotalTime();
-      if (totalTime > 0.0)
-        return (float)(GetTime() / totalTime * 100);
-    }
-    else
-      return appPlayer->GetPercentage();
-  }
-  return 0.0f;
-}
-
-float CApplication::GetCachePercentage() const
-{
-  const auto appPlayer = m_components.GetComponent<CApplicationPlayer>();
-  const auto stackHelper = m_components.GetComponent<CApplicationStackHelper>();
-
-  if (appPlayer->IsPlaying())
-  {
-    // Note that the player returns a relative cache percentage and we want an absolute percentage
-    if (stackHelper->IsPlayingRegularStack())
-    {
-      float stackedTotalTime = (float) GetTotalTime();
-      // We need to take into account the stack's total time vs. currently playing file's total time
-      if (stackedTotalTime > 0.0f)
-        return std::min( 100.0f, GetPercentage() + (appPlayer->GetCachePercentage() * appPlayer->GetTotalTime() * 0.001f / stackedTotalTime ) );
-    }
-    else
-      return std::min( 100.0f, appPlayer->GetPercentage() + appPlayer->GetCachePercentage() );
-  }
-  return 0.0f;
-}
-
 void CApplication::SeekPercentage(float percent)
 {
   const auto appPlayer = m_components.GetComponent<CApplicationPlayer>();
+  const auto appPlayerInfo = m_components.GetComponent<CApplicationPlayerInfo>();
   const auto stackHelper = m_components.GetComponent<CApplicationStackHelper>();
 
   if (appPlayer->IsPlaying() && (percent >= 0.0f))
@@ -3430,17 +3318,10 @@ void CApplication::SeekPercentage(float percent)
     if (!appPlayer->CanSeek())
       return;
     if (stackHelper->IsPlayingRegularStack())
-      SeekTime(static_cast<double>(percent) * 0.01 * GetTotalTime());
+      SeekTime(static_cast<double>(percent) * 0.01 * appPlayerInfo->GetTotalTime());
     else
       appPlayer->SeekPercentage(percent);
   }
-}
-
-
-std::string CApplication::GetCurrentPlayer()
-{
-  const auto appPlayer = m_components.GetComponent<CApplicationPlayer>();
-  return appPlayer->GetCurrentPlayer();
 }
 
 void CApplication::UpdateLibraries()

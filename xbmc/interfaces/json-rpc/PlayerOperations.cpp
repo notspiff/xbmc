@@ -21,11 +21,10 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "application/ApplicationPowerHandling.h"
-#include "cores/IPlayer.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
 #include "guilib/GUIWindowManager.h"
-#include "input/Key.h"
 #include "interfaces/builtins/Builtins.h"
 #include "messaging/ApplicationMessenger.h"
 #include "music/MusicDatabase.h"
@@ -172,7 +171,12 @@ JSONRPC_STATUS CPlayerOperations::GetItem(const std::string &method, ITransportL
     case Video:
     case Audio:
     {
-      fileItem = std::make_shared<CFileItem>(g_application.CurrentFileItem());
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+      if (!appPlayerInfo)
+        return FailedToExecute;
+
+      fileItem = std::make_shared<CFileItem>(appPlayerInfo->CurrentFileItem());
       if (IsPVRChannel())
         break;
 
@@ -1499,7 +1503,12 @@ JSONRPC_STATUS CPlayerOperations::GetPropertyValue(PlayerType player, const std:
       {
         int ms = 0;
         if (!IsPVRChannel())
-          ms = (int)(g_application.GetTime() * 1000.0);
+        {
+          auto& components = CServiceBroker::GetAppComponents();
+          const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+          if (appPlayerInfo)
+            ms = static_cast<int>(appPlayerInfo->GetTime() * 1000.0);
+        }
         else
         {
           std::shared_ptr<CPVREpgInfoTag> epg(GetCurrentEpg());
@@ -1528,7 +1537,12 @@ JSONRPC_STATUS CPlayerOperations::GetPropertyValue(PlayerType player, const std:
       case Audio:
       {
         if (!IsPVRChannel())
-          result = g_application.GetPercentage();
+        {
+          auto& components = CServiceBroker::GetAppComponents();
+          const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+          if (appPlayerInfo)
+            result = appPlayerInfo->GetPercentage();
+        }
         else
         {
           std::shared_ptr<CPVREpgInfoTag> epg(GetCurrentEpg());
@@ -1559,7 +1573,10 @@ JSONRPC_STATUS CPlayerOperations::GetPropertyValue(PlayerType player, const std:
       case Video:
       case Audio:
       {
-        result = g_application.GetCachePercentage();
+        auto& components = CServiceBroker::GetAppComponents();
+        const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+        if (appPlayerInfo)
+          result = appPlayerInfo->GetCachePercentage();
         break;
       }
 
@@ -1582,7 +1599,12 @@ JSONRPC_STATUS CPlayerOperations::GetPropertyValue(PlayerType player, const std:
       {
         int ms = 0;
         if (!IsPVRChannel())
-          ms = (int)(g_application.GetTotalTime() * 1000.0);
+        {
+          auto& components = CServiceBroker::GetAppComponents();
+          const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+          if (appPlayerInfo)
+            ms = static_cast<int>(appPlayerInfo->GetTotalTime() * 1000.0);
+        }
         else
         {
           std::shared_ptr<CPVREpgInfoTag> epg(GetCurrentEpg());
