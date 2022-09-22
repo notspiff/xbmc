@@ -264,7 +264,6 @@ CApplication::CApplication(void)
 
 CApplication::~CApplication(void)
 {
-  delete m_pInertialScrollingHandler;
   m_components.DeregisterComponent(typeid(CApplicationSkinHandling));
   m_components.DeregisterComponent(typeid(CApplicationPowerHandling));
   m_components.DeregisterComponent(typeid(CApplicationVolumeHandling));
