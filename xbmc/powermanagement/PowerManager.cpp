@@ -13,6 +13,8 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
+#include "application/ApplicationPlayerInfo.h"
 #include "application/ApplicationPowerHandling.h"
 #include "application/ApplicationStackHelper.h"
 #include "application/AppParams.h"
@@ -197,9 +199,11 @@ void CPowerManager::OnSleep()
 
   StorePlayerState();
 
-  g_application.StopPlaying();
-  CServiceBroker::GetPVRManager().OnSleep();
   auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (appPlayerControl)
+    appPlayerControl->StopPlaying();
+  CServiceBroker::GetPVRManager().OnSleep();
   const auto appPower = components.GetComponent<CApplicationPowerHandling>();
   if (appPower)
   {
@@ -261,11 +265,12 @@ void CPowerManager::StorePlayerState()
 {
   auto& components = CServiceBroker::GetAppComponents();
   const auto appP = components.GetComponent<CApplicationPlayer>();
+  const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
   CApplicationPlayer& appPlayer = *appP;
-  if (!appP || appPlayer.IsPlaying())
+  if (appP && appPlayer.IsPlaying() && appPlayerInfo)
   {
     m_lastUsedPlayer = appPlayer.GetCurrentPlayer();
-    m_lastPlayedFileItem.reset(new CFileItem(g_application.CurrentFileItem()));
+    m_lastPlayedFileItem.reset(new CFileItem(appPlayerInfo->CurrentFileItem()));
     // set the actual offset instead of store and load it from database
     m_lastPlayedFileItem->SetStartOffset(appPlayer.GetTime());
     // in case of regular stack, correct the start offset by adding current part start time
@@ -298,7 +303,10 @@ void CPowerManager::RestorePlayerState()
   CLog::Log(LOGDEBUG,
             "CPowerManager::RestorePlayerState - resume last played item (startOffset: {} ms)",
             m_lastPlayedFileItem->GetStartOffset());
-  g_application.PlayFile(*m_lastPlayedFileItem, m_lastUsedPlayer);
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (appPlayerControl)
+    appPlayerControl->PlayFile(*m_lastPlayedFileItem, m_lastUsedPlayer);
 }
 
 void CPowerManager::SettingOptionsShutdownStatesFiller(const SettingConstPtr& setting,

@@ -10,9 +10,9 @@
 
 #include "GUIInfoManager.h"
 #include "ServiceBroker.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPlayerInfo.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
@@ -69,7 +69,8 @@ static int SeekPercentage(const std::vector<std::string>& params)
       auto& components = CServiceBroker::GetAppComponents();
       const auto appPlayer = components.GetComponent<CApplicationPlayer>();
       const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
-      if (appPlayer && appPlayer->IsPlaying() && appPlayerInfo)
+      const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+      if (appPlayer && appPlayer->IsPlaying() && appPlayerInfo && appPlayerControl)
       {
         CGUIInfoManager& infoMgr = CServiceBroker::GetGUI()->GetInfoManager();
 
@@ -86,7 +87,7 @@ static int SeekPercentage(const std::vector<std::string>& params)
                                   (fTimeshiftPercentage - static_cast<float>(iTimeshiftBufferStart));
         fPlayerPercentage = std::max(0.0f, std::min(fPlayerPercentage, 100.0f));
 
-        g_application.SeekPercentage(fPlayerPercentage);
+        appPlayerControl->SeekPercentage(fPlayerPercentage);
       }
     }
   }

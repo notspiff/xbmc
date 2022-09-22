@@ -18,6 +18,7 @@
 #include "addons/Skin.h"
 #include "application/Application.h" //! @todo Remove me
 #include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPowerHandling.h"
 #include "dialogs/GUIDialogKaiToast.h"
 #include "dialogs/GUIDialogYesNo.h"
@@ -444,7 +445,10 @@ void CProfileManager::LogOff()
 {
   CNetworkBase &networkManager = CServiceBroker::GetNetwork();
 
-  g_application.StopPlaying();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (appPlayerControl)
+    appPlayerControl->StopPlaying();
 
   if (CMusicLibraryQueue::GetInstance().IsScanningLibrary())
     CMusicLibraryQueue::GetInstance().StopLibraryScanning();
@@ -461,7 +465,6 @@ void CProfileManager::LogOff()
 
   g_passwordManager.bMasterUser = false;
 
-  auto& components = CServiceBroker::GetAppComponents();
   const auto appPower = components.GetComponent<CApplicationPowerHandling>();
   if (appPower)
     appPower->WakeUpScreenSaverAndDPMS();

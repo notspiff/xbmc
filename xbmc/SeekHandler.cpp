@@ -10,9 +10,9 @@
 
 #include "FileItem.h"
 #include "ServiceBroker.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPlayerInfo.h"
 #include "cores/DataCacheCore.h"
 #include "guilib/GUIComponent.h"
@@ -364,6 +364,11 @@ bool CSeekHandler::OnAction(const CAction &action)
 
 bool CSeekHandler::SeekTimeCode(const CAction &action)
 {
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (!appPlayerControl)
+    return false;
+
   if (m_timeCodePosition <= 0)
     return false;
 
@@ -375,7 +380,7 @@ bool CSeekHandler::SeekTimeCode(const CAction &action)
     {
       std::unique_lock<CCriticalSection> lock(m_critSection);
 
-      g_application.SeekTime(GetTimeCodeSeconds());
+      appPlayerControl->SeekTime(GetTimeCodeSeconds());
       Reset();
       return true;
     }

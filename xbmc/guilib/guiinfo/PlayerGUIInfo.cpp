@@ -13,9 +13,9 @@
 #include "ServiceBroker.h"
 #include "URL.h"
 #include "Util.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPlayerInfo.h"
 #include "application/ApplicationVolumeHandling.h"
 #include "cores/AudioEngine/Utils/AEUtil.h"
@@ -459,7 +459,8 @@ bool CPlayerGUIInfo::GetBool(bool& value, const CGUIListItem *gitem, int context
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
   const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
-  if (!appPlayer || !appPlayerInfo)
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (!appPlayer || !appPlayerInfo || !appPlayerControl)
     return false;
 
   switch (info.m_info)
@@ -663,10 +664,11 @@ bool CPlayerGUIInfo::GetBool(bool& value, const CGUIListItem *gitem, int context
         }
         else if (m_currentItem && !m_currentItem->GetPath().empty())
         {
-          if (!g_application.m_strPlayListFile.empty())
+          if (!appPlayerControl->getCurrentPlaylistFile().empty())
           {
             //playlist file that is currently playing or the playlistitem that is currently playing.
-            value = item->IsPath(g_application.m_strPlayListFile) || m_currentItem->IsSamePath(item);
+            value = item->IsPath(appPlayerControl->getCurrentPlaylistFile()) ||
+                    m_currentItem->IsSamePath(item);
           }
           else
           {

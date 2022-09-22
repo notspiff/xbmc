@@ -14,9 +14,9 @@
 #include "ServiceBroker.h"
 #include "URL.h"
 #include "Util.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "guilib/LocalizeStrings.h"
 #include "guilib/guiinfo/GUIInfo.h"
 #include "guilib/guiinfo/GUIInfoHelper.h"
@@ -38,6 +38,7 @@ bool CMusicGUIInfo::InitCurrentItem(CFileItem *item)
 {
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
   if (item && (item->IsAudio() ||
      (item->IsInternetStream() && (appPlayer && appPlayer->IsPlayingAudio()))))
   {
@@ -51,11 +52,11 @@ bool CMusicGUIInfo::InitCurrentItem(CFileItem *item)
     // find a thumb for this file.
     if (item->IsInternetStream() && !item->IsMusicDb())
     {
-      if (!g_application.m_strPlayListFile.empty())
+      if (!appPlayerControl->getCurrentPlaylistFile().empty())
       {
         CLog::Log(LOGDEBUG, "Streaming media detected... using {} to find a thumb",
-                  g_application.m_strPlayListFile);
-        CFileItem streamingItem(g_application.m_strPlayListFile,false);
+                  appPlayerControl->getCurrentPlaylistFile());
+        CFileItem streamingItem(appPlayerControl->getCurrentPlaylistFile(), false);
 
         CMusicThumbLoader loader;
         loader.FillThumb(streamingItem);

@@ -12,8 +12,8 @@
 #include "GUIUserMessages.h"
 #include "PlayListPlayer.h"
 #include "ServiceBroker.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPowerHandling.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
 #include "filesystem/Directory.h"
@@ -326,7 +326,10 @@ bool CAutorun::RunDisc(IDirectory* pDir, const std::string& strDrive, int& nAdde
             if (hdVideoPlayer != "VideoPlayer")
             {
               CLog::Log(LOGINFO, "HD DVD: External singlefile playback initiated: {}", hddvdname);
-              g_application.PlayFile(item, hdVideoPlayer, false);
+              auto& components = CServiceBroker::GetAppComponents();
+              const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+              if (appPlayerControl)
+                appPlayerControl->PlayFile(item, hdVideoPlayer, false);
               return true;
             } else
               CLog::Log(LOGINFO,"HD DVD: No external player found. Fallback to internal one.");

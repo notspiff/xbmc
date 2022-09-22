@@ -18,9 +18,9 @@
 #include "ServiceBroker.h"
 #include "Util.h"
 #include "VideoLibrary.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPlayerInfo.h"
 #include "application/ApplicationPowerHandling.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
@@ -418,12 +418,13 @@ JSONRPC_STATUS CPlayerOperations::Seek(const std::string &method, ITransportLaye
     {
       auto& components = CServiceBroker::GetAppComponents();
       const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-      if (!appPlayer || !appPlayer->CanSeek())
+      const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+      if (!appPlayer || !appPlayer->CanSeek() || !appPlayerControl)
         return FailedToExecute;
 
       const CVariant& value = parameterObject["value"];
       if (value.isMember("percentage"))
-        g_application.SeekPercentage(value["percentage"].asFloat());
+        appPlayerControl->SeekPercentage(value["percentage"].asFloat());
       else if (value.isMember("step"))
       {
         std::string step = value["step"].asString();
@@ -441,7 +442,7 @@ JSONRPC_STATUS CPlayerOperations::Seek(const std::string &method, ITransportLaye
       else if (value.isMember("seconds"))
         appPlayer->GetSeekHandler().SeekSeconds(static_cast<int>(value["seconds"].asInteger()));
       else if (value.isMember("time"))
-        g_application.SeekTime(ParseTimeInSeconds(value["time"]));
+        appPlayerControl->SeekTime(ParseTimeInSeconds(value["time"]));
       else
         return InvalidParams;
 

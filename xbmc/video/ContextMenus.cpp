@@ -11,9 +11,9 @@
 #include "Autorun.h"
 #include "PlayListPlayer.h"
 #include "ServiceBroker.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "filesystem/Directory.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
@@ -267,7 +267,10 @@ void SetPathAndPlay(CFileItem& item)
 
   if (item.IsLiveTV()) // pvr tv or pvr radio?
   {
-    g_application.PlayMedia(item, "", PLAYLIST::TYPE_VIDEO);
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+    if (appPlayerControl)
+      appPlayerControl->PlayMedia(item, "", PLAYLIST::TYPE_VIDEO);
   }
   else if (IsActiveRecordingsFolder(item))
   {

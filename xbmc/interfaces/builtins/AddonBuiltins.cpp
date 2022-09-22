@@ -19,7 +19,8 @@
 #include "addons/RepositoryUpdater.h"
 #include "addons/gui/GUIDialogAddonSettings.h"
 #include "addons/gui/GUIWindowAddonBrowser.h"
-#include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayerControl.h"
 #include "filesystem/PluginDirectory.h"
 #include "games/tags/GameInfoTag.h"
 #include "guilib/GUIComponent.h"
@@ -188,7 +189,10 @@ static int RunAddon(const std::vector<std::string>& params)
       else
         item = CFileItem(addon);
 
-      if (!g_application.PlayMedia(item, "", PLAYLIST::TYPE_NONE))
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+
+      if (!appPlayerControl || !appPlayerControl->PlayMedia(item, "", PLAYLIST::TYPE_NONE))
       {
         CLog::Log(LOGERROR, "RunAddon could not start {}", addonid);
         return false;

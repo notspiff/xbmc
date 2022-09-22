@@ -15,9 +15,9 @@
 #include "ServiceBroker.h"
 #include "TextureDatabase.h"
 #include "URL.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPowerHandling.h"
 #include "filesystem/Directory.h"
 #include "guilib/GUIComponent.h"
@@ -1148,7 +1148,9 @@ bool CGUIWindowSlideShow::PlayVideo()
   CLog::Log(LOGDEBUG, "Playing current video slide {}", item->GetPath());
   m_bPlayingVideo = true;
   m_iVideoSlide = m_iCurrentSlide;
-  bool ret = g_application.PlayFile(*item, "");
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  bool ret = appPlayerControl ? appPlayerControl->PlayFile(*item, "") : false;
   if (ret == true)
     return true;
   else
@@ -1268,8 +1270,9 @@ void CGUIWindowSlideShow::RunSlideShow(const std::string &strPath,
   // stop any video
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  if (appPlayer && appPlayer->IsPlayingVideo())
-    g_application.StopPlaying();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (appPlayer && appPlayer->IsPlayingVideo() && appPlayerControl)
+    appPlayerControl->StopPlaying();
 
   AddFromPath(strPath, bRecursive, method, order, sortAttributes, strExtensions);
 

@@ -18,8 +18,8 @@
 #include "DVDFileInfo.h"
 #include "DVDInputStreams/DVDFactoryInputStream.h"
 #include "DVDInputStreams/DVDInputStream.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPlayerInfo.h"
 
 #include <mutex>
@@ -3208,11 +3208,13 @@ void CVideoPlayer::Seek(bool bPlus, bool bLargeStep, bool bChapterOverride)
 
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
   int64_t time = GetTime();
-  if (g_application.CurrentFileItem().IsStack() &&
-      (seekTarget > m_processInfo->GetMaxTime() || seekTarget < 0) && appPlayerInfo)
+  if (appPlayerInfo && appPlayerInfo->CurrentFileItem().IsStack() &&
+      (seekTarget > m_processInfo->GetMaxTime() || seekTarget < 0) &&
+      appPlayerControl)
   {
-    g_application.SeekTime((seekTarget - time) * 0.001 + appPlayerInfo->GetTime());
+    appPlayerControl->SeekTime((seekTarget - time) * 0.001 + appPlayerInfo->GetTime());
     // warning, don't access any VideoPlayer variables here as
     // the VideoPlayer object may have been destroyed
     return;

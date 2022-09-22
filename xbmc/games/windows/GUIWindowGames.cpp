@@ -14,7 +14,8 @@
 #include "URL.h"
 #include "Util.h"
 #include "addons/gui/GUIDialogAddonInfo.h"
-#include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayerControl.h"
 #include "dialogs/GUIDialogContextMenu.h"
 #include "dialogs/GUIDialogMediaSource.h"
 #include "dialogs/GUIDialogProgress.h"
@@ -337,5 +338,9 @@ void CGUIWindowGames::OnItemInfo(int itemNumber)
 bool CGUIWindowGames::PlayGame(const CFileItem& item)
 {
   CFileItem itemCopy(item);
-  return g_application.PlayMedia(itemCopy, "", PLAYLIST::TYPE_NONE);
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (!appPlayerControl)
+    return false;
+  return appPlayerControl->PlayMedia(itemCopy, "", PLAYLIST::TYPE_NONE);
 }

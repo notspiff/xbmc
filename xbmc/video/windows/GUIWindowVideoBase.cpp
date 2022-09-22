@@ -18,9 +18,9 @@
 #include "URL.h"
 #include "Util.h"
 #include "addons/gui/GUIDialogAddonInfo.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
 #include "dialogs/GUIDialogProgress.h"
 #include "dialogs/GUIDialogSelect.h"
@@ -1273,7 +1273,10 @@ void CGUIWindowVideoBase::LoadPlayList(const std::string& strPlayList,
     }
   }
 
-  if (g_application.ProcessAndStartPlaylist(strPlayList, *pPlayList, playlistId))
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (appPlayerControl &&
+      appPlayerControl->ProcessAndStartPlaylist(strPlayList, *pPlayList, playlistId))
   {
     if (m_guiState)
       m_guiState->SetPlaylistDirectory("playlistvideo://");

@@ -19,7 +19,8 @@
 #include "Util.h"
 #include "addons/AddonManager.h"
 #include "addons/PluginSource.h"
-#include "application/Application.h"
+#include "application/ApplicationComponents.h"
+#include "application/ApplicationPlayerControl.h"
 #include "messaging/ApplicationMessenger.h"
 #if defined(TARGET_ANDROID)
 #include "platform/android/activity/XBMCApp.h"
@@ -1488,11 +1489,16 @@ bool CGUIMediaWindow::OnPlayMedia(int iItem, const std::string &player)
 
   CLog::Log(LOGDEBUG, "{} {}", __FUNCTION__, CURL::GetRedacted(pItem->GetPath()));
 
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (!appPlayerControl)
+    return false;
+
   bool bResult = false;
   if (pItem->IsInternetStream() || pItem->IsPlayList())
-    bResult = g_application.PlayMedia(*pItem, player, m_guiState->GetPlaylist());
+    bResult = appPlayerControl->PlayMedia(*pItem, player, m_guiState->GetPlaylist());
   else
-    bResult = g_application.PlayFile(*pItem, player);
+    bResult = appPlayerControl->PlayFile(*pItem, player);
 
   if (pItem->GetStartOffset() == STARTOFFSET_RESUME)
     pItem->SetStartOffset(0);

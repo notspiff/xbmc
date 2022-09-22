@@ -15,6 +15,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPowerHandling.h"
 #include "dialogs/GUIDialogKaiToast.h"
 #include "filesystem/PluginDirectory.h"
@@ -321,10 +322,13 @@ bool CPlayListPlayer::Play(int iSong,
   m_bPlaybackStarted = false;
 
   const auto playAttempt = std::chrono::steady_clock::now();
-  bool ret = g_application.PlayFile(*item, player, bAutoPlay);
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  bool ret = appPlayerControl ? appPlayerControl->PlayFile(*item, player, bAutoPlay) : false;
   if (!ret)
   {
-    CLog::Log(LOGERROR, "Playlist Player: skipping unplayable item: {}, path [{}]", m_iCurrentSong,
+    CLog::Log(LOGERROR, "Playlist Player: skipping unplayable item: {}, path [{}]",
+              m_iCurrentSong,
               CURL::GetRedacted(item->GetDynPath()));
     playlist.SetUnPlayable(m_iCurrentSong);
 
@@ -423,7 +427,10 @@ void CPlayListPlayer::SetCurrentPlaylist(Id playlistId)
 void CPlayListPlayer::ClearPlaylist(Id playlistId)
 {
   // clear our applications playlist file
-  g_application.m_strPlayListFile.clear();
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+
+  appPlayerControl->m_strPlayListFile.clear();
 
   CPlayList& playlist = GetPlaylist(playlistId);
   playlist.Clear();
@@ -810,7 +817,8 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
 {
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  if (!appPlayer)
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (!appPlayer || !appPlayerControl)
     return;
 
   auto wakeScreensaver = []()
@@ -920,7 +928,7 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
       Reset();
 
       CFileItem *item = static_cast<CFileItem*>(pMsg->lpVoid);
-      g_application.PlayFile(*item, "", pMsg->param1 != 0);
+      appPlayerControl->PlayFile(*item, "", pMsg->param1 != 0);
       delete item;
       return;
     }
@@ -957,7 +965,7 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
           if (item->IsAudio() || item->IsVideo())
             Play(item, pMsg->strParam);
           else
-            g_application.PlayMedia(*item, pMsg->strParam, playlistId);
+            appPlayerControl->PlayMedia(*item, pMsg->strParam, playlistId);
         }
         else
         {
@@ -1015,7 +1023,7 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
 
     // stop playing file
     if (appPlayer->IsPlaying())
-      g_application.StopPlaying();
+      appPlayerControl->StopPlaying();
   }
   break;
 

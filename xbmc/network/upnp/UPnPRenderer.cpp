@@ -17,9 +17,9 @@
 #include "UPnP.h"
 #include "UPnPInternal.h"
 #include "URL.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPlayerInfo.h"
 #include "application/ApplicationVolumeHandling.h"
 #include "filesystem/SpecialProtocol.h"
@@ -417,7 +417,11 @@ NPT_Result
 CUPnPRenderer::GetMetadata(NPT_String& meta)
 {
     NPT_Result res = NPT_FAILURE;
-    CFileItem item(g_application.CurrentFileItem());
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+    if (!appPlayerInfo)
+      return NPT_FAILURE;
+    CFileItem item(appPlayerInfo->CurrentFileItem());
     NPT_String file_path, tmp;
 
     // we pass an empty CThumbLoader reference, as it can't be used
@@ -726,7 +730,8 @@ CUPnPRenderer::OnSeek(PLT_ActionReference& action)
 {
     auto& components = CServiceBroker::GetAppComponents();
     const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-    if (!appPlayer || !appPlayer->IsPlaying())
+    const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+    if (!appPlayer || !appPlayer->IsPlaying() || !appPlayerControl)
         return NPT_ERROR_INVALID_STATE;
 
     NPT_String unit, target;
@@ -737,7 +742,7 @@ CUPnPRenderer::OnSeek(PLT_ActionReference& action)
         // converts target to seconds
         NPT_UInt32 seconds;
         NPT_CHECK_SEVERE(PLT_Didl::ParseTimeStamp(target, seconds));
-        g_application.SeekTime(seconds);
+        appPlayerControl->SeekTime(seconds);
     }
 
     return NPT_SUCCESS;

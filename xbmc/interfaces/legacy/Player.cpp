@@ -15,9 +15,10 @@
 #include "PlayList.h"
 #include "PlayListPlayer.h"
 #include "ServiceBroker.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerCallback.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPlayerInfo.h"
 #include "cores/IPlayer.h"
 #include "guilib/GUIComponent.h"
@@ -462,7 +463,10 @@ namespace XBMCAddon
       if (!getAppPlayer()->IsPlaying())
         throw PlayerException("Kodi is not playing any media file");
 
-      g_application.SeekTime( pTime );
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+      if (appPlayerControl)
+        appPlayerControl->SeekTime(pTime);
     }
 
     void Player::setSubtitles(const char* cLine)

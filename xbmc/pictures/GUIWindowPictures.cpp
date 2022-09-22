@@ -17,9 +17,9 @@
 #include "URL.h"
 #include "Util.h"
 #include "addons/gui/GUIDialogAddonInfo.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "dialogs/GUIDialogMediaSource.h"
 #include "dialogs/GUIDialogProgress.h"
 #include "guilib/GUIComponent.h"
@@ -318,8 +318,9 @@ bool CGUIWindowPictures::ShowPicture(int iItem, bool startSlideShow)
     return false;
   auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  if (appPlayer && appPlayer->IsPlayingVideo())
-    g_application.StopPlaying();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (appPlayer && appPlayer->IsPlayingVideo() && appPlayerControl)
+    appPlayerControl->StopPlaying();
 
   pSlideShow->Reset();
   bool bShowVideos = CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_PICTURES_SHOWVIDEOS);
@@ -363,8 +364,9 @@ void CGUIWindowPictures::OnShowPictureRecursive(const std::string& strPath)
     // stop any video
     auto& components = CServiceBroker::GetAppComponents();
     const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-    if (appPlayer && appPlayer->IsPlayingVideo())
-      g_application.StopPlaying();
+    const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+    if (appPlayer && appPlayer->IsPlayingVideo() && appPlayerControl)
+      appPlayerControl->StopPlaying();
 
     SortDescription sorting = m_guiState->GetSortMethod();
     pSlideShow->AddFromPath(strPath, true,
@@ -557,8 +559,9 @@ void CGUIWindowPictures::LoadPlayList(const std::string& strPlayList)
       return;
     auto& components = CServiceBroker::GetAppComponents();
     const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-    if (appPlayer && appPlayer->IsPlayingVideo())
-      g_application.StopPlaying();
+    const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+    if (appPlayer && appPlayer->IsPlayingVideo() && appPlayerControl)
+      appPlayerControl->StopPlaying();
 
     // convert playlist items into slideshow items
     pSlideShow->Reset();

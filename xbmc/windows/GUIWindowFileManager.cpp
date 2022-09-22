@@ -15,9 +15,9 @@
 #include "ServiceBroker.h"
 #include "URL.h"
 #include "Util.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
 #include "dialogs/GUIDialogBusy.h"
 #include "dialogs/GUIDialogContextMenu.h"
@@ -630,6 +630,12 @@ void CGUIWindowFileManager::OnClick(int iList, int iItem)
 void CGUIWindowFileManager::OnStart(CFileItem *pItem, const std::string &player)
 {
   // start playlists from file manager
+
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (!appPlayerControl)
+    return;
+
   if (pItem->IsPlayList())
   {
     const std::string& strPlayList = pItem->GetPath();
@@ -642,7 +648,7 @@ void CGUIWindowFileManager::OnStart(CFileItem *pItem, const std::string &player)
         return;
       }
     }
-    g_application.ProcessAndStartPlaylist(strPlayList, *pPlayList, PLAYLIST::TYPE_MUSIC);
+    appPlayerControl->ProcessAndStartPlaylist(strPlayList, *pPlayList, PLAYLIST::TYPE_MUSIC);
     return;
   }
   if (pItem->IsAudio() || pItem->IsVideo())
@@ -652,7 +658,7 @@ void CGUIWindowFileManager::OnStart(CFileItem *pItem, const std::string &player)
   }
   if (pItem->IsGame())
   {
-    g_application.PlayFile(*pItem, player);
+    appPlayerControl->PlayFile(*pItem, player);
     return ;
   }
 #ifdef HAS_PYTHON
@@ -668,10 +674,9 @@ void CGUIWindowFileManager::OnStart(CFileItem *pItem, const std::string &player)
     if (!pSlideShow)
       return ;
 
-    auto& components = CServiceBroker::GetAppComponents();
     const auto appPlayer = components.GetComponent<CApplicationPlayer>();
     if (appPlayer && appPlayer->IsPlayingVideo())
-      g_application.StopPlaying();
+      appPlayerControl->StopPlaying();
 
     pSlideShow->Reset();
     pSlideShow->Add(pItem);

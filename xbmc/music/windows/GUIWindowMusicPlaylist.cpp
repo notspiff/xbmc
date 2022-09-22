@@ -13,9 +13,9 @@
 #include "PlayListPlayer.h"
 #include "ServiceBroker.h"
 #include "Util.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
 #include "dialogs/GUIDialogSmartPlaylistEditor.h"
 #include "guilib/GUIComponent.h"
@@ -472,7 +472,10 @@ bool CGUIWindowMusicPlayList::OnPlayMedia(int iItem, const std::string &player)
       CFileItemPtr pItem=m_vecItems->Get(iItem);
       CServiceBroker::GetPlaylistPlayer().Reset();
       CServiceBroker::GetPlaylistPlayer().SetCurrentPlaylist(PLAYLIST::TYPE_NONE);
-      g_application.PlayFile(*pItem, player);
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+      if (appPlayerControl)
+        appPlayerControl->PlayFile(*pItem, player);
     }
   }
 

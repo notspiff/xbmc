@@ -13,9 +13,9 @@
 #include "ServiceBroker.h"
 #include "URL.h"
 #include "Util.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "cores/DataCacheCore.h"
 #include "cores/VideoPlayer/VideoRenderers/BaseRenderer.h"
 #include "guilib/GUIComponent.h"
@@ -60,7 +60,11 @@ bool CVideoGUIInfo::InitCurrentItem(CFileItem *item)
     // special case where .strm is used to start an audio stream
     auto& components = CServiceBroker::GetAppComponents();
     const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-    if (item->IsInternetStream() && (!appPlayer || appPlayer->IsPlayingAudio()))
+    const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+    if (!appPlayerControl || !appPlayer)
+      return false;
+
+    if (item->IsInternetStream() && appPlayer->IsPlayingAudio())
       return false;
 
     CLog::Log(LOGDEBUG, "CVideoGUIInfo::InitCurrentItem({})", CURL::GetRedacted(item->GetPath()));
@@ -75,11 +79,11 @@ bool CVideoGUIInfo::InitCurrentItem(CFileItem *item)
     // find a thumb for this stream
     if (item->IsInternetStream())
     {
-      if (!g_application.m_strPlayListFile.empty())
+      if (!appPlayerControl->getCurrentPlaylistFile().empty())
       {
         CLog::Log(LOGDEBUG, "Streaming media detected... using {} to find a thumb",
-                  g_application.m_strPlayListFile);
-        CFileItem thumbItem(g_application.m_strPlayListFile,false);
+                  appPlayerControl->getCurrentPlaylistFile());
+        CFileItem thumbItem(appPlayerControl->getCurrentPlaylistFile(), false);
 
         CVideoThumbLoader loader;
         if (loader.FillThumb(thumbItem))

@@ -12,9 +12,10 @@
 #include "PlayListPlayer.h"
 #include "ServiceBroker.h"
 #include "Util.h"
-#include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerInfo.h"
+#include "application/ApplicationPlayerControl.h"
 #include "dialogs/GUIDialogFileBrowser.h"
 #include "dialogs/GUIDialogMediaSource.h"
 #include "music/MusicLibraryQueue.h"
@@ -751,7 +752,9 @@ void CGUIWindowMusicBase::OnRipCD()
 {
   if (CServiceBroker::GetMediaManager().IsAudio())
   {
-    if (!g_application.CurrentFileItem().IsCDDA())
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+    if (appPlayerInfo && !appPlayerInfo->CurrentFileItem().IsCDDA())
     {
 #ifdef HAS_CDDA_RIPPER
       KODI::CDRIP::CCDDARipper::GetInstance().RipCD();
@@ -766,7 +769,9 @@ void CGUIWindowMusicBase::OnRipTrack(int iItem)
 {
   if (CServiceBroker::GetMediaManager().IsAudio())
   {
-    if (!g_application.CurrentFileItem().IsCDDA())
+    auto& components = CServiceBroker::GetAppComponents();
+    const auto appPlayerInfo = components.GetComponent<CApplicationPlayerInfo>();
+    if (appPlayerInfo && !appPlayerInfo->CurrentFileItem().IsCDDA())
     {
 #ifdef HAS_CDDA_RIPPER
       CFileItemPtr item = m_vecItems->Get(iItem);
@@ -872,7 +877,10 @@ void CGUIWindowMusicBase::LoadPlayList(const std::string& strPlayList)
   }
 
   int iSize = pPlayList->size();
-  if (g_application.ProcessAndStartPlaylist(strPlayList, *pPlayList, PLAYLIST::TYPE_MUSIC))
+  auto& components = CServiceBroker::GetAppComponents();
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (appPlayerControl &&
+      appPlayerControl->ProcessAndStartPlaylist(strPlayList, *pPlayList, PLAYLIST::TYPE_MUSIC))
   {
     if (m_guiState)
       m_guiState->SetPlaylistDirectory("playlistmusic://");

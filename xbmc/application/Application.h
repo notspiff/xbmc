@@ -118,13 +118,6 @@ public:
   int  GetMessageMask() override;
   void OnApplicationMessage(KODI::MESSAGING::ThreadMessage* pMsg) override;
 
-  bool PlayMedia(CFileItem& item, const std::string& player, PLAYLIST::Id playlistId);
-  bool ProcessAndStartPlaylist(const std::string& strPlayList,
-                               PLAYLIST::CPlayList& playlist,
-                               PLAYLIST::Id playlistId,
-                               int track = 0);
-  bool PlayFile(CFileItem item, const std::string& player, bool bRestart = false);
-  void StopPlaying();
   void Restart(bool bSamePosition = true);
   void DelayedPlayerRestart();
   void CheckDelayedPlayerRestart();
@@ -138,9 +131,6 @@ public:
   void Process() override;
   void ProcessSlow();
 
-  void SeekPercentage(float percent);
-  void SeekTime( double dTime = 0.0 );
-
   void UpdateLibraries();
 
   void UpdateCurrentPlayArt();
@@ -150,8 +140,6 @@ public:
 #ifdef HAS_DVD_DRIVE
   std::unique_ptr<MEDIA_DETECT::CAutorun> m_Autorun;
 #endif
-
-  std::string m_strPlayListFile;
 
   bool IsAppFocused() const { return m_AppFocused; }
 
@@ -205,14 +193,10 @@ protected:
   std::string m_prevMedia;
   bool m_bInitializing = true;
 
-  int m_nextPlaylistItem = -1;
-
   std::chrono::time_point<std::chrono::steady_clock> m_lastRenderTime;
   bool m_skipGuiRender = false;
 
   std::unique_ptr<MUSIC_INFO::CMusicInfoScanner> m_musicInfoScanner;
-
-  bool PlayStack(CFileItem& item, bool bRestart);
 
   void HandlePortEvents();
 

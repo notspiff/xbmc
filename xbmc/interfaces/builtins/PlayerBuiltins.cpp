@@ -18,6 +18,7 @@
 #include "application/Application.h"
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
+#include "application/ApplicationPlayerControl.h"
 #include "application/ApplicationPowerHandling.h"
 #include "filesystem/Directory.h"
 #include "guilib/GUIComponent.h"
@@ -88,7 +89,10 @@ static int PlayOffset(const std::vector<std::string>& params)
     // user wants to play the 'other' playlist
     if (playlistId != CServiceBroker::GetPlaylistPlayer().GetCurrentPlaylist())
     {
-      g_application.StopPlaying();
+      auto& components = CServiceBroker::GetAppComponents();
+      const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+      if (appPlayerControl)
+        appPlayerControl->StopPlaying();
       CServiceBroker::GetPlaylistPlayer().Reset();
       CServiceBroker::GetPlaylistPlayer().SetCurrentPlaylist(playlistId);
     }
@@ -127,7 +131,8 @@ static int PlayerControl(const std::vector<std::string>& params)
   StringUtils::ToLower(paramlow);
 
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  if (!appPlayer)
+  const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+  if (!appPlayer || !appPlayerControl)
     return -1;
 
   if (paramlow ==  "play")
@@ -143,7 +148,7 @@ static int PlayerControl(const std::vector<std::string>& params)
   }
   else if (paramlow == "stop")
   {
-    g_application.StopPlaying();
+    appPlayerControl->StopPlaying();
   }
   else if (StringUtils::StartsWithNoCase(params[0], "frameadvance"))
   {
@@ -264,7 +269,7 @@ static int PlayerControl(const std::vector<std::string>& params)
         CLog::Log(LOGERROR, "PlayerControl(seekpercentage(n)) argument, {:f}, must be 0-100",
                   offsetpercent);
       else if (appPlayer->IsPlaying())
-        g_application.SeekPercentage(offsetpercent);
+        appPlayerControl->SeekPercentage(offsetpercent);
     }
   }
   else if (paramlow == "showvideomenu")
@@ -394,7 +399,7 @@ static int PlayerControl(const std::vector<std::string>& params)
       }
 
       CFileItem playItem(groupMember);
-      if (!g_application.PlayMedia(
+      if (!appPlayerControl->PlayMedia(
               playItem, "", channel->IsRadio() ? PLAYLIST::TYPE_MUSIC : PLAYLIST::TYPE_VIDEO))
       {
         CLog::Log(LOGERROR, "ResumeLiveTv could not play channel: {}", channel->ChannelName());
@@ -553,7 +558,11 @@ static int PlayMedia(const std::vector<std::string>& params)
   if ((item.IsAudio() || item.IsVideo()) && !item.IsSmartPlayList())
     CServiceBroker::GetPlaylistPlayer().Play(std::make_shared<CFileItem>(item), "");
   else
-    g_application.PlayMedia(item, "", PLAYLIST::TYPE_NONE);
+  {
+    const auto appPlayerControl = components.GetComponent<CApplicationPlayerControl>();
+    if (appPlayerControl)
+      appPlayerControl->PlayMedia(item, "", PLAYLIST::TYPE_NONE);
+  }
 
   return 0;
 }
