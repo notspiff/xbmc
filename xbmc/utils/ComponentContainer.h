@@ -14,9 +14,12 @@
 #include <memory>
 #include <mutex>
 #include <stdexcept>
+#include <tuple>
 #include <typeindex>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
+#include <variant>
 
 //! \brief A generic container for components.
 //! \details A component has to be derived from the BaseType.
@@ -25,6 +28,15 @@
 template<class BaseType>
 class CComponentContainer
 {
+  //! \brief Helper template to wrap a variadic template pack in std::shared_ptr.
+  template<typename T> struct wrap_in_shared_ptr;
+
+  //! \brief Specialization for variadic parameters.
+  template<typename... T>
+  struct wrap_in_shared_ptr<std::tuple<T...>> {
+    using type = std::tuple<std::shared_ptr<T>...>;
+  };
+
 public:
   //! \brief Obtain a component.
   template<class T>
@@ -43,6 +55,16 @@ public:
       return std::static_pointer_cast<const T>((*it).second);
 
     throw std::logic_error("ComponentContainer: Attempt to obtain non-existent component");
+  }
+
+  //! \brief Obtain a set of components.
+  //! \details Explicitly use const to request a const pointer.
+  template<typename... Args>
+  typename wrap_in_shared_ptr<std::tuple<Args...>>::type GetComponents()
+  {
+    typename wrap_in_shared_ptr<std::tuple<Args...>>::type ret;
+    tuple_call(ret);
+    return ret;
   }
 
   //! \brief Returns number of registered components.
@@ -72,7 +94,28 @@ protected:
   }
 
 private:
-  mutable CCriticalSection m_critSection; //!< Critical section for map updates
   std::unordered_map<std::type_index, std::shared_ptr<BaseType>>
       m_components; //!< Map of components
+
+  mutable CCriticalSection m_critSection; //!< Critical section for map updates
+
+  //! \brief Dummy base case for tuple traversal.
+  template<std::size_t I = 0, typename Tuple>
+  typename std::enable_if<I == std::tuple_size<Tuple>::value, void>::type
+  tuple_call(Tuple&)
+  {
+  }
+
+  //! \brief Traverse a tuple and obtain the requested components.
+  template<std::size_t I = 0, typename Tuple>
+  typename std::enable_if<I != std::tuple_size<Tuple>::value, void>::type
+  tuple_call(Tuple& tuple)
+  {
+      using type = typename std::tuple_element_t<I,Tuple>::element_type;
+      if constexpr (std::is_const_v<type>)
+        std::get<I>(tuple) = std::as_const(*this).template GetComponent<std::remove_const_t<type>>();
+      else
+        std::get<I>(tuple) = this->GetComponent<type>();
+      tuple_call<I+1>(tuple);
+  }
 };
