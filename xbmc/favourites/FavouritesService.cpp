@@ -13,12 +13,12 @@
 #include "ServiceBroker.h"
 #include "URL.h"
 #include "Util.h"
-#include "filesystem/File.h"
 #include "music/tags/MusicInfoTag.h"
 #include "profiles/ProfileManager.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/SettingsComponent.h"
 #include "utils/ContentUtils.h"
+#include "utils/FileUtils.h"
 #include "utils/StringUtils.h"
 #include "utils/URIUtils.h"
 #include "utils/XBMCTinyXML.h"
@@ -153,13 +153,13 @@ void CFavouritesService::ReInit(std::string userDataFolder)
 
   CFileItemList items;
   std::string favourites = "special://xbmc/system/favourites.xml";
-  if(XFILE::CFile::Exists(favourites))
+  if (CFileUtils::Exists(favourites))
     LoadFromFile(favourites, m_favourites);
   else
     CLog::Log(LOGDEBUG, "CFavourites::Load - no system favourites found, skipping");
 
   favourites = URIUtils::AddFileToFolder(m_userDataFolder, "favourites.xml");
-  if(XFILE::CFile::Exists(favourites))
+  if (CFileUtils::Exists(favourites))
     LoadFromFile(favourites, m_favourites);
   else
     CLog::Log(LOGDEBUG, "CFavourites::Load - no userdata favourites found, skipping");
