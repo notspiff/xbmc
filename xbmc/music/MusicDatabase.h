@@ -17,7 +17,6 @@
 #include "MediaSource.h"
 #include "addons/Scraper.h"
 #include "dbwrappers/Database.h"
-#include "settings/LibExportSettings.h"
 #include "utils/SortUtils.h"
 
 #include <utility>
@@ -25,6 +24,7 @@
 
 class CArtist;
 class CFileItem;
+class CLibExportSettings;
 class CMusicDbUrl;
 
 namespace dbiplus

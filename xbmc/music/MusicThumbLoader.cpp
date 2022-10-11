@@ -14,6 +14,7 @@
 #include "music/tags/MusicInfoTag.h"
 #include "music/tags/MusicInfoTagLoaderFactory.h"
 #include "utils/StringUtils.h"
+#include "utils/Variant.h"
 #include "video/VideoThumbLoader.h"
 
 #include <utility>
