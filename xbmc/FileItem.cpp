@@ -3870,23 +3870,23 @@ std::string CFileItem::FindTrailer() const
   return strTrailer;
 }
 
-int CFileItem::GetVideoContentType() const
+VIDEODB_CONTENT_TYPE CFileItem::GetVideoContentType() const
 {
-  VIDEODB_CONTENT_TYPE type = VIDEODB_CONTENT_MOVIES;
+  VIDEODB_CONTENT_TYPE type = VIDEODB_CONTENT_TYPE::MOVIES;
   if (HasVideoInfoTag() && GetVideoInfoTag()->m_type == MediaTypeTvShow)
-    type = VIDEODB_CONTENT_TVSHOWS;
+    type = VIDEODB_CONTENT_TYPE::TVSHOWS;
   if (HasVideoInfoTag() && GetVideoInfoTag()->m_type == MediaTypeEpisode)
-    return VIDEODB_CONTENT_EPISODES;
+    return VIDEODB_CONTENT_TYPE::EPISODES;
   if (HasVideoInfoTag() && GetVideoInfoTag()->m_type == MediaTypeMusicVideo)
-    return VIDEODB_CONTENT_MUSICVIDEOS;
+    return VIDEODB_CONTENT_TYPE::MUSICVIDEOS;
   if (HasVideoInfoTag() && GetVideoInfoTag()->m_type == MediaTypeAlbum)
-    return VIDEODB_CONTENT_MUSICALBUMS;
+    return VIDEODB_CONTENT_TYPE::MUSICALBUMS;
 
   CVideoDatabaseDirectory dir;
   VIDEODATABASEDIRECTORY::CQueryParams params;
   dir.GetQueryParams(m_strPath, params);
   if (params.GetSetId() != -1 && params.GetMovieId() == -1) // movie set
-    return VIDEODB_CONTENT_MOVIE_SETS;
+    return VIDEODB_CONTENT_TYPE::MOVIE_SETS;
 
   return type;
 }

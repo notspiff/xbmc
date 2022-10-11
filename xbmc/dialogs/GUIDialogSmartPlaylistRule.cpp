@@ -105,26 +105,26 @@ void CGUIDialogSmartPlaylistRule::OnBrowse()
   else
     basePath = "videodb://";
 
-  VIDEODB_CONTENT_TYPE type = VIDEODB_CONTENT_MOVIES;
+  VIDEODB_CONTENT_TYPE type = VIDEODB_CONTENT_TYPE::MOVIES;
   if (m_type == "movies")
     basePath += "movies/";
   else if (m_type == "tvshows")
   {
-    type = VIDEODB_CONTENT_TVSHOWS;
+    type = VIDEODB_CONTENT_TYPE::TVSHOWS;
     basePath += "tvshows/";
   }
   else if (m_type == "musicvideos")
   {
-    type = VIDEODB_CONTENT_MUSICVIDEOS;
+    type = VIDEODB_CONTENT_TYPE::MUSICVIDEOS;
     basePath += "musicvideos/";
   }
   else if (m_type == "episodes")
   {
     if (m_rule.m_field == FieldGenre || m_rule.m_field == FieldYear ||
         m_rule.m_field == FieldStudio)
-      type = VIDEODB_CONTENT_TVSHOWS;
+      type = VIDEODB_CONTENT_TYPE::TVSHOWS;
     else
-      type = VIDEODB_CONTENT_EPISODES;
+      type = VIDEODB_CONTENT_TYPE::EPISODES;
     basePath += "tvshows/";
   }
 
@@ -144,7 +144,7 @@ void CGUIDialogSmartPlaylistRule::OnBrowse()
         m_type == "mixed")
     {
       CFileItemList items2;
-      videodatabase.GetGenresNav("videodb://musicvideos/genres/",items2,VIDEODB_CONTENT_MUSICVIDEOS);
+      videodatabase.GetGenresNav("videodb://musicvideos/genres/",items2,VIDEODB_CONTENT_TYPE::MUSICVIDEOS);
       items.Append(items2);
     }
     iLabel = 515;
@@ -330,17 +330,17 @@ void CGUIDialogSmartPlaylistRule::OnBrowse()
   }
   else if (m_rule.m_field == FieldSet)
   {
-    videodatabase.GetSetsNav("videodb://movies/sets/", items, VIDEODB_CONTENT_MOVIES);
+    videodatabase.GetSetsNav("videodb://movies/sets/", items, VIDEODB_CONTENT_TYPE::MOVIES);
     iLabel = 20434;
   }
   else if (m_rule.m_field == FieldTag)
   {
-    VIDEODB_CONTENT_TYPE type = VIDEODB_CONTENT_MOVIES;
+    VIDEODB_CONTENT_TYPE type = VIDEODB_CONTENT_TYPE::MOVIES;
     if (m_type == "tvshows" ||
         m_type == "episodes")
-      type = VIDEODB_CONTENT_TVSHOWS;
+      type = VIDEODB_CONTENT_TYPE::TVSHOWS;
     else if (m_type == "musicvideos")
-      type = VIDEODB_CONTENT_MUSICVIDEOS;
+      type = VIDEODB_CONTENT_TYPE::MUSICVIDEOS;
     else if (m_type != "movies")
       return;
 

@@ -231,11 +231,11 @@ void CAnnouncementManager::DoAnnounce(AnnouncementFlag flag,
 
       switch (item->GetVideoContentType())
       {
-      case VIDEODB_CONTENT_MOVIES:
+      case VIDEODB_CONTENT_TYPE::MOVIES:
         if (item->GetVideoInfoTag()->HasYear())
           object["item"]["year"] = item->GetVideoInfoTag()->GetYear();
         break;
-      case VIDEODB_CONTENT_EPISODES:
+      case VIDEODB_CONTENT_TYPE::EPISODES:
         if (item->GetVideoInfoTag()->m_iEpisode >= 0)
           object["item"]["episode"] = item->GetVideoInfoTag()->m_iEpisode;
         if (item->GetVideoInfoTag()->m_iSeason >= 0)
@@ -243,11 +243,13 @@ void CAnnouncementManager::DoAnnounce(AnnouncementFlag flag,
         if (!item->GetVideoInfoTag()->m_strShowTitle.empty())
           object["item"]["showtitle"] = item->GetVideoInfoTag()->m_strShowTitle;
         break;
-      case VIDEODB_CONTENT_MUSICVIDEOS:
+      case VIDEODB_CONTENT_TYPE::MUSICVIDEOS:
         if (!item->GetVideoInfoTag()->m_strAlbum.empty())
           object["item"]["album"] = item->GetVideoInfoTag()->m_strAlbum;
         if (!item->GetVideoInfoTag()->m_artist.empty())
           object["item"]["artist"] = StringUtils::Join(item->GetVideoInfoTag()->m_artist, " / ");
+        break;
+      default:
         break;
       }
     }

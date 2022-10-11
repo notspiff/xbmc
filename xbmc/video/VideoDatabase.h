@@ -154,16 +154,16 @@ enum VideoDbDetails
 #define VIDEODB_TYPE_DATE 7
 #define VIDEODB_TYPE_DATETIME 8
 
-typedef enum
+enum class VIDEODB_CONTENT_TYPE
 {
-  VIDEODB_CONTENT_UNKNOWN = 0,
-  VIDEODB_CONTENT_MOVIES = 1,
-  VIDEODB_CONTENT_TVSHOWS = 2,
-  VIDEODB_CONTENT_MUSICVIDEOS = 3,
-  VIDEODB_CONTENT_EPISODES = 4,
-  VIDEODB_CONTENT_MOVIE_SETS = 5,
-  VIDEODB_CONTENT_MUSICALBUMS = 6
-} VIDEODB_CONTENT_TYPE;
+  UNKNOWN = -1,
+  MOVIES = 1,
+  TVSHOWS = 2,
+  MUSICVIDEOS = 3,
+  EPISODES = 4,
+  MOVIE_SETS = 5,
+  MUSICALBUMS = 6
+};
 
 typedef enum // this enum MUST match the offset struct further down!! and make sure to keep min and max at -1 and sizeof(offsets)
 {
@@ -475,8 +475,8 @@ public:
    */
   bool GetPlayCounts(const std::string &path, CFileItemList &items);
 
-  void UpdateMovieTitle(int idMovie, const std::string& strNewMovieTitle, VIDEODB_CONTENT_TYPE iType=VIDEODB_CONTENT_MOVIES);
-  bool UpdateVideoSortTitle(int idDb, const std::string& strNewSortTitle, VIDEODB_CONTENT_TYPE iType = VIDEODB_CONTENT_MOVIES);
+  void UpdateMovieTitle(int idMovie, const std::string& strNewMovieTitle, VIDEODB_CONTENT_TYPE iType = VIDEODB_CONTENT_TYPE::MOVIES);
+  bool UpdateVideoSortTitle(int idDb, const std::string& strNewSortTitle, VIDEODB_CONTENT_TYPE iType = VIDEODB_CONTENT_TYPE::MOVIES);
 
   bool HasMovieInfo(const std::string& strFilenameAndPath);
   bool HasTvShowInfo(const std::string& strFilenameAndPath);
@@ -739,15 +739,15 @@ public:
   bool GetLinksToTvShow(int idMovie, std::vector<int>& ids);
 
   // general browsing
-  bool GetGenresNav(const std::string& strBaseDir, CFileItemList& items, int idContent=-1, const Filter &filter = Filter(), bool countOnly = false);
-  bool GetCountriesNav(const std::string& strBaseDir, CFileItemList& items, int idContent=-1, const Filter &filter = Filter(), bool countOnly = false);
-  bool GetStudiosNav(const std::string& strBaseDir, CFileItemList& items, int idContent=-1, const Filter &filter = Filter(), bool countOnly = false);
-  bool GetYearsNav(const std::string& strBaseDir, CFileItemList& items, int idContent=-1, const Filter &filter = Filter());
-  bool GetActorsNav(const std::string& strBaseDir, CFileItemList& items, int idContent=-1, const Filter &filter = Filter(), bool countOnly = false);
-  bool GetDirectorsNav(const std::string& strBaseDir, CFileItemList& items, int idContent=-1, const Filter &filter = Filter(), bool countOnly = false);
-  bool GetWritersNav(const std::string& strBaseDir, CFileItemList& items, int idContent=-1, const Filter &filter = Filter(), bool countOnly = false);
-  bool GetSetsNav(const std::string& strBaseDir, CFileItemList& items, int idContent=-1, const Filter &filter = Filter(), bool ignoreSingleMovieSets = false);
-  bool GetTagsNav(const std::string& strBaseDir, CFileItemList& items, int idContent=-1, const Filter &filter = Filter(), bool countOnly = false);
+  bool GetGenresNav(const std::string& strBaseDir, CFileItemList& items, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter &filter = Filter(), bool countOnly = false);
+  bool GetCountriesNav(const std::string& strBaseDir, CFileItemList& items, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter& filter = Filter(), bool countOnly = false);
+  bool GetStudiosNav(const std::string& strBaseDir, CFileItemList& items, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter& filter = Filter(), bool countOnly = false);
+  bool GetYearsNav(const std::string& strBaseDir, CFileItemList& items, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter& filter = Filter());
+  bool GetActorsNav(const std::string& strBaseDir, CFileItemList& items, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter& filter = Filter(), bool countOnly = false);
+  bool GetDirectorsNav(const std::string& strBaseDir, CFileItemList& items, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter& filter = Filter(), bool countOnly = false);
+  bool GetWritersNav(const std::string& strBaseDir, CFileItemList& items, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter& filter = Filter(), bool countOnly = false);
+  bool GetSetsNav(const std::string& strBaseDir, CFileItemList& items, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter& filter = Filter(), bool ignoreSingleMovieSets = false);
+  bool GetTagsNav(const std::string& strBaseDir, CFileItemList& items, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter& filter = Filter(), bool countOnly = false);
   bool GetMusicVideoAlbumsNav(const std::string& strBaseDir, CFileItemList& items, int idArtist, const Filter &filter = Filter(), bool countOnly = false);
 
   bool GetMoviesNav(const std::string& strBaseDir, CFileItemList& items, int idGenre=-1, int idYear=-1, int idActor=-1, int idDirector=-1, int idStudio=-1, int idCountry=-1, int idSet=-1, int idTag=-1, const SortDescription &sortDescription = SortDescription(), int getDetails = VideoDbDetailsNone);
@@ -847,16 +847,16 @@ public:
   {
     switch (type)
     {
-    case VIDEODB_CONTENT_MOVIES:
+    case VIDEODB_CONTENT_TYPE::MOVIES:
       out = MediaTypeMovie;
       break;
-    case VIDEODB_CONTENT_TVSHOWS:
+    case VIDEODB_CONTENT_TYPE::TVSHOWS:
       out = MediaTypeTvShow;
       break;
-    case VIDEODB_CONTENT_EPISODES:
+    case VIDEODB_CONTENT_TYPE::EPISODES:
       out = MediaTypeEpisode;
       break;
-    case VIDEODB_CONTENT_MUSICVIDEOS:
+    case VIDEODB_CONTENT_TYPE::MUSICVIDEOS:
       out = MediaTypeMusicVideo;
       break;
     default:
@@ -987,8 +987,8 @@ protected:
   CVideoInfoTag GetDetailsForEpisode(const dbiplus::sql_record* const record, int getDetails = VideoDbDetailsNone);
   CVideoInfoTag GetDetailsForMusicVideo(std::unique_ptr<dbiplus::Dataset> &pDS, int getDetails = VideoDbDetailsNone);
   CVideoInfoTag GetDetailsForMusicVideo(const dbiplus::sql_record* const record, int getDetails = VideoDbDetailsNone);
-  bool GetPeopleNav(const std::string& strBaseDir, CFileItemList& items, const char *type, int idContent = -1, const Filter &filter = Filter(), bool countOnly = false);
-  bool GetNavCommon(const std::string& strBaseDir, CFileItemList& items, const char *type, int idContent=-1, const Filter &filter = Filter(), bool countOnly = false);
+  bool GetPeopleNav(const std::string& strBaseDir, CFileItemList& items, const char* type, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter& filter = Filter(), bool countOnly = false);
+  bool GetNavCommon(const std::string& strBaseDir, CFileItemList& items, const char* type, VIDEODB_CONTENT_TYPE idContent = VIDEODB_CONTENT_TYPE::UNKNOWN, const Filter& filter = Filter(), bool countOnly = false);
   void GetCast(int media_id, const std::string &media_type, std::vector<SActorInfo> &cast);
   void GetTags(int media_id, const std::string &media_type, std::vector<std::string> &tags);
   void GetRatings(int media_id, const std::string &media_type, RatingMap &ratings);

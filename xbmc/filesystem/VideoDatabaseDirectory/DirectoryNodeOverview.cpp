@@ -56,9 +56,9 @@ bool CDirectoryNodeOverview::GetContent(CFileItemList& items) const
 {
   CVideoDatabase database;
   database.Open();
-  bool hasMovies = database.HasContent(VIDEODB_CONTENT_MOVIES);
-  bool hasTvShows = database.HasContent(VIDEODB_CONTENT_TVSHOWS);
-  bool hasMusicVideos = database.HasContent(VIDEODB_CONTENT_MUSICVIDEOS);
+  bool hasMovies = database.HasContent(VIDEODB_CONTENT_TYPE::MOVIES);
+  bool hasTvShows = database.HasContent(VIDEODB_CONTENT_TYPE::TVSHOWS);
+  bool hasMusicVideos = database.HasContent(VIDEODB_CONTENT_TYPE::MUSICVIDEOS);
   std::vector<std::pair<const char*, int> > vec;
   if (hasMovies)
   {

@@ -664,13 +664,13 @@ int CGUIDialogMediaFilter::GetItems(const Filter &filter, std::vector<std::strin
     CDatabase::Filter dbfilter;
     dbfilter.where = tmpFilter.GetWhereClause(videodb, playlists);
 
-    VIDEODB_CONTENT_TYPE type = VIDEODB_CONTENT_MOVIES;
+    VIDEODB_CONTENT_TYPE type = VIDEODB_CONTENT_TYPE::MOVIES;
     if (m_mediaType == "tvshows")
-      type = VIDEODB_CONTENT_TVSHOWS;
+      type = VIDEODB_CONTENT_TYPE::TVSHOWS;
     else if (m_mediaType == "episodes")
-      type = VIDEODB_CONTENT_EPISODES;
+      type = VIDEODB_CONTENT_TYPE::EPISODES;
     else if (m_mediaType == "musicvideos")
-      type = VIDEODB_CONTENT_MUSICVIDEOS;
+      type = VIDEODB_CONTENT_TYPE::MUSICVIDEOS;
 
     if (filter.field == FieldGenre)
       videodb.GetGenresNav(m_dbUrl->ToString(), selectItems, type, dbfilter, countOnly);

@@ -28,6 +28,8 @@
 #include <utility>
 #include <vector>
 
+enum class VIDEODB_CONTENT_TYPE;
+
 namespace ADDON
 {
 class IAddon;
@@ -263,7 +265,7 @@ public:
   void FillInDefaultIcon();
   void SetFileSizeLabel();
   void SetLabel(const std::string &strLabel) override;
-  int GetVideoContentType() const; /* return VIDEODB_CONTENT_TYPE, but don't want to include videodb in this header */
+  VIDEODB_CONTENT_TYPE GetVideoContentType() const;
   bool IsLabelPreformatted() const { return m_bLabelPreformatted; }
   void SetLabelPreformatted(bool bYesNo) { m_bLabelPreformatted=bYesNo; }
   bool SortsOnTop() const { return m_specialSort == SortSpecialOnTop; }

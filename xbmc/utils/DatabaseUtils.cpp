@@ -17,24 +17,23 @@
 
 #include <sstream>
 
-MediaType DatabaseUtils::MediaTypeFromVideoContentType(int videoContentType)
+MediaType DatabaseUtils::MediaTypeFromVideoContentType(VIDEODB_CONTENT_TYPE videoContentType)
 {
-  VIDEODB_CONTENT_TYPE type = (VIDEODB_CONTENT_TYPE)videoContentType;
-  switch (type)
+  switch (videoContentType)
   {
-    case VIDEODB_CONTENT_MOVIES:
+    case VIDEODB_CONTENT_TYPE::MOVIES:
       return MediaTypeMovie;
 
-    case VIDEODB_CONTENT_MOVIE_SETS:
+    case VIDEODB_CONTENT_TYPE::MOVIE_SETS:
       return MediaTypeVideoCollection;
 
-    case VIDEODB_CONTENT_TVSHOWS:
+    case VIDEODB_CONTENT_TYPE::TVSHOWS:
       return MediaTypeTvShow;
 
-    case VIDEODB_CONTENT_EPISODES:
+    case VIDEODB_CONTENT_TYPE::EPISODES:
       return MediaTypeEpisode;
 
-    case VIDEODB_CONTENT_MUSICVIDEOS:
+    case VIDEODB_CONTENT_TYPE::MUSICVIDEOS:
       return MediaTypeMusicVideo;
 
     default:

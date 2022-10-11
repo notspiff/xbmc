@@ -729,7 +729,7 @@ CUPnPServer::OnBrowseDirectChildren(PLT_ActionReference&          action,
 
       CVideoDatabase database;
       database.Open();
-      if (database.HasContent(VIDEODB_CONTENT_MUSICVIDEOS)) {
+      if (database.HasContent(VIDEODB_CONTENT_TYPE::MUSICVIDEOS)) {
           CFileItemPtr mvideos(new CFileItem("library://video/musicvideos/", true));
           mvideos->SetLabel(g_localizeStrings.Get(20389));
           items.Add(mvideos);
@@ -1128,11 +1128,11 @@ CUPnPServer::OnUpdateObject(PLT_ActionReference&             action,
         int id = -1;
         VIDEODB_CONTENT_TYPE content_type;
         if ((id = params.GetMovieId()) >= 0 )
-            content_type = VIDEODB_CONTENT_MOVIES;
+            content_type = VIDEODB_CONTENT_TYPE::MOVIES;
         else if ((id = params.GetEpisodeId()) >= 0 )
-            content_type = VIDEODB_CONTENT_EPISODES;
+            content_type = VIDEODB_CONTENT_TYPE::EPISODES;
         else if ((id = params.GetMVideoId()) >= 0 )
-            content_type = VIDEODB_CONTENT_MUSICVIDEOS;
+            content_type = VIDEODB_CONTENT_TYPE::MUSICVIDEOS;
         else {
             err = 701;
             msg = "No such object";
