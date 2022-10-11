@@ -57,6 +57,8 @@
 #include "utils/Screenshot.h"
 #include "utils/Variant.h"
 #include "video/Bookmark.h"
+#include "video/VideoDatabase.h"
+#include "video/VideoInfoTag.h"
 #include "video/VideoLibraryQueue.h"
 
 #ifdef HAS_PYTHON

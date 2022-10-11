@@ -10,10 +10,11 @@
 
 #include "guilib/GUIDialog.h"
 #include "utils/JobManager.h"
-#include "video/VideoDatabase.h"
+#include "video/Bookmark.h"
 #include "view/GUIViewControl.h"
 
 class CFileItemList;
+class CVideoInfoTag;
 
 class CGUIDialogVideoBookmarks : public CGUIDialog, public CJobQueue
 {
@@ -53,7 +54,7 @@ protected:
   void GotoBookmark(int iItem);
   void ClearBookmarks();
   static bool AddEpisodeBookmark();
-  static bool AddBookmark(CVideoInfoTag *tag=NULL);
+  static bool AddBookmark(CVideoInfoTag* tag = nullptr);
   void Delete(int item);
   void Clear();
   void OnRefreshList();
