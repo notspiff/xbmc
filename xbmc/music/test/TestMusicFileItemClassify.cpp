@@ -19,6 +19,23 @@ struct SimpleDefinition
   bool result;
 };
 
+class AudioBookTest : public testing::WithParamInterface<SimpleDefinition>
+                    , public testing::Test
+{};
+
+TEST_P(AudioBookTest, IsAudioBook)
+{
+  EXPECT_EQ(IsAudioBook(CFileItem(GetParam().path, false)), GetParam().result);
+}
+
+const auto audiobook_tests = std::array{
+  SimpleDefinition{"/home/user/test.m4b", true},
+  SimpleDefinition{"/home/user/test.mka", true},
+  SimpleDefinition{"/home/user/test.not", false},
+};
+
+INSTANTIATE_TEST_SUITE_P(TestMusicFileItemClassify, AudioBookTest, testing::ValuesIn(audiobook_tests));
+
 class CuesheetTest : public testing::WithParamInterface<SimpleDefinition>
                    , public testing::Test
 {};

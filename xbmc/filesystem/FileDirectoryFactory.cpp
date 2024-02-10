@@ -7,6 +7,7 @@
  */
 
 #include "FileDirectoryFactory.h"
+#include "music/MusicFileItemClassify.h"
 
 #if defined(HAS_ISO9660PP)
 #include "ISO9660Directory.h"
@@ -235,7 +236,7 @@ IFileDirectory* CFileDirectoryFactory::Create(const CURL& url, CFileItem* pItem,
     return NULL;
   }
 
-  if (pItem->IsAudioBook())
+  if (IsAudioBook(*pItem))
   {
     if (!pItem->HasMusicInfoTag() || pItem->GetEndOffset() <= 0)
     {
