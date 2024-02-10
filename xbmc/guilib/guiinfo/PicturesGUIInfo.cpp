@@ -15,6 +15,7 @@
 #include "guilib/GUIWindowManager.h"
 #include "guilib/guiinfo/GUIInfo.h"
 #include "guilib/guiinfo/GUIInfoLabels.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "pictures/PictureInfoTag.h"
 #include "pictures/SlideShowDelegator.h"
 #include "utils/StringUtils.h"
@@ -121,7 +122,7 @@ bool CPicturesGUIInfo::InitCurrentItem(CFileItem *item)
 
 bool CPicturesGUIInfo::GetLabel(std::string& value, const CFileItem *item, int contextWindow, const CGUIInfo &info, std::string *fallback) const
 {
-  if (item->IsPicture() && info.m_info >= LISTITEM_PICTURE_START && info.m_info <= LISTITEM_PICTURE_END)
+  if (IsPicture(*item) && info.m_info >= LISTITEM_PICTURE_START && info.m_info <= LISTITEM_PICTURE_END)
   {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // LISTITEM_*
@@ -197,7 +198,7 @@ bool CPicturesGUIInfo::GetLabel(std::string& value, const CFileItem *item, int c
     }
   }
 
-  if (item->IsPicture())
+  if (IsPicture(*item))
   {
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // LISTITEM_*

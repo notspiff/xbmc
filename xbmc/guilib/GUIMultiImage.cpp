@@ -15,6 +15,7 @@
 #include "TextureManager.h"
 #include "WindowIDs.h"
 #include "filesystem/Directory.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "utils/FileExtensionProvider.h"
 #include "utils/JobManager.h"
 #include "utils/Random.h"
@@ -224,7 +225,7 @@ void CGUIMultiImage::LoadDirectory()
    3. Bundled folder
    */
   CFileItem item(m_currentPath, false);
-  if (item.IsPicture() || CServiceBroker::GetTextureCache()->HasCachedImage(m_currentPath))
+  if (IsPicture(item) || CServiceBroker::GetTextureCache()->HasCachedImage(m_currentPath))
     m_files.push_back(m_currentPath);
   else // bundled folder?
     m_files =
@@ -296,7 +297,7 @@ bool CGUIMultiImage::CMultiImageJob::DoWork()
   // check to see if we have a single image or a folder of images
   CFileItem item(m_path, false);
   item.FillInMimeType();
-  if (item.IsPicture() || StringUtils::StartsWithNoCase(item.GetMimeType(), "image/"))
+  if (IsPicture(item) || StringUtils::StartsWithNoCase(item.GetMimeType(), "image/"))
   {
     m_files.push_back(m_path);
   }
@@ -314,7 +315,7 @@ bool CGUIMultiImage::CMultiImageJob::DoWork()
     for (int i=0; i < items.Size(); i++)
     {
       CFileItem* pItem = items[i].get();
-      if (pItem && (pItem->IsPicture() || StringUtils::StartsWithNoCase(pItem->GetMimeType(), "image/")))
+      if (pItem && IsPicture(*pItem))
         m_files.push_back(pItem->GetPath());
     }
   }

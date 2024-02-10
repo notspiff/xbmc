@@ -12,6 +12,7 @@
 #include "ServiceBroker.h"
 #include "URL.h"
 #include "music/tags/MusicInfoTag.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/SettingsComponent.h"
 #include "utils/StringUtils.h"
@@ -223,7 +224,7 @@ bool CExecString::Parse(const CFileItem& item, const std::string& contextWindow)
       BuildPlayMedia(item, StringUtils::Paramify(item.GetVideoInfoTag()->m_strFileNameAndPath));
     else if (item.IsMusicDb() && item.HasMusicInfoTag())
       BuildPlayMedia(item, StringUtils::Paramify(item.GetMusicInfoTag()->GetURL()));
-    else if (item.IsPicture())
+    else if (IsPicture(item))
       Build("ShowPicture", {StringUtils::Paramify(item.GetPath())});
     else
     {

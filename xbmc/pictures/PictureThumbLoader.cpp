@@ -17,6 +17,7 @@
 #include "filesystem/MultiPathDirectory.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -75,7 +76,7 @@ bool CPictureThumbLoader::LoadItemCached(CFileItem* pItem)
   }
 
   std::string thumb;
-  if (pItem->IsPicture() && !pItem->IsZIP() && !pItem->IsRAR() && !pItem->IsCBZ() && !pItem->IsCBR() && !pItem->IsPlayList())
+  if (IsPicture(*pItem) && !pItem->IsZIP() && !pItem->IsRAR() && !pItem->IsCBZ() && !pItem->IsCBR() && !pItem->IsPlayList())
   { // load the thumb from the image file
     thumb = pItem->HasArt("thumb") ? pItem->GetArt("thumb") : CTextureUtils::GetWrappedThumbURL(pItem->GetPath());
   }
@@ -160,7 +161,7 @@ void CPictureThumbLoader::ProcessFoldersAndArchives(CFileItem *pItem)
       // count the number of images
       for (int i=0; i < items.Size();)
       {
-        if (!items[i]->IsPicture() || items[i]->IsZIP() || items[i]->IsRAR() || items[i]->IsPlayList())
+        if (!IsPicture(*items[i]) || items[i]->IsZIP() || items[i]->IsRAR() || items[i]->IsPlayList())
         {
           items.Remove(i);
         }

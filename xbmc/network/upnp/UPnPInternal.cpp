@@ -18,6 +18,7 @@
 #include "filesystem/StackDirectory.h"
 #include "filesystem/VideoDatabaseDirectory.h"
 #include "music/tags/MusicInfoTag.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -208,7 +209,7 @@ NPT_String GetMimeType(const CFileItem& item, const PLT_HttpRequestContext* cont
       mime = "video/" + ext;
     else if (item.IsAudio() || item.IsMusicDb())
       mime = "audio/" + ext;
-    else if (item.IsPicture())
+    else if (IsPicture(item))
       mime = "image/" + ext;
     else if (item.IsSubtitle())
       mime = "text/" + ext;
@@ -542,7 +543,7 @@ PLT_MediaObject* BuildObject(CFileItem& item,
         PopulateObjectFromTag(*tag, *object, &file_path, &resource, quirks, upnp_service);
       }
     }
-    else if (item.IsPicture())
+    else if (IsPicture(item))
     {
       object->m_ObjectClass.type = "object.item.imageItem.photo";
     }

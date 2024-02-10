@@ -19,6 +19,7 @@
 #include "guilib/LocalizeStrings.h"
 #include "interfaces/AnnouncementManager.h"
 #include "music/MusicThumbLoader.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "pictures/PictureThumbLoader.h"
 #include "pvr/PVRManager.h"
 #include "pvr/PVRThumbLoader.h"
@@ -143,7 +144,7 @@ public:
       initThumbLoader<CMusicThumbLoader>(InfoTagType::AUDIO);
       return m_thumbloaders[InfoTagType::AUDIO];
     }
-    if (item->IsPicture())
+    if (IsPicture(*item))
     {
       initThumbLoader<CPictureThumbLoader>(InfoTagType::PICTURE);
       return m_thumbloaders[InfoTagType::PICTURE];

@@ -26,6 +26,7 @@
 #include "interfaces/AnnouncementManager.h"
 #include "messaging/ApplicationMessenger.h"
 #include "network/Network.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "pictures/SlideShowDelegator.h"
 #include "utils/StringUtils.h"
 #include "utils/URIUtils.h"
@@ -677,7 +678,7 @@ NPT_Result CUPnPRenderer::PlayMedia(const NPT_String& uri,
     return NPT_FAILURE;
   }
 
-  if (item->IsPicture())
+  if (IsPicture(*item))
   {
     CServiceBroker::GetAppMessenger()->PostMsg(TMSG_PICTURE_SHOW, -1, -1, nullptr, item->GetPath());
   }

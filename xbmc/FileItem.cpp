@@ -31,6 +31,7 @@
 #include "music/MusicDatabase.h"
 #include "music/tags/MusicInfoTag.h"
 #include "music/tags/MusicInfoTagLoaderFactory.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "pictures/PictureInfoTag.h"
 #include "playlists/PlayList.h"
 #include "playlists/PlayListFactory.h"
@@ -986,33 +987,6 @@ bool CFileItem::IsGame() const
   return CGameUtils::HasGameExtension(m_strPath);
 }
 
-bool CFileItem::IsPicture() const
-{
-  if (StringUtils::StartsWithNoCase(m_mimetype, "image/"))
-    return true;
-
-  if (HasPictureInfoTag())
-    return true;
-
-  if (HasGameInfoTag())
-    return false;
-
-  if (HasMusicInfoTag())
-    return false;
-
-  if (HasVideoInfoTag())
-    return false;
-
-  if (HasPVRTimerInfoTag() || HasPVRChannelInfoTag() || HasPVRChannelGroupMemberInfoTag() ||
-      HasPVRRecordingInfoTag() || HasEPGInfoTag() || HasEPGSearchFilter())
-    return false;
-
-  if (!m_strPath.empty())
-    return CUtil::IsPicture(m_strPath);
-
-  return false;
-}
-
 bool CFileItem::IsLyrics() const
 {
   return URIUtils::HasExtension(m_strPath, ".cdg|.lrc");
@@ -1426,7 +1400,7 @@ void CFileItem::FillInDefaultIcon()
       {
         SetArt("icon", "DefaultVideo.png");
       }
-      else if ( IsPicture() )
+      else if (IsPicture(*this))
       {
         // picture
         SetArt("icon", "DefaultPicture.png");

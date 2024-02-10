@@ -40,6 +40,7 @@
 #include "messaging/ApplicationMessenger.h"
 #include "messaging/helpers/DialogOKHelper.h"
 #include "network/Network.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "pictures/SlideShowDelegator.h"
 #include "platform/Filesystem.h"
 #include "playlists/PlayList.h"
@@ -673,7 +674,7 @@ void CGUIWindowFileManager::OnStart(CFileItem *pItem, const std::string &player)
     return ;
   }
 #endif
-  if (pItem->IsPicture())
+  if (IsPicture(*pItem))
   {
     const auto& components = CServiceBroker::GetAppComponents();
     const auto appPlayer = components.GetComponent<CApplicationPlayer>();

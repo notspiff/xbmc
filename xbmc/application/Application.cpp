@@ -106,6 +106,7 @@
 #include "network/upnp/UPnP.h"
 #endif
 #include "peripherals/Peripherals.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "pictures/SlideShowDelegator.h"
 #include "platform/Environment.h"
 #include "playlists/PlayList.h"
@@ -3239,7 +3240,7 @@ void CApplication::ProcessSlow()
   // Temporarily pause pausable jobs when viewing video/picture
   int currentWindow = CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow();
   if (IsVideo(CurrentFileItem()) ||
-      CurrentFileItem().IsPicture() ||
+      IsPicture(CurrentFileItem()) ||
       currentWindow == WINDOW_FULLSCREEN_VIDEO ||
       currentWindow == WINDOW_FULLSCREEN_GAME ||
       currentWindow == WINDOW_SLIDESHOW)

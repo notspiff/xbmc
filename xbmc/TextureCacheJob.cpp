@@ -19,6 +19,7 @@
 #include "guilib/Texture.h"
 #include "imagefiles/SpecialImageLoaderFactory.h"
 #include "pictures/Picture.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/SettingsComponent.h"
 #include "utils/StringUtils.h"
@@ -250,7 +251,7 @@ std::unique_ptr<CTexture> CTextureCacheJob::LoadImage(const std::string& image,
   // Validate file URL to see if it is an image
   CFileItem file(image, false);
   file.FillInMimeType();
-  if (!(file.IsPicture() && !(file.IsZIP() || file.IsRAR() || file.IsCBR() || file.IsCBZ() ))
+  if (!(IsPicture(file) && !(file.IsZIP() || file.IsRAR() || file.IsCBR() || file.IsCBZ() ))
       && !StringUtils::StartsWithNoCase(file.GetMimeType(), "image/") && !StringUtils::EqualsNoCase(file.GetMimeType(), "application/octet-stream")) // ignore non-pictures
     return NULL;
 

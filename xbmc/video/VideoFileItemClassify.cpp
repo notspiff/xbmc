@@ -10,6 +10,7 @@
 
 #include "FileItem.h"
 #include "ServiceBroker.h"
+#include "Util.h"
 #include "utils/FileExtensionProvider.h"
 #include "utils/StringUtils.h"
 #include "utils/URIUtils.h"

@@ -28,6 +28,7 @@
 #include "input/actions/ActionIDs.h"
 #include "media/MediaLockState.h"
 #include "messaging/helpers/DialogOKHelper.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "pictures/SlideShowDelegator.h"
 #include "playlists/PlayList.h"
 #include "playlists/PlayListFactory.h"
@@ -328,7 +329,7 @@ bool CGUIWindowPictures::ShowPicture(int iItem, bool startSlideShow)
   {
     if (!pItem->m_bIsFolder &&
         !(URIUtils::IsRAR(pItem->GetPath()) || URIUtils::IsZIP(pItem->GetPath())) &&
-        (pItem->IsPicture() || (bShowVideos && IsVideo(*pItem))))
+        (IsPicture(*pItem) || (bShowVideos && IsVideo(*pItem))))
     {
       slideShow.Add(pItem.get());
     }
@@ -448,7 +449,7 @@ void CGUIWindowPictures::GetContextButtons(int itemNumber, CContextButtons &butt
       {
         if (!(item->m_bIsFolder || item->IsZIP() || item->IsRAR() || item->IsCBZ() || item->IsCBR() || item->IsScript()))
         {
-          if (item->IsPicture())
+          if (IsPicture(*item))
             buttons.Add(CONTEXT_BUTTON_INFO, 13406); // picture info
           buttons.Add(CONTEXT_BUTTON_VIEW_SLIDESHOW, item->m_bIsFolder ? 13317 : 13422);      // View Slideshow
         }
@@ -553,7 +554,7 @@ void CGUIWindowPictures::LoadPlayList(const std::string& strPlayList)
     {
       CFileItemPtr pItem = playlist[i];
       //CLog::Log(LOGDEBUG,"-- playlist item: {}", pItem->GetPath());
-      if (pItem->IsPicture() && !(pItem->IsZIP() || pItem->IsRAR() || pItem->IsCBZ() || pItem->IsCBR()))
+      if (IsPicture(*pItem) && !(pItem->IsZIP() || pItem->IsRAR() || pItem->IsCBZ() || pItem->IsCBR()))
       {
         slideShow.Add(pItem.get());
       }
@@ -578,7 +579,7 @@ void CGUIWindowPictures::OnItemInfo(int itemNumber)
     CGUIDialogAddonInfo::ShowForItem(item);
     return;
   }
-  if (item->m_bIsFolder || item->IsZIP() || item->IsRAR() || item->IsCBZ() || item->IsCBR() || !item->IsPicture())
+  if (item->m_bIsFolder || item->IsZIP() || item->IsRAR() || item->IsCBZ() || item->IsCBR() || !IsPicture(*item))
     return;
   CGUIDialogPictureInfo *pictureInfo = CServiceBroker::GetGUI()->GetWindowManager().GetWindow<CGUIDialogPictureInfo>(WINDOW_DIALOG_PICTURE_INFO);
   if (pictureInfo)

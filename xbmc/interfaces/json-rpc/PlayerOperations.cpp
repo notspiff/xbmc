@@ -30,6 +30,7 @@
 #include "interfaces/builtins/Builtins.h"
 #include "messaging/ApplicationMessenger.h"
 #include "music/MusicDatabase.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "pictures/SlideShowDelegator.h"
 #include "pvr/PVRManager.h"
 #include "pvr/PVRPlaybackState.h"
@@ -915,7 +916,7 @@ JSONRPC_STATUS CPlayerOperations::Open(const std::string &method, ITransportLaye
       bool slideshow = true;
       for (int index = 0; index < list.Size(); index++)
       {
-        if (!list[index]->IsPicture())
+        if (!IsPicture(*list[index]))
         {
           slideshow = false;
           break;

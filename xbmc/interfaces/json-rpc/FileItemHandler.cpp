@@ -18,6 +18,7 @@
 #include "filesystem/Directory.h"
 #include "music/MusicThumbLoader.h"
 #include "music/tags/MusicInfoTag.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "pictures/PictureInfoTag.h"
 #include "pvr/PVRManager.h"
 #include "pvr/channels/PVRChannel.h"
@@ -526,7 +527,7 @@ bool CFileItemHandler::FillFileItemList(const CVariant &parameterObject, CFileIt
     if (!added)
     {
       CFileItemPtr item = std::make_shared<CFileItem>(file, false);
-      if (item->IsPicture())
+      if (IsPicture(*item))
       {
         CPictureInfoTag picture;
         picture.Load(item->GetPath());

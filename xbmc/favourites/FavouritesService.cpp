@@ -14,6 +14,7 @@
 #include "Util.h"
 #include "favourites/FavouritesURL.h"
 #include "input/WindowTranslator.h"
+#include "pictures/PictureFileItemClassify.h"
 #include "profiles/ProfileManager.h"
 #include "settings/SettingsComponent.h"
 #include "utils/ContentUtils.h"
@@ -87,7 +88,7 @@ bool IsMediasourceOfFavItemUnlocked(const std::shared_ptr<CFileItem>& item)
       return false;
     }
   }
-  else if (action == CFavouritesURL::Action::SHOW_PICTURE && itemToCheck.IsPicture())
+  else if (action == CFavouritesURL::Action::SHOW_PICTURE && IsPicture(itemToCheck))
   {
     if (!profileManager->GetCurrentProfile().picturesLocked())
       return g_passwordManager.IsMediaFileUnlocked("pictures", itemToCheck.GetPath());
