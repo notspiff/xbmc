@@ -939,7 +939,7 @@ bool CFileItem::IsFileFolder(EFileFolderType types) const
 
   if(types & always_type)
   {
-    if(IsSmartPlayList()
+    if (IsSmartPlayList(*this)
     || (IsPlayList(*this) && CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_playlistAsFolders)
     || IsAPK()
     || IsZIP()
@@ -967,14 +967,6 @@ bool CFileItem::IsFileFolder(EFileFolderType types) const
   }
 
   return false;
-}
-
-bool CFileItem::IsSmartPlayList() const
-{
-  if (HasProperty("library.smartplaylist") && GetProperty("library.smartplaylist").asBoolean())
-    return true;
-
-  return URIUtils::HasExtension(m_strPath, ".xsp");
 }
 
 bool CFileItem::IsLibraryFolder() const
@@ -1293,7 +1285,7 @@ void CFileItem::FillInDefaultIcon()
         // picture
         SetArt("icon", "DefaultPicture.png");
       }
-      else if (IsPlayList(*this) || IsSmartPlayList())
+      else if (IsPlayList(*this) || IsSmartPlayList(*this))
       {
         SetArt("icon", "DefaultPlaylist.png");
       }
@@ -1313,7 +1305,7 @@ void CFileItem::FillInDefaultIcon()
     }
     else
     {
-      if (IsPlayList(*this) || IsSmartPlayList())
+      if (IsPlayList(*this) || IsSmartPlayList(*this))
       {
         SetArt("icon", "DefaultPlaylist.png");
       }
@@ -3054,7 +3046,7 @@ std::string CFileItemList::GetDiscFileCache(int windowID) const
   if (IsVideoDb(*this))
     return StringUtils::Format("special://temp/archive_cache/vdb-{:08x}.fi", crc);
 
-  if (IsSmartPlayList())
+  if (IsSmartPlayList(*this))
     return StringUtils::Format("special://temp/archive_cache/sp-{:08x}.fi", crc);
 
   if (windowID)

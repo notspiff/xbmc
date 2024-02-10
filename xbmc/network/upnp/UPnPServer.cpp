@@ -446,7 +446,7 @@ PLT_MediaObject* CUPnPServer::Build(const std::shared_ptr<CFileItem>& item,
       }
     }
     // all playlist types are folders
-    else if (IsPlayList(*item) || item->IsSmartPlayList())
+    else if (IsPlayList(*item) || IsSmartPlayList(*item))
     {
       item->m_bIsFolder = true;
     }

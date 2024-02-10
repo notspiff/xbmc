@@ -15,6 +15,7 @@
 #include "filesystem/VideoDatabaseDirectory.h"
 #include "guilib/LocalizeStrings.h"
 #include "guilib/WindowIDs.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "playlists/PlayListTypes.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/MediaSourceSettings.h"
@@ -378,7 +379,7 @@ CGUIViewStateMusicSmartPlaylist::CGUIViewStateMusicSmartPlaylist(const CFileItem
     AddSortMethod(SortByBPM, 38080,
                   LABEL_MASKS("%T - %A", "%f")); // Title - Artist, bpm, empty, empty
 
-    if (items.IsSmartPlayList() || items.IsLibraryFolder())
+    if (IsSmartPlayList(items) || items.IsLibraryFolder())
       AddPlaylistOrder(items, LABEL_MASKS(strTrack, "%D"));
     else
     {
@@ -422,7 +423,7 @@ CGUIViewStateMusicSmartPlaylist::CGUIViewStateMusicSmartPlaylist(const CFileItem
     // userrating
     AddSortMethod(SortByUserRating, 38018, LABEL_MASKS("%F", "", strAlbum, "%r"));  // Filename, empty | Userdefined, UserRating
 
-    if (items.IsSmartPlayList() || items.IsLibraryFolder())
+    if (IsSmartPlayList(items) || items.IsLibraryFolder())
       AddPlaylistOrder(items, LABEL_MASKS("%F", "", strAlbum, "%D"));
     else
     {

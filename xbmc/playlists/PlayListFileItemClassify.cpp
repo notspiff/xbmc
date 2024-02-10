@@ -10,8 +10,18 @@
 
 #include "FileItem.h"
 #include "playlists/PlayListFactory.h"
+#include "utils/URIUtils.h"
+#include "utils/Variant.h"
 
 bool IsPlayList(const CFileItem& item)
 {
   return PLAYLIST::CPlayListFactory::IsPlaylist(item);
+}
+
+bool IsSmartPlayList(const CFileItem& item)
+{
+  if (item.HasProperty("library.smartplaylist") && item.GetProperty("library.smartplaylist").asBoolean())
+    return true;
+
+  return URIUtils::HasExtension(item.GetPath(), ".xsp");
 }

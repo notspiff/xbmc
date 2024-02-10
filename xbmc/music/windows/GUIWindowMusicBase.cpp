@@ -434,7 +434,7 @@ void CGUIWindowMusicBase::GetContextButtons(int itemNumber, CContextButtons &but
 
     // Check for the partymode playlist item.
     // When "PartyMode.xsp" not exist, only context menu button is edit
-    if (item->IsSmartPlayList() &&
+    if (IsSmartPlayList(*item) &&
         (item->GetPath() == profileManager->GetUserDataItem("PartyMode.xsp")) &&
         !CFileUtils::Exists(item->GetPath()))
     {
@@ -447,10 +447,10 @@ void CGUIWindowMusicBase::GetContextButtons(int itemNumber, CContextButtons &but
       //! @todo get rid of IsAddonsPath and IsScript check. CanQueue should be enough!
       if (item->CanQueue() && !item->IsAddonsPath() && !item->IsScript())
       {
-        if (item->IsSmartPlayList())
+        if (IsSmartPlayList(*item))
           buttons.Add(CONTEXT_BUTTON_PLAY_PARTYMODE, 15216); // Play in Partymode
 
-        if (item->IsSmartPlayList() || m_vecItems->IsSmartPlayList())
+        if (IsSmartPlayList(*item) || IsSmartPlayList(*m_vecItems))
           buttons.Add(CONTEXT_BUTTON_EDIT_SMART_PLAYLIST, 586);
         else if (IsPlayList(*item) || IsPlayList(*m_vecItems))
           buttons.Add(CONTEXT_BUTTON_EDIT, 586);
@@ -513,7 +513,7 @@ bool CGUIWindowMusicBase::OnContextButton(int itemNumber, CONTEXT_BUTTON button)
 
   case CONTEXT_BUTTON_EDIT_SMART_PLAYLIST:
     {
-      std::string playlist = item->IsSmartPlayList() ? item->GetPath() : m_vecItems->GetPath(); // save path as activatewindow will destroy our items
+      std::string playlist = IsSmartPlayList(*item) ? item->GetPath() : m_vecItems->GetPath(); // save path as activatewindow will destroy our items
       if (CGUIDialogSmartPlaylistEditor::EditPlaylist(playlist, "music"))
         Refresh(true); // need to update
       return true;
@@ -609,7 +609,7 @@ void CGUIWindowMusicBase::PlayItem(int iItem)
 #endif
 
   // Check for the partymode playlist item, do nothing when "PartyMode.xsp" not exist
-  if (pItem->IsSmartPlayList())
+  if (IsSmartPlayList(*pItem))
   {
     const std::shared_ptr<CProfileManager> profileManager =
         CServiceBroker::GetSettingsComponent()->GetProfileManager();
@@ -1044,7 +1044,7 @@ void CGUIWindowMusicBase::OnPrepareFileItems(CFileItemList &items)
 {
   CGUIMediaWindow::OnPrepareFileItems(items);
 
-  if (!items.IsMusicDb() && !items.IsSmartPlayList())
+  if (!items.IsMusicDb() && !IsSmartPlayList(items))
     RetrieveMusicInfo();
 }
 

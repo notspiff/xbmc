@@ -515,7 +515,7 @@ namespace
 {
 bool IsNonExistingUserPartyModePlaylist(const CFileItem& item)
 {
-  if (!item.IsSmartPlayList())
+  if (!IsSmartPlayList(item))
     return false;
 
   const std::string& path{item.GetPath()};

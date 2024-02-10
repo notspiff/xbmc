@@ -2243,7 +2243,7 @@ bool CApplication::PlayMedia(CFileItem& item, const std::string& player, PLAYLIS
   if (URIUtils::HasPluginPath(item) && !XFILE::CPluginDirectory::GetResolvedPluginResult(item))
     return false;
 
-  if (item.IsSmartPlayList())
+  if (IsSmartPlayList(item))
   {
     CFileItemList items;
     CUtil::GetRecursiveListing(item.GetPath(), items, "", DIR_FLAG_NO_FILE_DIRS);

@@ -479,7 +479,7 @@ bool CGUIWindowMusicNav::GetDirectory(const std::string &strDirectory, CFileItem
   else if (items.IsAddonsPath())
     items.SetContent("addons");
   else if (!items.IsSourcesPath() && !items.IsVirtualDirectoryRoot() &&
-           !items.IsLibraryFolder() && !items.IsPlugin() && !items.IsSmartPlayList())
+           !items.IsLibraryFolder() && !items.IsPlugin() && !IsSmartPlayList(items))
     items.SetContent("files");
 
   return bResult;
@@ -684,7 +684,7 @@ void CGUIWindowMusicNav::GetContextButtons(int itemNumber, CContextButtons &butt
           }
         }
         if (inPlaylists && URIUtils::GetFileName(item->GetPath()) != "PartyMode.xsp"
-          && (IsPlayList(*item) || item->IsSmartPlayList()))
+          && (IsPlayList(*item) || IsSmartPlayList(*item)))
           buttons.Add(CONTEXT_BUTTON_DELETE, 117);
 
         if (!item->IsReadOnly() && CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool("filelists.allowfiledeletion"))
@@ -819,7 +819,7 @@ bool CGUIWindowMusicNav::OnContextButton(int itemNumber, CONTEXT_BUTTON button)
     return true;
 
   case CONTEXT_BUTTON_DELETE:
-    if (IsPlayList(*item) || item->IsSmartPlayList())
+    if (IsPlayList(*item) || IsSmartPlayList(*item))
     {
       item->m_bIsFolder = false;
       CGUIComponent *gui = CServiceBroker::GetGUI();
