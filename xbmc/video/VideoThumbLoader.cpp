@@ -21,6 +21,7 @@
 #include "guilib/StereoscopicsManager.h"
 #include "music/MusicDatabase.h"
 #include "music/tags/MusicInfoTag.h"
+#include "network/NetworkFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/SettingUtils.h"
 #include "settings/Settings.h"
@@ -520,7 +521,7 @@ std::string CVideoThumbLoader::GetLocalArt(const CFileItem &item, const std::str
       settings ? settings->GetInt(CSettings::SETTING_FILECACHE_BUFFERMODE) == CACHE_BUFFER_MODE_ALL
                : false;
 
-  if (item.m_bIsFolder && (item.IsStreamedFilesystem() || cacheAll))
+  if (item.m_bIsFolder && (IsStreamedFilesystem(item) || cacheAll))
   {
     CFileItemList items; // Dummy list
     CDirectory::GetDirectory(item.GetPath(), items, "", DIR_FLAG_NO_FILE_DIRS | DIR_FLAG_READ_CACHE | DIR_FLAG_NO_FILE_INFO);
