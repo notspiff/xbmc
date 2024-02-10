@@ -923,29 +923,6 @@ bool CFileItem::IsDeleted() const
   return false;
 }
 
-bool CFileItem::IsGame() const
-{
-  if (HasGameInfoTag())
-    return true;
-
-  if (HasVideoInfoTag())
-    return false;
-
-  if (HasMusicInfoTag())
-    return false;
-
-  if (HasPictureInfoTag())
-    return false;
-
-  if (IsPVR())
-    return false;
-
-  if (HasAddonInfo())
-    return CGameUtils::IsStandaloneGame(std::const_pointer_cast<ADDON::IAddon>(GetAddonInfo()));
-
-  return CGameUtils::HasGameExtension(m_strPath);
-}
-
 bool CFileItem::IsInternetStream(const bool bStrictCheck /* = false */) const
 {
   if (HasProperty("IsHTTPDirectory"))

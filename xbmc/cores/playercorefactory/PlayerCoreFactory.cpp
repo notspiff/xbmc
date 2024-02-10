@@ -15,6 +15,7 @@
 #include "cores/IPlayerCallback.h"
 #include "cores/VideoPlayer/Interface/InputStreamConstants.h"
 #include "dialogs/GUIDialogContextMenu.h"
+#include "games/GameFileItemClassify.h"
 #include "guilib/LocalizeStrings.h"
 #include "music/MusicFileItemClassify.h"
 #include "profiles/ProfileManager.h"
@@ -143,7 +144,7 @@ void CPlayerCoreFactory::GetPlayers(const CFileItem& item, std::vector<std::stri
   // "videodefaultplayer"
   if (defaultInputstreamPlayerOverride == ForcedPlayer::VIDEO_DEFAULT ||
       (defaultInputstreamPlayerOverride == ForcedPlayer::NONE &&
-       (IsVideo(item) || (!IsAudio(item) && !item.IsGame()))))
+       (IsVideo(item) || (!IsAudio(item) && !IsGame(item)))))
   {
     int idx = GetPlayerIndex("videodefaultplayer");
     if (idx > -1)
@@ -180,7 +181,7 @@ void CPlayerCoreFactory::GetPlayers(const CFileItem& item, std::vector<std::stri
     GetPlayers(players, true, true);  // Audio & video players
   }
 
-  if (item.IsGame())
+  if (IsGame(item))
   {
     CLog::Log(LOGDEBUG, "CPlayerCoreFactory::GetPlayers: adding retroplayer");
     players.emplace_back("RetroPlayer");

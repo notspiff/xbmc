@@ -16,6 +16,7 @@
 #include "application/ApplicationComponents.h"
 #include "application/ApplicationPlayer.h"
 #include "application/ApplicationStackHelper.h"
+#include "games/GameFileItemClassify.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIMessage.h"
 #include "guilib/GUIWindowManager.h"
@@ -82,7 +83,7 @@ void CApplicationPlayerCallback::OnPlayBackStarted(const CFileItem& file)
    * This should speed up player startup for files on internet filesystems (eg. webdav) and
    * increase performance on low powered systems (Atom/ARM).
    */
-  if (IsVideo(file) || file.IsGame())
+  if (IsVideo(file) || IsGame(file))
   {
     CServiceBroker::GetJobManager()->PauseJobs();
   }

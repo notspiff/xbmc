@@ -11,6 +11,7 @@
 #include "FileItem.h"
 #include "Util.h"
 #include "cores/RetroPlayer/RetroPlayerUtils.h"
+#include "games/GameFileItemClassify.h"
 #include "games/tags/GameInfoTag.h"
 #include "guilib/guiinfo/GUIInfo.h"
 #include "guilib/guiinfo/GUIInfoLabels.h"
@@ -28,7 +29,7 @@ using namespace KODI::RETRO;
 
 bool CGamesGUIInfo::InitCurrentItem(CFileItem *item)
 {
-  if (item && item->IsGame())
+  if (item && IsGame(*item))
   {
     CLog::Log(LOGDEBUG, "CGamesGUIInfo::InitCurrentItem({})", item->GetPath());
 

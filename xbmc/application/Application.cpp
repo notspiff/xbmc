@@ -60,6 +60,7 @@
 #include "filesystem/DirectoryFactory.h"
 #include "filesystem/DllLibCurl.h"
 #include "filesystem/File.h"
+#include "games/GameFileItemClassify.h"
 #include "music/MusicFileItemClassify.h"
 #include "video/VideoFileItemClassify.h"
 #ifdef HAS_FILESYSTEM_NFS
@@ -3119,7 +3120,7 @@ bool CApplication::ExecuteXBMCAction(std::string actionStr,
     }
     else
 #endif
-    if (IsAudio(item) || IsVideo(item) || item.IsGame())
+    if (IsAudio(item) || IsVideo(item) || IsGame(item))
     { // an audio or video file
       PlayFile(item, "");
     }

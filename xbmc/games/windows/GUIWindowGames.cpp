@@ -18,6 +18,7 @@
 #include "dialogs/GUIDialogContextMenu.h"
 #include "dialogs/GUIDialogMediaSource.h"
 #include "dialogs/GUIDialogProgress.h"
+#include "games/GameFileItemClassify.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
 #include "guilib/WindowIDs.h"
@@ -181,7 +182,7 @@ void CGUIWindowGames::GetContextButtons(int itemNumber, CContextButtons& buttons
     }
     else
     {
-      if (item->IsGame())
+      if (IsGame(*item))
       {
         buttons.Add(CONTEXT_BUTTON_PLAY_ITEM, 208); // Play
       }

@@ -11,6 +11,7 @@
 #include "FileItem.h"
 #include "ServiceBroker.h"
 #include "URL.h"
+#include "games/GameFileItemClassify.h"
 #include "music/MusicFileItemClassify.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -118,7 +119,7 @@ void CPlayerSelectionRule::GetPlayers(const CFileItem& item, std::vector<std::st
     return;
   if (m_tVideo >= 0 && (m_tVideo > 0) != IsVideo(item))
     return;
-  if (m_tGame >= 0 && (m_tGame > 0) != item.IsGame())
+  if (m_tGame >= 0 && (m_tGame > 0) != IsGame(item))
     return;
   if (m_tInternetStream >= 0 && (m_tInternetStream > 0) != item.IsInternetStream())
     return;

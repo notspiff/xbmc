@@ -29,6 +29,7 @@
 #include "filesystem/Directory.h"
 #include "filesystem/FileDirectoryFactory.h"
 #include "filesystem/ZipManager.h"
+#include "games/GameFileItemClassify.h"
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIKeyboardFactory.h"
 #include "guilib/GUIWindowManager.h"
@@ -663,7 +664,7 @@ void CGUIWindowFileManager::OnStart(CFileItem *pItem, const std::string &player)
     CServiceBroker::GetPlaylistPlayer().Play(std::make_shared<CFileItem>(*pItem), player);
     return;
   }
-  if (pItem->IsGame())
+  if (IsGame(*pItem))
   {
     g_application.PlayFile(*pItem, player);
     return ;

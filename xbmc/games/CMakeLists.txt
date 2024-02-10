@@ -1,8 +1,10 @@
-set(SOURCES GameServices.cpp
+set(SOURCES GameFileItemClassify.cpp
+            GameServices.cpp
             GameSettings.cpp
             GameUtils.cpp)
 
-set(HEADERS GameServices.h
+set(HEADERS GameFileItemClassify.h
+            GameServices.h
             GameSettings.h
             GameTypes.h
             GameUtils.h)
