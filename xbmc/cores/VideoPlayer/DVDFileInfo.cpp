@@ -20,6 +20,7 @@
 #include "utils/MemUtils.h"
 #include "utils/URIUtils.h"
 #include "utils/log.h"
+#include "video/VideoFileItemClassify.h"
 #include "video/VideoInfoTag.h"
 #ifdef HAVE_LIBBLURAY
 #include "DVDInputStreams/DVDInputStreamBluray.h"
@@ -258,7 +259,7 @@ bool CDVDFileInfo::CanExtract(const CFileItem& fileItem)
       URIUtils::IsPVRRecording(fileItem.GetDynPath()) ||
       // plugin path not fully resolved
       URIUtils::IsPlugin(fileItem.GetDynPath()) || URIUtils::IsUPnP(fileItem.GetPath()) ||
-      fileItem.IsInternetStream() || fileItem.IsDiscStub() || fileItem.IsPlayList())
+      fileItem.IsInternetStream() || IsDiscStub(fileItem) || fileItem.IsPlayList())
     return false;
 
   // mostly can't extract from discs and files from discs.

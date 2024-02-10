@@ -165,8 +165,6 @@ public:
    */
   std::string GetOpticalMediaPath() const;
 
-  bool IsDiscStub() const;
-
   /*!
    \brief Check whether an item is a picture item. Note that this returns true for
     anything with a picture info tag, so that may include eg. folders.
