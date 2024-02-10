@@ -13,6 +13,7 @@
 #include "URL.h"
 #include "games/GameFileItemClassify.h"
 #include "music/MusicFileItemClassify.h"
+#include "network/NetworkFileItemClassify.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
 #include "utils/RegExp.h"
@@ -121,7 +122,7 @@ void CPlayerSelectionRule::GetPlayers(const CFileItem& item, std::vector<std::st
     return;
   if (m_tGame >= 0 && (m_tGame > 0) != IsGame(item))
     return;
-  if (m_tInternetStream >= 0 && (m_tInternetStream > 0) != item.IsInternetStream())
+  if (m_tInternetStream >= 0 && (m_tInternetStream > 0) != IsInternetStream(item))
     return;
   if (m_tRemote >= 0 && (m_tRemote > 0) != item.IsRemote())
     return;

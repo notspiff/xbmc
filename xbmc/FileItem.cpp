@@ -31,6 +31,7 @@
 #include "music/MusicDatabase.h"
 #include "music/tags/MusicInfoTag.h"
 #include "music/tags/MusicInfoTagLoaderFactory.h"
+#include "network/NetworkFileItemClassify.h"
 #include "pictures/PictureFileItemClassify.h"
 #include "pictures/PictureInfoTag.h"
 #include "playlists/PlayList.h"
@@ -846,7 +847,7 @@ bool CFileItem::Exists(bool bUseCache /* = true */) const
 {
   if (m_strPath.empty()
    || IsPath("add")
-   || IsInternetStream()
+   || IsInternetStream(*this)
    || IsParentFolder()
    || IsVirtualDirectoryRoot()
    || IsPlugin()
@@ -923,17 +924,6 @@ bool CFileItem::IsDeleted() const
   return false;
 }
 
-bool CFileItem::IsInternetStream(const bool bStrictCheck /* = false */) const
-{
-  if (HasProperty("IsHTTPDirectory"))
-    return bStrictCheck;
-
-  if (!m_strDynPath.empty())
-    return URIUtils::IsInternetStream(m_strDynPath, bStrictCheck);
-
-  return URIUtils::IsInternetStream(m_strPath, bStrictCheck);
-}
-
 bool CFileItem::IsStreamedFilesystem() const
 {
   if (!m_strDynPath.empty())
@@ -947,7 +937,7 @@ bool CFileItem::IsFileFolder(EFileFolderType types) const
   EFileFolderType always_type = EFILEFOLDER_TYPE_ALWAYS;
 
   /* internet streams are not directly expanded */
-  if(IsInternetStream())
+  if (IsInternetStream(*this))
     always_type = EFILEFOLDER_TYPE_ONCLICK;
 
   // strm files are not browsable
@@ -1494,7 +1484,7 @@ void CFileItem::UpdateMimeType(bool lookup /*= true*/)
 
 void CFileItem::SetMimeTypeForInternetFile()
 {
-  if (m_doContentLookup && IsInternetStream())
+  if (m_doContentLookup && IsInternetStream(*this))
   {
     SetMimeType("");
     FillInMimeType(true);
@@ -3119,7 +3109,7 @@ std::string CFileItem::GetUserMusicThumb(bool alwaysCheckRemote /* = false */, b
    || StringUtils::StartsWithNoCase(m_strPath, "newsmartplaylist://")
    || StringUtils::StartsWithNoCase(m_strPath, "newplaylist://")
    || m_bIsShareOrDrive
-   || IsInternetStream()
+   || IsInternetStream(*this)
    || URIUtils::IsUPnP(m_strPath)
    || (URIUtils::IsFTP(m_strPath) && !CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_bFTPThumbs)
    || IsPlugin()
@@ -3238,7 +3228,7 @@ bool CFileItem::SkipLocalArt() const
        || StringUtils::StartsWithNoCase(m_strPath, "newsmartplaylist://")
        || StringUtils::StartsWithNoCase(m_strPath, "newplaylist://")
        || m_bIsShareOrDrive
-       || IsInternetStream()
+       || IsInternetStream(*this)
        || URIUtils::IsUPnP(m_strPath)
        || (URIUtils::IsFTP(m_strPath) && !CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_bFTPThumbs)
        || IsPlugin()
@@ -3477,7 +3467,7 @@ std::string CFileItem::GetLocalFanart() const
   }
 
   // no local fanart available for these
-  if (IsInternetStream()
+  if (IsInternetStream(*this)
    || URIUtils::IsUPnP(strFile)
    || URIUtils::IsBluray(strFile)
    || IsLiveTV()
@@ -3943,7 +3933,7 @@ std::string CFileItem::FindTrailer() const
   }
 
   // no local trailer available for these
-  if (IsInternetStream()
+  if (IsInternetStream(*this)
    || URIUtils::IsUPnP(strFile)
    || URIUtils::IsBluray(strFile)
    || IsLiveTV()

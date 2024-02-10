@@ -25,6 +25,7 @@
 #include "interfaces/json-rpc/JSONUtils.h"
 #include "interfaces/python/XBPython.h"
 #include "music/MusicFileItemClassify.h"
+#include "network/NetworkFileItemClassify.h"
 #include "profiles/ProfileManager.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/MediaSettings.h"
@@ -58,7 +59,7 @@ void CApplicationPlayerCallback::OnPlayBackStarted(const CFileItem& file)
 
   // check if VideoPlayer should set file item stream details from its current streams
   const bool isBlu_dvd_image_or_stream = (URIUtils::IsBluray(file.GetPath()) || file.IsDVDFile() ||
-                                          file.IsDiscImage() || file.IsInternetStream());
+                                          file.IsDiscImage() || IsInternetStream(file));
 
   const bool hasNoStreamDetails =
       (!file.HasVideoInfoTag() || !file.GetVideoInfoTag()->HasStreamDetails());

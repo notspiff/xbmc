@@ -14,6 +14,7 @@
 #include "ServiceBroker.h"
 #include "filesystem/StackDirectory.h"
 #include "guilib/Texture.h"
+#include "network/NetworkFileItemClassify.h"
 #include "pictures/Picture.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/SettingsComponent.h"
@@ -259,7 +260,7 @@ bool CDVDFileInfo::CanExtract(const CFileItem& fileItem)
       URIUtils::IsPVRRecording(fileItem.GetDynPath()) ||
       // plugin path not fully resolved
       URIUtils::IsPlugin(fileItem.GetDynPath()) || URIUtils::IsUPnP(fileItem.GetPath()) ||
-      fileItem.IsInternetStream() || IsDiscStub(fileItem) || fileItem.IsPlayList())
+      IsInternetStream(fileItem) || IsDiscStub(fileItem) || fileItem.IsPlayList())
     return false;
 
   // mostly can't extract from discs and files from discs.

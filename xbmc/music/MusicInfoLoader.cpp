@@ -20,6 +20,7 @@
 #include "music/MusicFileItemClassify.h"
 #include "music/tags/MusicInfoTag.h"
 #include "music/tags/MusicInfoTagLoaderFactory.h"
+#include "network/NetworkFileItemClassify.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
 #include "utils/Archive.h"
@@ -73,7 +74,7 @@ void CMusicInfoLoader::OnLoaderStart()
 bool CMusicInfoLoader::LoadAdditionalTagInfo(CFileItem* pItem)
 {
   if (!pItem || (pItem->m_bIsFolder && !IsAudio(*pItem)) ||
-      pItem->IsPlayList() || pItem->IsNFO() || pItem->IsInternetStream())
+      pItem->IsPlayList() || pItem->IsNFO() || IsInternetStream(*pItem))
     return false;
 
   if (pItem->GetProperty("hasfullmusictag") == "true")
@@ -150,7 +151,7 @@ bool CMusicInfoLoader::LoadItemCached(CFileItem* pItem)
       pItem->IsPlayList() || pItem->IsSmartPlayList() ||
       StringUtils::StartsWithNoCase(pItem->GetPath(), "newplaylist://") ||
       StringUtils::StartsWithNoCase(pItem->GetPath(), "newsmartplaylist://") ||
-      pItem->IsNFO() || (pItem->IsInternetStream() && !pItem->IsMusicDb()))
+      pItem->IsNFO() || (IsInternetStream(*pItem) && !pItem->IsMusicDb()))
     return false;
 
   // Get thumb for item
@@ -168,7 +169,7 @@ bool CMusicInfoLoader::LoadItemLookup(CFileItem* pItem)
       pItem->IsPlayList() || pItem->IsSmartPlayList() || //
       StringUtils::StartsWithNoCase(pItem->GetPath(), "newplaylist://") || //
       StringUtils::StartsWithNoCase(pItem->GetPath(), "newsmartplaylist://") || //
-      pItem->IsNFO() || (pItem->IsInternetStream() && !pItem->IsMusicDb()))
+      pItem->IsNFO() || (IsInternetStream(*pItem) && !pItem->IsMusicDb()))
     return false;
 
   if ((!pItem->HasMusicInfoTag() || !pItem->GetMusicInfoTag()->Loaded()) && IsAudio(*pItem))

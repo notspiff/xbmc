@@ -25,6 +25,7 @@
 #include "music/MusicInfoLoader.h"
 #include "music/MusicThumbLoader.h"
 #include "music/tags/MusicInfoTag.h"
+#include "network/NetworkFileItemClassify.h"
 #include "playlists/PlayList.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/SettingsComponent.h"
@@ -39,7 +40,7 @@ bool CMusicGUIInfo::InitCurrentItem(CFileItem *item)
 {
   const auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  if (item && (IsAudio(*item) || (item->IsInternetStream() && appPlayer->IsPlayingAudio())))
+  if (item && (IsAudio(*item) || (IsInternetStream(*item) && appPlayer->IsPlayingAudio())))
   {
     CLog::Log(LOGDEBUG, "CMusicGUIInfo::InitCurrentItem({})", item->GetPath());
 
@@ -49,7 +50,7 @@ bool CMusicGUIInfo::InitCurrentItem(CFileItem *item)
     tag->SetLoaded(true);
 
     // find a thumb for this file.
-    if (item->IsInternetStream() && !item->IsMusicDb())
+    if (IsInternetStream(*item) && !item->IsMusicDb())
     {
       if (!g_application.m_strPlayListFile.empty())
       {

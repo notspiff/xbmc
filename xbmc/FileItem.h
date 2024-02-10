@@ -171,7 +171,6 @@ public:
    */
   bool IsDeleted() const;
 
-  bool IsInternetStream(const bool bStrictCheck = false) const;
   bool IsStreamedFilesystem() const;
   bool IsPlayList() const;
   bool IsSmartPlayList() const;

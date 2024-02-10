@@ -36,6 +36,7 @@
 #include "input/actions/ActionIDs.h"
 #include "messaging/helpers/DialogOKHelper.h"
 #include "music/dialogs/GUIDialogMusicInfo.h"
+#include "network/NetworkFileItemClassify.h"
 #include "playlists/PlayList.h"
 #include "playlists/PlayListFactory.h"
 #include "profiles/ProfileManager.h"
@@ -1172,7 +1173,7 @@ bool CGUIWindowVideoBase::StackingAvailable(const CFileItemList &items)
 {
   CURL url(items.GetPath());
   return !(items.IsPlugin() || items.IsAddonsPath()  ||
-           items.IsRSS() || items.IsInternetStream() ||
+           items.IsRSS() || IsInternetStream(items) ||
            items.IsVideoDb() || url.IsProtocol("playlistvideo"));
 }
 
