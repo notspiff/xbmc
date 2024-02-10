@@ -43,6 +43,7 @@
 #include "music/tags/MusicInfoTag.h"
 #include "music/tags/MusicInfoTagLoaderFactory.h"
 #include "pictures/PictureFileItemClassify.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -552,7 +553,7 @@ bool CMusicInfoScanner::DoScan(const std::string& strDirectory)
     if (m_bStop)
       break;
     // if we have a directory item (non-playlist) we then recurse into that folder
-    if (pItem->m_bIsFolder && !pItem->IsParentFolder() && !pItem->IsPlayList())
+    if (pItem->m_bIsFolder && !pItem->IsParentFolder() && !IsPlayList(*pItem))
     {
       std::string strPath=pItem->GetPath();
       if (!DoScan(strPath))
@@ -579,7 +580,7 @@ CInfoScanner::INFO_RET CMusicInfoScanner::ScanTags(const CFileItemList& items,
     if (CUtil::ExcludeFileOrFolder(pItem->GetPath(), regexps))
       continue;
 
-    if (pItem->m_bIsFolder || pItem->IsPlayList() || IsPicture(*pItem) || IsLyrics(*pItem))
+    if (pItem->m_bIsFolder || IsPlayList(*pItem) || IsPicture(*pItem) || IsLyrics(*pItem))
       continue;
 
     m_currentItem++;
@@ -1273,7 +1274,7 @@ int CMusicInfoScanner::GetPathHash(const CFileItemList &items, std::string &hash
     digest.Update((unsigned char *)&pItem->m_dwSize, sizeof(pItem->m_dwSize));
     KODI::TIME::FileTime time = pItem->m_dateTime;
     digest.Update((unsigned char*)&time, sizeof(KODI::TIME::FileTime));
-    if (IsAudio(*pItem) && !pItem->IsPlayList() && !pItem->IsNFO())
+    if (IsAudio(*pItem) && !IsPlayList(*pItem) && !pItem->IsNFO())
       count++;
   }
   hash = digest.Finalize();
@@ -2333,7 +2334,7 @@ int CMusicInfoScanner::CountFiles(const CFileItemList &items, bool recursive)
 
     if (recursive && pItem->m_bIsFolder)
       count+=CountFilesRecursively(pItem->GetPath());
-    else if (IsAudio(*pItem) && !pItem->IsPlayList() && !pItem->IsNFO())
+    else if (IsAudio(*pItem) && !IsPlayList(*pItem) && !pItem->IsNFO())
       count++;
   }
   return count;

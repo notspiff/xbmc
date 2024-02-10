@@ -33,6 +33,7 @@
 #include "network/NetworkFileItemClassify.h"
 #include "playlists/PlayList.h"
 #include "playlists/PlayListFactory.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "profiles/ProfileManager.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -578,7 +579,7 @@ void CAsyncGetItemsForPlaylist::GetItemsForPlaylist(const std::shared_ptr<CFileI
   }
   else
   {
-    if (item->IsPlayList())
+    if (IsPlayList(*item))
     {
       const std::unique_ptr<PLAYLIST::CPlayList> playList(
           PLAYLIST::CPlayListFactory::Create(*item));
@@ -889,7 +890,7 @@ bool IsItemPlayable(const CFileItem& item)
     return false;
 
   // Include playlists located at one of the possible music playlist locations
-  if (item.IsPlayList())
+  if (IsPlayList(item))
   {
     if (StringUtils::StartsWithNoCase(item.GetMimeType(), "audio/"))
       return true;

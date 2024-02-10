@@ -13,6 +13,7 @@
 #include "URL.h"
 #include "music/tags/MusicInfoTag.h"
 #include "pictures/PictureFileItemClassify.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/SettingsComponent.h"
 #include "utils/StringUtils.h"
@@ -200,7 +201,7 @@ bool CExecString::Parse(const CFileItem& item, const std::string& contextWindow)
   }
   else if (item.m_bIsFolder &&
            (CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_playlistAsFolders ||
-            !(item.IsSmartPlayList() || item.IsPlayList())))
+            !(item.IsSmartPlayList() || IsPlayList(item))))
   {
     if (!contextWindow.empty())
       Build("ActivateWindow", {contextWindow, StringUtils::Paramify(item.GetPath()), "return"});

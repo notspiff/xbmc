@@ -39,6 +39,7 @@
 #include "network/NetworkFileItemClassify.h"
 #include "playlists/PlayList.h"
 #include "playlists/PlayListFactory.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "profiles/ProfileManager.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/Settings.h"
@@ -213,7 +214,7 @@ bool CGUIWindowVideoBase::OnMessage(CGUIMessage& message)
 bool CGUIWindowVideoBase::OnItemInfo(const CFileItem& fileItem)
 {
   if (fileItem.IsParentFolder() || fileItem.m_bIsShareOrDrive || fileItem.IsPath("add") ||
-      (fileItem.IsPlayList() && !URIUtils::HasExtension(fileItem.GetDynPath(), ".strm")))
+      (IsPlayList(fileItem) && !URIUtils::HasExtension(fileItem.GetDynPath(), ".strm")))
     return false;
 
   // "Videos/Video Add-ons" lists addons in the video window
@@ -304,7 +305,7 @@ bool CGUIWindowVideoBase::OnItemInfo(const CFileItem& fileItem)
                                                             ->m_moviesExcludeFromScanRegExps;
       for (const auto& i : items)
       {
-        if (IsVideo(*i) && !i->IsPlayList() &&
+        if (IsVideo(*i) && !IsPlayList(*i) &&
             !CUtil::ExcludeFileOrFolder(i->GetPath(), excludeFromScan))
         {
           item.SetPath(i->GetPath());
@@ -1094,7 +1095,7 @@ bool CGUIWindowVideoBase::PlayItem(const std::shared_ptr<CFileItem>& pItem,
     CServiceBroker::GetPlaylistPlayer().Play();
     return true;
   }
-  else if (pItem->IsPlayList() && !pItem->IsType(".strm"))
+  else if (IsPlayList(*pItem) && !pItem->IsType(".strm"))
   {
     // Note: strm files being somehow special playlists need to be handled in OnPlay*Media
 

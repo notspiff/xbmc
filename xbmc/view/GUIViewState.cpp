@@ -30,6 +30,7 @@
 #include "guilib/TextureManager.h"
 #include "music/GUIViewStateMusic.h"
 #include "pictures/GUIViewStatePictures.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "profiles/ProfileManager.h"
 #include "programs/GUIViewStatePrograms.h"
 #include "pvr/windows/GUIViewStatePVR.h"
@@ -94,7 +95,7 @@ CGUIViewState* CGUIViewState::GetViewState(int windowId, const CFileItemList& it
   if (url.IsProtocol("library"))
     return new CGUIViewStateLibrary(items);
 
-  if (items.IsPlayList())
+  if (IsPlayList(items))
   {
     // Playlists (like .strm) can be music or video type
     if (windowId == WINDOW_VIDEO_NAV)

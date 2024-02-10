@@ -11,6 +11,7 @@
 #include "PlayListPlayer.h"
 #include "ServiceBroker.h"
 #include "playlists/PlayListFactory.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "utils/URIUtils.h"
 
 namespace XBMCAddon
@@ -60,7 +61,7 @@ namespace XBMCAddon
       CFileItem item(cFileName);
       item.SetPath(cFileName);
 
-      if (item.IsPlayList())
+      if (IsPlayList(item))
       {
         // load playlist and copy al items to existing playlist
 

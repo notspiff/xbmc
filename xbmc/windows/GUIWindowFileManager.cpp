@@ -47,6 +47,7 @@
 #include "platform/Filesystem.h"
 #include "playlists/PlayList.h"
 #include "playlists/PlayListFactory.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "settings/MediaSourceSettings.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -644,7 +645,7 @@ void CGUIWindowFileManager::OnClick(int iList, int iItem)
 void CGUIWindowFileManager::OnStart(CFileItem *pItem, const std::string &player)
 {
   // start playlists from file manager
-  if (pItem->IsPlayList())
+  if (IsPlayList(*pItem))
   {
     const std::string& strPlayList = pItem->GetPath();
     std::unique_ptr<PLAYLIST::CPlayList> pPlayList(PLAYLIST::CPlayListFactory::Create(strPlayList));

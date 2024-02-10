@@ -15,6 +15,7 @@
 #include "filesystem/Directory.h"
 #include "guilib/Texture.h"
 #include "pictures/PictureFileItemClassify.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
 #include "utils/FileExtensionProvider.h"
@@ -39,7 +40,7 @@ std::unique_ptr<CTexture> CPictureFolderImageFileLoader::Load(const std::string&
   for (int i = 0; i < imagesInFolder.Size();)
   {
     if (!IsPicture(*imagesInFolder[i]) || imagesInFolder[i]->IsZIP() ||
-        imagesInFolder[i]->IsRAR() || imagesInFolder[i]->IsPlayList())
+        imagesInFolder[i]->IsRAR() || IsPlayList(*imagesInFolder[i]))
     {
       imagesInFolder.Remove(i);
     }

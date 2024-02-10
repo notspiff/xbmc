@@ -20,6 +20,7 @@
 #include "music/MusicFileItemClassify.h"
 #include "music/tags/MusicInfoTag.h"
 #include "pictures/PictureFileItemClassify.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -714,7 +715,7 @@ PLT_MediaObject* BuildObject(CFileItem& item,
           break;
       }
     }
-    else if (item.IsPlayList() || item.IsSmartPlayList())
+    else if (IsPlayList(item) || item.IsSmartPlayList())
     {
       container->m_ObjectClass.type += ".playlistContainer";
     }
@@ -748,7 +749,7 @@ PLT_MediaObject* BuildObject(CFileItem& item,
     if (!item.GetLabel().empty())
     {
       std::string title = item.GetLabel();
-      if (item.IsPlayList() || !item.m_bIsFolder)
+      if (IsPlayList(item) || !item.m_bIsFolder)
         URIUtils::RemoveExtension(title);
       object->m_Title = title.c_str();
     }

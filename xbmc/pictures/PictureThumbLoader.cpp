@@ -18,6 +18,7 @@
 #include "guilib/GUIComponent.h"
 #include "guilib/GUIWindowManager.h"
 #include "pictures/PictureFileItemClassify.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -76,11 +77,11 @@ bool CPictureThumbLoader::LoadItemCached(CFileItem* pItem)
   }
 
   std::string thumb;
-  if (IsPicture(*pItem) && !pItem->IsZIP() && !pItem->IsRAR() && !pItem->IsCBZ() && !pItem->IsCBR() && !pItem->IsPlayList())
+  if (IsPicture(*pItem) && !pItem->IsZIP() && !pItem->IsRAR() && !pItem->IsCBZ() && !pItem->IsCBR() && !IsPlayList(*pItem))
   { // load the thumb from the image file
     thumb = pItem->HasArt("thumb") ? pItem->GetArt("thumb") : CTextureUtils::GetWrappedThumbURL(pItem->GetPath());
   }
-  else if (IsVideo(*pItem) && !pItem->IsZIP() && !pItem->IsRAR() && !pItem->IsCBZ() && !pItem->IsCBR() && !pItem->IsPlayList())
+  else if (IsVideo(*pItem) && !pItem->IsZIP() && !pItem->IsRAR() && !pItem->IsCBZ() && !pItem->IsCBR() && !IsPlayList(*pItem))
   { // video
     CVideoThumbLoader loader;
     loader.LoadItemCached(pItem);
@@ -161,7 +162,7 @@ void CPictureThumbLoader::ProcessFoldersAndArchives(CFileItem *pItem)
       // count the number of images
       for (int i=0; i < items.Size();)
       {
-        if (!IsPicture(*items[i]) || items[i]->IsZIP() || items[i]->IsRAR() || items[i]->IsPlayList())
+        if (!IsPicture(*items[i]) || items[i]->IsZIP() || items[i]->IsRAR() || IsPlayList(*items[i]))
         {
           items.Remove(i);
         }

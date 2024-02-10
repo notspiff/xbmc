@@ -31,6 +31,7 @@
 #include "interfaces/AnnouncementManager.h"
 #include "messaging/helpers/DialogHelper.h"
 #include "messaging/helpers/DialogOKHelper.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -428,7 +429,7 @@ namespace VIDEO
 
       // if we have a directory item (non-playlist) we then recurse into that folder
       // do not recurse for tv shows - we have already looked recursively for episodes
-      if (pItem->m_bIsFolder && !pItem->IsParentFolder() && !pItem->IsPlayList() && settings.recurse > 0 && content != CONTENT_TVSHOWS)
+      if (pItem->m_bIsFolder && !pItem->IsParentFolder() && !IsPlayList(*pItem) && settings.recurse > 0 && content != CONTENT_TVSHOWS)
       {
         if (!DoScan(pItem->GetPath()))
         {
@@ -723,7 +724,7 @@ namespace VIDEO
                                           CGUIDialogProgress* pDlgProgress)
   {
     if (pItem->m_bIsFolder || !IsVideo(*pItem) || pItem->IsNFO() ||
-       (pItem->IsPlayList() && !URIUtils::HasExtension(pItem->GetPath(), ".strm")))
+       (IsPlayList(*pItem) && !URIUtils::HasExtension(pItem->GetPath(), ".strm")))
       return INFO_NOT_NEEDED;
 
     if (ProgressCancelled(pDlgProgress, 198, pItem->GetLabel()))
@@ -828,7 +829,7 @@ namespace VIDEO
                                                CGUIDialogProgress* pDlgProgress)
   {
     if (pItem->m_bIsFolder || !IsVideo(*pItem) || pItem->IsNFO() ||
-       (pItem->IsPlayList() && !URIUtils::HasExtension(pItem->GetPath(), ".strm")))
+       (IsPlayList(*pItem) && !URIUtils::HasExtension(pItem->GetPath(), ".strm")))
       return INFO_NOT_NEEDED;
 
     if (ProgressCancelled(pDlgProgress, 20394, pItem->GetLabel()))
@@ -2205,7 +2206,7 @@ namespace VIDEO
         KODI::TIME::FileTime time = pItem->m_dateTime;
         digest.Update(&time, sizeof(KODI::TIME::FileTime));
       }
-      if (IsVideo(*pItem) && !pItem->IsPlayList() && !pItem->IsNFO())
+      if (IsVideo(*pItem) && !IsPlayList(*pItem) && !pItem->IsNFO())
         count++;
     }
     hash = digest.Finalize();

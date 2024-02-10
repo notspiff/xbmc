@@ -24,6 +24,7 @@
 #include "application/ApplicationPlayer.h"
 #include "music/MusicFileItemClassify.h"
 #include "network/NetworkFileItemClassify.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "video/VideoFileItemClassify.h"
 #ifdef HAS_CDDA_RIPPER
 #include "cdrip/CDDARipper.h"
@@ -352,7 +353,7 @@ void CGUIWindowMusicBase::RetrieveMusicInfo()
   for (int i = 0; i < m_vecItems->Size(); ++i)
   {
     CFileItemPtr pItem = (*m_vecItems)[i];
-    if (pItem->m_bIsFolder || pItem->IsPlayList() || IsPicture(*pItem) || IsLyrics(*pItem) || IsVideo(*pItem))
+    if (pItem->m_bIsFolder || IsPlayList(*pItem) || IsPicture(*pItem) || IsLyrics(*pItem) || IsVideo(*pItem))
       continue;
 
     CMusicInfoTag& tag = *pItem->GetMusicInfoTag();
@@ -451,7 +452,7 @@ void CGUIWindowMusicBase::GetContextButtons(int itemNumber, CContextButtons &but
 
         if (item->IsSmartPlayList() || m_vecItems->IsSmartPlayList())
           buttons.Add(CONTEXT_BUTTON_EDIT_SMART_PLAYLIST, 586);
-        else if (item->IsPlayList() || m_vecItems->IsPlayList())
+        else if (IsPlayList(*item) || IsPlayList(*m_vecItems))
           buttons.Add(CONTEXT_BUTTON_EDIT, 586);
       }
 #ifdef HAS_OPTICAL_DRIVE
@@ -503,7 +504,7 @@ bool CGUIWindowMusicBase::OnContextButton(int itemNumber, CONTEXT_BUTTON button)
 
     case CONTEXT_BUTTON_EDIT:
     {
-      std::string playlist = item->IsPlayList() ? item->GetPath() : m_vecItems->GetPath(); // save path as activatewindow will destroy our items
+      std::string playlist = IsPlayList(*item) ? item->GetPath() : m_vecItems->GetPath(); // save path as activatewindow will destroy our items
       CServiceBroker::GetGUI()->GetWindowManager().ActivateWindow(WINDOW_MUSIC_PLAYLIST_EDITOR, playlist);
       // need to update
       m_vecItems->RemoveDiscCache(GetID());
@@ -653,7 +654,7 @@ void CGUIWindowMusicBase::PlayItem(int iItem)
     // play!
     CServiceBroker::GetPlaylistPlayer().Play();
   }
-  else if (pItem->IsPlayList())
+  else if (IsPlayList(*pItem))
   {
     // load the playlist the old way
     LoadPlayList(pItem->GetPath());
@@ -710,7 +711,7 @@ bool CGUIWindowMusicBase::OnPlayMedia(int iItem, const std::string &player)
     g_partyModeManager.AddUserSongs(playlistTemp, !CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_MUSICPLAYER_QUEUEBYDEFAULT));
     return true;
   }
-  else if (!pItem->IsPlayList() && !IsInternetStream(*pItem))
+  else if (!IsPlayList(*pItem) && !IsInternetStream(*pItem))
   { // single music file - if we get here then we have autoplaynextitem turned off or queuebydefault
     // turned on, but we still want to use the playlist player in order to handle more queued items
     // following etc.

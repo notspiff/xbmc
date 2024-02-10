@@ -1,6 +1,7 @@
 set(SOURCES PlayListB4S.cpp
             PlayList.cpp
             PlayListFactory.cpp
+            PlayListFileItemClassify.cpp
             PlayListM3U.cpp
             PlayListPLS.cpp
             PlayListURL.cpp
@@ -13,6 +14,7 @@ set(SOURCES PlayListB4S.cpp
 set(HEADERS PlayList.h
             PlayListB4S.h
             PlayListFactory.h
+            PlayListFileItemClassify.h
             PlayListM3U.h
             PlayListPLS.h
             PlayListTypes.h

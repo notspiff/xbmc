@@ -26,6 +26,7 @@
 #include "network/NetworkFileItemClassify.h"
 #include "playlists/PlayList.h"
 #include "playlists/PlayListFactory.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "profiles/ProfileManager.h"
 #include "settings/MediaSettings.h"
 #include "settings/SettingUtils.h"
@@ -286,7 +287,7 @@ void CAsyncGetItemsForPlaylist::GetItemsForPlaylist(const std::shared_ptr<CFileI
       GetItemsForPlaylist(i);
     }
   }
-  else if (item->IsPlayList())
+  else if (IsPlayList(*item))
   {
     // just queue the playlist, it will be expanded on play
     m_queuedItems.Add(item);
@@ -555,7 +556,7 @@ bool IsItemPlayable(const CFileItem& item)
     return false;
 
   // Include playlists located at one of the possible video/mixed playlist locations
-  if (item.IsPlayList())
+  if (IsPlayList(item))
   {
     if (StringUtils::StartsWithNoCase(item.GetMimeType(), "video/"))
       return true;
@@ -684,7 +685,7 @@ ResumeInformation GetNonFolderItemResumeInformation(const CFileItem& item)
     return {};
 
   // do not resume playlists, except strm files
-  if (!item.IsType(".strm") && item.IsPlayList())
+  if (!item.IsType(".strm") && IsPlayList(item))
     return {};
 
   // do not resume Live TV and 'deleted' items (e.g. trashed pvr recordings)

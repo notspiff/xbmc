@@ -171,7 +171,6 @@ public:
    */
   bool IsDeleted() const;
 
-  bool IsPlayList() const;
   bool IsSmartPlayList() const;
   bool IsLibraryFolder() const;
   bool IsPythonScript() const;

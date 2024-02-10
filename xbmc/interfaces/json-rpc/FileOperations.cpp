@@ -17,6 +17,7 @@
 #include "VideoLibrary.h"
 #include "filesystem/Directory.h"
 #include "media/MediaLockState.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/MediaSourceSettings.h"
 #include "settings/SettingsComponent.h"
@@ -377,7 +378,7 @@ bool CFileOperations::FillFileItemList(const CVariant &parameterObject, CFileIte
       {
         // Sort folders and files by filename to avoid reverse item order bug on some platforms,
         // but leave items from a playlist, smartplaylist or upnp container in order supplied
-        if (!items.IsPlayList() && !items.IsSmartPlayList() && !URIUtils::IsUPnP(items.GetPath()))
+        if (!IsPlayList(items) && !items.IsSmartPlayList() && !URIUtils::IsUPnP(items.GetPath()))
           items.Sort(SortByFile, SortOrderAscending);
 
         CFileItemList filteredDirectories;

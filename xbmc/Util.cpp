@@ -8,6 +8,7 @@
 
 #include "network/Network.h"
 #include "network/NetworkFileItemClassify.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "video/VideoFileItemClassify.h"
 #if defined(TARGET_DARWIN)
 #include <sys/param.h>
@@ -2057,7 +2058,7 @@ void CUtil::ScanForExternalSubtitles(const std::string& strMovie, std::vector<st
 
   CFileItem item(strMovie, false);
   if ((IsInternetStream(item) && !URIUtils::IsOnLAN(item.GetDynPath()))
-    || item.IsPlayList()
+    || IsPlayList(item)
     || item.IsLiveTV()
     || !IsVideo(item))
     return;
@@ -2349,7 +2350,7 @@ void CUtil::ScanForExternalAudio(const std::string& videoPath, std::vector<std::
 {
   CFileItem item(videoPath, false);
   if ( IsInternetStream(item)
-   ||  item.IsPlayList()
+   ||  IsPlayList(item)
    ||  item.IsLiveTV()
    ||  item.IsPVR()
    || !IsVideo(item))
