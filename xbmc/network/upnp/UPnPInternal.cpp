@@ -17,6 +17,7 @@
 #include "filesystem/MusicDatabaseDirectory.h"
 #include "filesystem/StackDirectory.h"
 #include "filesystem/VideoDatabaseDirectory.h"
+#include "music/MusicFileItemClassify.h"
 #include "music/tags/MusicInfoTag.h"
 #include "pictures/PictureFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
@@ -207,7 +208,7 @@ NPT_String GetMimeType(const CFileItem& item, const PLT_HttpRequestContext* cont
   {
     if (IsVideo(item) || item.IsVideoDb())
       mime = "video/" + ext;
-    else if (item.IsAudio() || item.IsMusicDb())
+    else if (IsAudio(item) || item.IsMusicDb())
       mime = "audio/" + ext;
     else if (IsPicture(item))
       mime = "image/" + ext;
@@ -520,7 +521,7 @@ PLT_MediaObject* BuildObject(CFileItem& item,
     object->m_ObjectID = EncodeObjectId(item.GetPath());
 
     /* Setup object type */
-    if (item.IsMusicDb() || item.IsAudio())
+    if (item.IsMusicDb() || IsAudio(item))
     {
       object->m_ObjectClass.type = "object.item.audioItem.musicTrack";
 

@@ -39,6 +39,7 @@
 #include "interfaces/generic/ScriptInvocationManager.h"
 #include "messaging/ApplicationMessenger.h"
 #include "messaging/helpers/DialogOKHelper.h"
+#include "music/MusicFileItemClassify.h"
 #include "network/Network.h"
 #include "pictures/PictureFileItemClassify.h"
 #include "pictures/SlideShowDelegator.h"
@@ -657,7 +658,7 @@ void CGUIWindowFileManager::OnStart(CFileItem *pItem, const std::string &player)
     g_application.ProcessAndStartPlaylist(strPlayList, *pPlayList, PLAYLIST::TYPE_MUSIC);
     return;
   }
-  if (pItem->IsAudio() || IsVideo(*pItem))
+  if (IsAudio(*pItem) || IsVideo(*pItem))
   {
     CServiceBroker::GetPlaylistPlayer().Play(std::make_shared<CFileItem>(*pItem), player);
     return;

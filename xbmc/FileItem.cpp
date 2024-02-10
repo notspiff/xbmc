@@ -915,42 +915,6 @@ bool CFileItem::IsPVRTimer() const
   return HasPVRTimerInfoTag();
 }
 
-bool CFileItem::IsAudio() const
-{
-  /* check preset mime type */
-  if(StringUtils::StartsWithNoCase(m_mimetype, "audio/"))
-    return true;
-
-  if (HasMusicInfoTag())
-    return true;
-
-  if (HasVideoInfoTag())
-    return false;
-
-  if (HasPictureInfoTag())
-    return false;
-
-  if (HasGameInfoTag())
-    return false;
-
-  if (IsCDDA())
-    return true;
-
-  if(StringUtils::StartsWithNoCase(m_mimetype, "application/"))
-  { /* check for some standard types */
-    std::string extension = m_mimetype.substr(12);
-    if( StringUtils::EqualsNoCase(extension, "ogg")
-     || StringUtils::EqualsNoCase(extension, "mp4")
-     || StringUtils::EqualsNoCase(extension, "mxf") )
-     return true;
-  }
-
-  //! @todo If the file is a zip file, ask the game clients if any support this
-  // file before assuming it is audio
-
-  return URIUtils::HasExtension(m_strPath, CServiceBroker::GetFileExtensionProvider().GetMusicExtensions());
-}
-
 bool CFileItem::IsDeleted() const
 {
   if (HasPVRRecordingInfoTag())
@@ -1371,7 +1335,7 @@ void CFileItem::FillInDefaultIcon()
         // PVR deleted recording
         SetArt("icon", "DefaultVideoDeleted.png");
       }
-      else if ( IsAudio() )
+      else if (IsAudio(*this))
       {
         // audio
         SetArt("icon", "DefaultAudio.png");
@@ -2694,7 +2658,7 @@ void CFileItemList::FilterCueItems()
                 strMediaFile = pItem->GetPath();
                 URIUtils::RemoveExtension(strMediaFile);
                 CFileItem item(strMediaFile, false);
-                if (item.IsAudio() && Contains(strMediaFile))
+                if (IsAudio(item) && Contains(strMediaFile))
                 {
                   bFoundMediaFile = true;
                 }
@@ -3604,7 +3568,7 @@ std::string CFileItem::GetLocalMetadataPath() const
 bool CFileItem::LoadMusicTag()
 {
   // not audio
-  if (!IsAudio())
+  if (!IsAudio(*this))
     return false;
   // already loaded?
   if (HasMusicInfoTag() && m_musicInfoTag->Loaded())
@@ -3788,7 +3752,7 @@ bool CFileItem::LoadDetails()
             return true;
           }
         }
-        else if (item->IsAudio())
+        else if (IsAudio(*item))
         {
           if (item->LoadMusicTag())
           {
@@ -3802,7 +3766,7 @@ bool CFileItem::LoadDetails()
     return false;
   }
 
-  if (IsAudio())
+  if (IsAudio(*this))
   {
     return LoadMusicTag();
   }

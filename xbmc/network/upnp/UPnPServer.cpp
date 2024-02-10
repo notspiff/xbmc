@@ -24,6 +24,7 @@
 #include "interfaces/AnnouncementManager.h"
 #include "music/Artist.h"
 #include "music/MusicDatabase.h"
+#include "music/MusicFileItemClassify.h"
 #include "music/MusicLibraryQueue.h"
 #include "music/MusicThumbLoader.h"
 #include "music/tags/MusicInfoTag.h"
@@ -448,7 +449,7 @@ PLT_MediaObject* CUPnPServer::Build(const std::shared_ptr<CFileItem>& item,
       item->m_bIsFolder = true;
     }
     // audio and not a playlist -> song, so it's not a folder
-    else if (item->IsAudio())
+    else if (IsAudio(*item))
     {
       item->m_bIsFolder = false;
     }

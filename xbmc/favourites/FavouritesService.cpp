@@ -14,6 +14,7 @@
 #include "Util.h"
 #include "favourites/FavouritesURL.h"
 #include "input/WindowTranslator.h"
+#include "music/MusicFileItemClassify.h"
 #include "pictures/PictureFileItemClassify.h"
 #include "profiles/ProfileManager.h"
 #include "settings/SettingsComponent.h"
@@ -80,7 +81,7 @@ bool IsMediasourceOfFavItemUnlocked(const std::shared_ptr<CFileItem>& item)
 
       return false;
     }
-    else if (itemToCheck.IsAudio())
+    else if (IsAudio(itemToCheck))
     {
       if (!profileManager->GetCurrentProfile().musicLocked())
         return g_passwordManager.IsMediaFileUnlocked("music", itemToCheck.GetPath());

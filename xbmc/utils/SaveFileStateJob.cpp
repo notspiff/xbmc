@@ -191,7 +191,7 @@ void CSaveFileState::DoWork(CFileItem& item,
       }
     }
 
-    if (item.IsAudio())
+    if (IsAudio(item))
     {
       std::string redactPath = CURL::GetRedacted(progressTrackingFile);
       CLog::Log(LOGDEBUG, "{} - Saving file state for audio item {}", __FUNCTION__, redactPath);

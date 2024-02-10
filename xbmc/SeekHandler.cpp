@@ -19,6 +19,7 @@
 #include "guilib/LocalizeStrings.h"
 #include "input/actions/Action.h"
 #include "input/actions/ActionIDs.h"
+#include "music/MusicFileItemClassify.h"
 #include "settings/AdvancedSettings.h"
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
@@ -275,7 +276,7 @@ bool CSeekHandler::OnAction(const CAction &action)
   if (!appPlayer->IsPlaying() || !appPlayer->CanSeek())
     return false;
 
-  SeekType type = g_application.CurrentFileItem().IsAudio() ? SEEK_TYPE_MUSIC : SEEK_TYPE_VIDEO;
+  SeekType type = IsAudio(g_application.CurrentFileItem()) ? SEEK_TYPE_MUSIC : SEEK_TYPE_VIDEO;
 
   if (SeekTimeCode(action))
     return true;

@@ -25,6 +25,7 @@
 #include "guilib/GUIWindowManager.h"
 #include "guilib/LocalizeStrings.h"
 #include "messaging/helpers/DialogHelper.h"
+#include "music/MusicFileItemClassify.h"
 #include "playlists/PlayList.h"
 #include "profiles/ProfileManager.h"
 #include "settings/Settings.h"
@@ -437,7 +438,7 @@ bool CAutorun::RunDisc(IDirectory* pDir, const std::string& strDrive, int& nAdde
     for (int i = 0; i < vecItems.Size(); i++)
     {
       CFileItemPtr pItem = vecItems[i];
-      if (!pItem->m_bIsFolder && pItem->IsAudio())
+      if (!pItem->m_bIsFolder && IsAudio(*pItem))
       {
         nAddedToPlaylist++;
         CServiceBroker::GetPlaylistPlayer().Add(PLAYLIST::TYPE_MUSIC, pItem);

@@ -39,7 +39,7 @@ bool CMusicGUIInfo::InitCurrentItem(CFileItem *item)
 {
   const auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
-  if (item && (item->IsAudio() || (item->IsInternetStream() && appPlayer->IsPlayingAudio())))
+  if (item && (IsAudio(*item) || (item->IsInternetStream() && appPlayer->IsPlayingAudio())))
   {
     CLog::Log(LOGDEBUG, "CMusicGUIInfo::InitCurrentItem({})", item->GetPath());
 

@@ -28,6 +28,7 @@
 #include "interfaces/AnnouncementManager.h"
 #include "messaging/ApplicationMessenger.h"
 #include "messaging/helpers/DialogOKHelper.h"
+#include "music/MusicFileItemClassify.h"
 #include "music/tags/MusicInfoTag.h"
 #include "playlists/PlayList.h"
 #include "settings/AdvancedSettings.h"
@@ -268,7 +269,7 @@ bool CPlayListPlayer::Play(const CFileItemPtr& pItem, const std::string& player)
 {
   Id playlistId;
   bool isVideo{IsVideo(*pItem)};
-  bool isAudio{pItem->IsAudio()};
+  bool isAudio{IsAudio(*pItem)};
 
   if (isAudio && !isVideo)
     playlistId = TYPE_MUSIC;
@@ -968,7 +969,7 @@ void PLAYLIST::CPlayListPlayer::OnApplicationMessage(KODI::MESSAGING::ThreadMess
           {
             return;
           }
-          if (item->IsAudio() || IsVideo(*item))
+          if (IsAudio(*item) || IsVideo(*item))
             Play(item, pMsg->strParam);
           else
             g_application.PlayMedia(*item, pMsg->strParam, playlistId);
