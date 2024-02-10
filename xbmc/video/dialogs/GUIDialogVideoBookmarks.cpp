@@ -35,6 +35,7 @@
 #include "utils/Variant.h"
 #include "utils/log.h"
 #include "video/VideoDatabase.h"
+#include "video/VideoFileItemClassify.h"
 #include "view/ViewState.h"
 
 #include <mutex>
@@ -490,7 +491,7 @@ bool CGUIDialogVideoBookmarks::AddEpisodeBookmark()
 
 bool CGUIDialogVideoBookmarks::OnAddBookmark()
 {
-  if (!g_application.CurrentFileItem().IsVideo())
+  if (!IsVideo(g_application.CurrentFileItem()))
     return false;
 
   if (CGUIDialogVideoBookmarks::AddBookmark())

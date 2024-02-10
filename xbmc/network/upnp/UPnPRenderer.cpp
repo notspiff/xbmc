@@ -30,6 +30,7 @@
 #include "utils/StringUtils.h"
 #include "utils/URIUtils.h"
 #include "utils/Variant.h"
+#include "video/VideoFileItemClassify.h"
 
 #include <inttypes.h>
 #include <mutex>
@@ -628,7 +629,7 @@ NPT_Result CUPnPRenderer::OnSetNextAVTransportURI(PLT_ActionReference& action)
   {
 
     PLAYLIST::Id playlistId = PLAYLIST::TYPE_MUSIC;
-    if (item->IsVideo())
+    if (IsVideo(*item))
       playlistId = PLAYLIST::TYPE_VIDEO;
 
     // note: auto-deleted when the message is consumed

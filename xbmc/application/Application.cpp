@@ -60,6 +60,7 @@
 #include "filesystem/DirectoryFactory.h"
 #include "filesystem/DllLibCurl.h"
 #include "filesystem/File.h"
+#include "video/VideoFileItemClassify.h"
 #ifdef HAS_FILESYSTEM_NFS
 #include "filesystem/NFSFile.h"
 #endif
@@ -2364,7 +2365,7 @@ bool CApplication::PlayFile(CFileItem item, const std::string& player, bool bRes
     m_nextPlaylistItem = -1;
     stackHelper->Clear();
 
-    if (item.IsVideo())
+    if (IsVideo(item))
       CUtil::ClearSubtitles();
   }
 
@@ -2409,7 +2410,7 @@ bool CApplication::PlayFile(CFileItem item, const std::string& player, bool bRes
   {
     // the following code block is only applicable when bRestart is false OR to ISO stacks
 
-    if (item.IsVideo())
+    if (IsVideo(item))
     {
       // open the d/b and retrieve the bookmarks for the current movie
       CVideoDatabase dbs;
@@ -2521,7 +2522,7 @@ bool CApplication::PlayFile(CFileItem item, const std::string& player, bool bRes
         CSettings::SETTING_MUSICFILES_SELECTACTION) &&
         !CMediaSettings::GetInstance().DoesMediaStartWindowed();
   }
-  else if (item.IsVideo() && playlistId == PLAYLIST::TYPE_VIDEO &&
+  else if (IsVideo(item) && playlistId == PLAYLIST::TYPE_VIDEO &&
            CServiceBroker::GetPlaylistPlayer().GetPlaylist(playlistId).size() > 1)
   { // playing from a playlist by the looks
     // don't switch to fullscreen if we are not playing the first item...
@@ -2846,9 +2847,9 @@ bool CApplication::OnMessage(CGUIMessage& message)
       bool bNothingToQueue = false;
 
       const auto appPlayer = GetComponent<CApplicationPlayer>();
-      if (!file.IsVideo() && appPlayer->IsPlayingVideo())
+      if (!IsVideo(file) && appPlayer->IsPlayingVideo())
         bNothingToQueue = true;
-      else if ((!file.IsAudio() || file.IsVideo()) && appPlayer->IsPlayingAudio())
+      else if ((!file.IsAudio() || IsVideo(file)) && appPlayer->IsPlayingAudio())
         bNothingToQueue = true;
 
       if (bNothingToQueue)
@@ -3116,7 +3117,7 @@ bool CApplication::ExecuteXBMCAction(std::string actionStr,
     }
     else
 #endif
-    if (item.IsAudio() || item.IsVideo() || item.IsGame())
+    if (item.IsAudio() || IsVideo(item) || item.IsGame())
     { // an audio or video file
       PlayFile(item, "");
     }
@@ -3237,7 +3238,7 @@ void CApplication::ProcessSlow()
 
   // Temporarily pause pausable jobs when viewing video/picture
   int currentWindow = CServiceBroker::GetGUI()->GetWindowManager().GetActiveWindow();
-  if (CurrentFileItem().IsVideo() ||
+  if (IsVideo(CurrentFileItem()) ||
       CurrentFileItem().IsPicture() ||
       currentWindow == WINDOW_FULLSCREEN_VIDEO ||
       currentWindow == WINDOW_FULLSCREEN_GAME ||

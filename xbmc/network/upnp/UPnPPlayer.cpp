@@ -24,6 +24,7 @@
 #include "utils/StringUtils.h"
 #include "utils/TimeUtils.h"
 #include "utils/log.h"
+#include "video/VideoFileItemClassify.h"
 #include "video/VideoThumbLoader.h"
 
 #include <mutex>
@@ -383,7 +384,7 @@ bool CUPnPPlayer::OpenFile(const CFileItem& file, const CPlayerOptions& options)
   m_stopremote = true;
   m_started = true;
 
-  if (file.IsVideo())
+  if (IsVideo(file))
   {
     m_hasVideo = true;
   }

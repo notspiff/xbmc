@@ -20,6 +20,7 @@
 #include "utils/StringUtils.h"
 #include "utils/URIUtils.h"
 #include "utils/log.h"
+#include "video/VideoFileItemClassify.h"
 
 #include <map>
 #include <memory>
@@ -251,7 +252,7 @@ bool CPicturesGUIInfo::GetBool(bool& value, const CGUIListItem *gitem, int conte
     case SLIDESHOW_ISVIDEO:
     {
       CSlideShowDelegator& slideShow = CServiceBroker::GetSlideShowDelegator();
-      value = slideShow.GetCurrentSlide() && slideShow.GetCurrentSlide()->IsVideo();
+      value = slideShow.GetCurrentSlide() && IsVideo(*slideShow.GetCurrentSlide());
       return true;
     }
   }

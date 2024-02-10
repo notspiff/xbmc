@@ -7,6 +7,7 @@
  */
 
 #include "network/Network.h"
+#include "video/VideoFileItemClassify.h"
 #if defined(TARGET_DARWIN)
 #include <sys/param.h>
 #include <mach-o/dyld.h>
@@ -2057,7 +2058,7 @@ void CUtil::ScanForExternalSubtitles(const std::string& strMovie, std::vector<st
   if ((item.IsInternetStream() && !URIUtils::IsOnLAN(item.GetDynPath()))
     || item.IsPlayList()
     || item.IsLiveTV()
-    || !item.IsVideo())
+    || !IsVideo(item))
     return;
 
   CLog::Log(LOGDEBUG, "{}: Searching for subtitles...", __FUNCTION__);
@@ -2350,7 +2351,7 @@ void CUtil::ScanForExternalAudio(const std::string& videoPath, std::vector<std::
    ||  item.IsPlayList()
    ||  item.IsLiveTV()
    ||  item.IsPVR()
-   || !item.IsVideo())
+   || !IsVideo(item))
     return;
 
   std::string strBasePath;

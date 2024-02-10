@@ -164,12 +164,6 @@ public:
    \return non-empty string if item is optical media folder, empty otherwise.
    */
   std::string GetOpticalMediaPath() const;
-  /*!
-   \brief Check whether an item is a video item. Note that this returns true for
-    anything with a video info tag, so that may include eg. folders.
-   \return true if item is video, false otherwise.
-   */
-  bool IsVideo() const;
 
   bool IsDiscStub() const;
 

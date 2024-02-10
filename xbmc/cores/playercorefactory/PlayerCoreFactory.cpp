@@ -25,6 +25,7 @@
 #include "utils/StringUtils.h"
 #include "utils/XMLUtils.h"
 #include "utils/log.h"
+#include "video/VideoFileItemClassify.h"
 
 #include <mutex>
 #include <sstream>
@@ -141,7 +142,7 @@ void CPlayerCoreFactory::GetPlayers(const CFileItem& item, std::vector<std::stri
   // "videodefaultplayer"
   if (defaultInputstreamPlayerOverride == ForcedPlayer::VIDEO_DEFAULT ||
       (defaultInputstreamPlayerOverride == ForcedPlayer::NONE &&
-       (item.IsVideo() || (!item.IsAudio() && !item.IsGame()))))
+       (IsVideo(item) || (!item.IsAudio() && !item.IsGame()))))
   {
     int idx = GetPlayerIndex("videodefaultplayer");
     if (idx > -1)

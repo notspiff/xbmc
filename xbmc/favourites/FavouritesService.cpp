@@ -21,6 +21,7 @@
 #include "utils/URIUtils.h"
 #include "utils/XBMCTinyXML2.h"
 #include "utils/log.h"
+#include "video/VideoFileItemClassify.h"
 
 #include <mutex>
 
@@ -71,7 +72,7 @@ bool IsMediasourceOfFavItemUnlocked(const std::shared_ptr<CFileItem>& item)
 
   if (action == CFavouritesURL::Action::PLAY_MEDIA)
   {
-    if (itemToCheck.IsVideo())
+    if (IsVideo(itemToCheck))
     {
       if (!profileManager->GetCurrentProfile().videoLocked())
         return g_passwordManager.IsMediaFileUnlocked("video", itemToCheck.GetPath());

@@ -42,6 +42,7 @@
 #include "utils/URIUtils.h"
 #include "utils/Variant.h"
 #include "utils/log.h"
+#include "video/VideoFileItemClassify.h"
 #include "video/VideoManagerTypes.h"
 #include "video/VideoThumbLoader.h"
 #include "video/dialogs/GUIDialogVideoManagerExtras.h"
@@ -721,7 +722,7 @@ namespace VIDEO
                                           CScraperUrl* pURL,
                                           CGUIDialogProgress* pDlgProgress)
   {
-    if (pItem->m_bIsFolder || !pItem->IsVideo() || pItem->IsNFO() ||
+    if (pItem->m_bIsFolder || !IsVideo(*pItem) || pItem->IsNFO() ||
        (pItem->IsPlayList() && !URIUtils::HasExtension(pItem->GetPath(), ".strm")))
       return INFO_NOT_NEEDED;
 
@@ -826,7 +827,7 @@ namespace VIDEO
                                                CScraperUrl* pURL,
                                                CGUIDialogProgress* pDlgProgress)
   {
-    if (pItem->m_bIsFolder || !pItem->IsVideo() || pItem->IsNFO() ||
+    if (pItem->m_bIsFolder || !IsVideo(*pItem) || pItem->IsNFO() ||
        (pItem->IsPlayList() && !URIUtils::HasExtension(pItem->GetPath(), ".strm")))
       return INFO_NOT_NEEDED;
 
@@ -2204,7 +2205,7 @@ namespace VIDEO
         KODI::TIME::FileTime time = pItem->m_dateTime;
         digest.Update(&time, sizeof(KODI::TIME::FileTime));
       }
-      if (pItem->IsVideo() && !pItem->IsPlayList() && !pItem->IsNFO())
+      if (IsVideo(*pItem) && !pItem->IsPlayList() && !pItem->IsNFO())
         count++;
     }
     hash = digest.Finalize();

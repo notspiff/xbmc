@@ -35,6 +35,7 @@
 #include "utils/StringUtils.h"
 #include "utils/URIUtils.h"
 #include "utils/log.h"
+#include "video/VideoFileItemClassify.h"
 #include "video/VideoInfoTag.h"
 #include "video/VideoManagerTypes.h"
 #include "video/VideoThumbLoader.h"
@@ -61,7 +62,7 @@ int CVideoGUIInfo::GetPercentPlayed(const CVideoInfoTag* tag) const
 
 bool CVideoGUIInfo::InitCurrentItem(CFileItem *item)
 {
-  if (item && item->IsVideo())
+  if (item && IsVideo(*item))
   {
     // special case where .strm is used to start an audio stream
     if (item->IsInternetStream() && m_appPlayer->IsPlayingAudio())
