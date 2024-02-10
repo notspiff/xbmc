@@ -20,3 +20,6 @@ bool IsSubtitle(const CFileItem& item);
 //! \details Note that this returns true for anything with a video info tag,
 //!          so that may include eg. folders.
 bool IsVideo(const CFileItem& item);
+
+//! \brief Check whether an item is a video extras item.
+bool IsVideoExtras(const CFileItem& item);

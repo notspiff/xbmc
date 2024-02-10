@@ -1007,12 +1007,6 @@ bool CFileItem::IsNFO() const
   return URIUtils::HasExtension(m_strPath, ".nfo");
 }
 
-bool CFileItem::IsVideoExtras() const
-{
-  return m_bIsFolder &&
-         StringUtils::EqualsNoCase(URIUtils::GetFileOrFolderName(m_strPath), "extras");
-}
-
 bool CFileItem::IsDiscImage() const
 {
   return URIUtils::IsDiscImage(GetDynPath());
@@ -1164,11 +1158,6 @@ bool CFileItem::IsOnDVD() const
 bool CFileItem::IsNfs() const
 {
   return URIUtils::IsNfs(m_strPath);
-}
-
-bool CFileItem::IsOnLAN() const
-{
-  return URIUtils::IsOnLAN(m_strPath);
 }
 
 bool CFileItem::IsISO9660() const

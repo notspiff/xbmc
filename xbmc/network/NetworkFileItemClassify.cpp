@@ -22,6 +22,11 @@ bool IsInternetStream(const CFileItem& item, const bool bStrictCheck /* = false 
   return URIUtils::IsInternetStream(item.GetPath(), bStrictCheck);
 }
 
+bool IsOnLAN(const CFileItem& item)
+{
+  return URIUtils::IsOnLAN(item.GetPath());
+}
+
 bool IsStreamedFilesystem(const CFileItem& item)
 {
   if (!item.GetDynPath().empty())

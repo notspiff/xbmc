@@ -13,5 +13,8 @@ class CFileItem;
 //! \brief Check whether an item is an internet stream.
 bool IsInternetStream(const CFileItem& item, const bool bStrictCheck = false);
 
+//! \brief Check whether an item is on the local network.
+bool IsOnLAN(const CFileItem& item);
+
 //! \brief Check whether an item is on a streamed filesystem.
 bool IsStreamedFilesystem(const CFileItem& item);

@@ -77,3 +77,9 @@ bool IsVideo(const CFileItem& item)
   return URIUtils::HasExtension(item.GetPath(),
                                 CServiceBroker::GetFileExtensionProvider().GetVideoExtensions());
 }
+
+bool IsVideoExtras(const CFileItem& item)
+{
+  return item.m_bIsFolder &&
+         StringUtils::EqualsNoCase(URIUtils::GetFileOrFolderName(item.GetPath()), "extras");
+}
