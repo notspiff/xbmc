@@ -27,6 +27,7 @@
 #include "media/MediaLockState.h"
 #include "music/Album.h"
 #include "music/Artist.h"
+#include "music/MusicFileItemClassify.h"
 #include "music/MusicDatabase.h"
 #include "music/tags/MusicInfoTag.h"
 #include "music/tags/MusicInfoTagLoaderFactory.h"
@@ -1020,11 +1021,6 @@ bool CFileItem::IsLyrics() const
 bool CFileItem::IsSubtitle() const
 {
   return URIUtils::HasExtension(m_strPath, CServiceBroker::GetFileExtensionProvider().GetSubtitleExtensions());
-}
-
-bool CFileItem::IsCUESheet() const
-{
-  return URIUtils::HasExtension(m_strPath, ".cue");
 }
 
 bool CFileItem::IsInternetStream(const bool bStrictCheck /* = false */) const
@@ -2710,7 +2706,7 @@ void CFileItemList::FilterCueItems()
     CFileItemPtr pItem = m_items[i];
     if (!pItem->m_bIsFolder)
     { // see if it's a .CUE sheet
-      if (pItem->IsCUESheet())
+      if (IsCUESheet(*pItem))
       {
         CCueDocumentPtr cuesheet(new CCueDocument);
         if (cuesheet->ParseFile(pItem->GetPath()))
@@ -2750,7 +2746,7 @@ void CFileItemList::FilterCueItems()
                   {
                     strMediaFile = URIUtils::ReplaceExtension(pItem->GetPath(), *i);
                     CFileItem item(strMediaFile, false);
-                    if (!item.IsCUESheet() && !item.IsPlayList() && Contains(strMediaFile))
+                    if (!IsCUESheet(item) && !item.IsPlayList() && Contains(strMediaFile))
                     {
                       bFoundMediaFile = true;
                       break;
