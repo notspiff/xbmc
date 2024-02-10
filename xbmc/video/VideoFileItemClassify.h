@@ -21,5 +21,8 @@ bool IsSubtitle(const CFileItem& item);
 //!          so that may include eg. folders.
 bool IsVideo(const CFileItem& item);
 
+//! \brief Check whether an item is a video database item.
+bool IsVideoDb(const CFileItem& item);
+
 //! \brief Check whether an item is a video extras item.
 bool IsVideoExtras(const CFileItem& item);

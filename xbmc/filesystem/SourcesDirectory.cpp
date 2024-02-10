@@ -19,6 +19,7 @@
 #include "storage/MediaManager.h"
 #include "utils/FileUtils.h"
 #include "utils/URIUtils.h"
+#include "video/VideoFileItemClassify.h"
 
 using namespace XFILE;
 
@@ -68,7 +69,7 @@ bool CSourcesDirectory::GetDirectory(const VECSOURCES &sources, CFileItemList &i
     else if (   pItem->IsPath("special://musicplaylists/")
              || pItem->IsPath("special://videoplaylists/"))
       strIcon = "DefaultPlaylist.png";
-    else if (   pItem->IsVideoDb()
+    else if (   IsVideoDb(*pItem)
              || pItem->IsMusicDb()
              || pItem->IsPlugin()
              || pItem->IsPath("musicsearch://"))

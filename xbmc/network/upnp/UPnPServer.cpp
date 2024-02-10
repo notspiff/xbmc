@@ -39,6 +39,7 @@
 #include "utils/Variant.h"
 #include "utils/log.h"
 #include "video/VideoDatabase.h"
+#include "video/VideoFileItemClassify.h"
 #include "video/VideoLibraryQueue.h"
 #include "video/VideoThumbLoader.h"
 #include "view/GUIViewState.h"
@@ -714,7 +715,7 @@ NPT_Result CUPnPServer::OnBrowseMetadata(PLT_ActionReference& action,
         parent = "sources://video/"; // this can only match video sources
     }
 
-    if (item->IsVideoDb())
+    if (IsVideoDb(*item))
     {
       thumb_loader = NPT_Reference<CThumbLoader>(new CVideoThumbLoader());
     }
@@ -1307,7 +1308,7 @@ NPT_Result CUPnPServer::OnUpdateObject(PLT_ActionReference& action,
   NPT_CHECK_LABEL(FindServiceById("urn:upnp-org:serviceId:ContentDirectory", service), error);
   NPT_CHECK_LABEL(service->PauseEventing(), error);
 
-  if (updated.IsVideoDb())
+  if (IsVideoDb(updated))
   {
     CVideoDatabase db;
     NPT_CHECK_LABEL(!db.Open(), error);
@@ -1409,7 +1410,7 @@ NPT_Result CUPnPServer::OnUpdateObject(PLT_ActionReference& action,
   if (updatelisting)
   {
     updated.SetPath(path);
-    if (updated.IsVideoDb())
+    if (IsVideoDb(updated))
       CUtil::DeleteVideoDatabaseDirectoryCache();
     else if (updated.IsMusicDb())
       CUtil::DeleteMusicDatabaseDirectoryCache();
@@ -1526,7 +1527,7 @@ NPT_Result CUPnPServer::ServeFile(const NPT_HttpRequest& request,
 void CUPnPServer::DefaultSortItems(CFileItemList& items)
 {
   CGUIViewState* viewState =
-      CGUIViewState::GetViewState(items.IsVideoDb() ? WINDOW_VIDEO_NAV : -1, items);
+      CGUIViewState::GetViewState(IsVideoDb(items) ? WINDOW_VIDEO_NAV : -1, items);
   if (viewState)
   {
     SortDescription sorting = viewState->GetSortMethod();

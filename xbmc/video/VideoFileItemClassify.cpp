@@ -18,7 +18,7 @@
 
 bool IsDiscStub(const CFileItem& item)
 {
-  if (item.IsVideoDb() && item.HasVideoInfoTag())
+  if (IsVideoDb(item) && item.HasVideoInfoTag())
   {
     CFileItem dbItem(item.m_bIsFolder ? item.GetVideoInfoTag()->m_strPath : item.GetVideoInfoTag()->m_strFileNameAndPath, item.m_bIsFolder);
     return IsDiscStub(dbItem);
@@ -76,6 +76,11 @@ bool IsVideo(const CFileItem& item)
 
   return URIUtils::HasExtension(item.GetPath(),
                                 CServiceBroker::GetFileExtensionProvider().GetVideoExtensions());
+}
+
+bool IsVideoDb(const CFileItem& item)
+{
+  return URIUtils::IsVideoDb(item.GetPath());
 }
 
 bool IsVideoExtras(const CFileItem& item)

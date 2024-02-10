@@ -30,6 +30,7 @@
 #include "utils/URIUtils.h"
 #include "utils/Variant.h"
 #include "utils/log.h"
+#include "video/VideoFileItemClassify.h"
 #include "video/guilib/VideoPlayActionProcessor.h"
 
 #define CONTROL_BTNVIEWASICONS 2
@@ -63,7 +64,7 @@ void CGUIWindowVideoPlaylist::OnPrepareFileItems(CFileItemList& items)
   if (items.IsEmpty())
     return;
 
-  if (!items.IsVideoDb() && !items.IsVirtualDirectoryRoot())
+  if (!IsVideoDb(items) && !items.IsVirtualDirectoryRoot())
   { // load info from the database
     std::string label;
     if (items.GetLabel().empty() &&

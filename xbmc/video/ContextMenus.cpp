@@ -23,6 +23,7 @@
 #include "utils/ExecString.h"
 #include "utils/StringUtils.h"
 #include "utils/URIUtils.h"
+#include "video/VideoFileItemClassify.h"
 #include "video/VideoInfoTag.h"
 #include "video/VideoManagerTypes.h"
 #include "video/VideoUtils.h"
@@ -85,7 +86,7 @@ bool CVideoMarkWatched::IsVisible(const CFileItem& item) const
   if (item.m_bIsFolder) // Only allow video db content, video and recording folders to be updated recursively
   {
     if (item.HasVideoInfoTag())
-      return item.IsVideoDb();
+      return IsVideoDb(item);
     else if (item.GetProperty("IsVideoFolder").asBoolean())
       return true;
     else
@@ -114,7 +115,7 @@ bool CVideoMarkUnWatched::IsVisible(const CFileItem& item) const
   if (item.m_bIsFolder) // Only allow video db content, video and recording folders to be updated recursively
   {
     if (item.HasVideoInfoTag())
-      return item.IsVideoDb();
+      return IsVideoDb(item);
     else if (item.GetProperty("IsVideoFolder").asBoolean())
       return true;
     else
@@ -270,7 +271,7 @@ std::vector<std::string> GetPlayers(const CPlayerCoreFactory& playerCoreFactory,
                                     const CFileItem& item)
 {
   std::vector<std::string> players;
-  if (item.IsVideoDb())
+  if (IsVideoDb(item))
   {
     //! @todo CPlayerCoreFactory and classes called from there do not handle dyn path correctly.
     CFileItem item2{item};
@@ -349,7 +350,7 @@ void SetPathAndPlay(const std::shared_ptr<CFileItem>& item, PlayMode mode)
   else
   {
     const auto itemCopy{std::make_shared<CFileItem>(*item)};
-    if (itemCopy->IsVideoDb())
+    if (IsVideoDb(*itemCopy))
     {
       if (!itemCopy->m_bIsFolder)
       {

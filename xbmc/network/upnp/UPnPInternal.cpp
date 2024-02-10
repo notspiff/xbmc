@@ -206,7 +206,7 @@ NPT_String GetMimeType(const CFileItem& item, const PLT_HttpRequestContext* cont
   /* fallback to generic mime type if not found */
   if (mime.IsEmpty())
   {
-    if (IsVideo(item) || item.IsVideoDb())
+    if (IsVideo(item) || IsVideoDb(item))
       mime = "video/" + ext;
     else if (IsAudio(item) || item.IsMusicDb())
       mime = "audio/" + ext;
@@ -531,7 +531,7 @@ PLT_MediaObject* BuildObject(CFileItem& item,
         PopulateObjectFromTag(*tag, *object, &file_path, &resource, quirks, upnp_service);
       }
     }
-    else if (item.IsVideoDb() || IsVideo(item))
+    else if (IsVideoDb(item) || IsVideo(item))
     {
       object->m_ObjectClass.type = "object.item.videoItem";
 
@@ -675,7 +675,7 @@ PLT_MediaObject* BuildObject(CFileItem& item,
           break;
       }
     }
-    else if (item.IsVideoDb())
+    else if (IsVideoDb(item))
     {
       VIDEODATABASEDIRECTORY::NODE_TYPE node =
           CVideoDatabaseDirectory::GetDirectoryType(item.GetPath());

@@ -21,6 +21,7 @@
 #include "utils/StringUtils.h"
 #include "utils/log.h"
 #include "video/VideoDatabase.h"
+#include "video/VideoFileItemClassify.h"
 #include "video/VideoManagerTypes.h"
 #include "video/VideoThumbLoader.h"
 
@@ -280,7 +281,7 @@ std::shared_ptr<CFileItem> CVideoVersionHelper::ChooseVideoFromAssets(
 
 bool VIDEO::IsVideoAssetFile(const CFileItem& item)
 {
-  if (item.m_bIsFolder || !item.IsVideoDb())
+  if (item.m_bIsFolder || !IsVideoDb(item))
     return false;
 
   // @todo maybe in the future look for prefix videodb://movies/videoversions in path instead
