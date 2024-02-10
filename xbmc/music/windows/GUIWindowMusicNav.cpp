@@ -479,7 +479,7 @@ bool CGUIWindowMusicNav::GetDirectory(const std::string &strDirectory, CFileItem
   else if (items.IsAddonsPath())
     items.SetContent("addons");
   else if (!items.IsSourcesPath() && !items.IsVirtualDirectoryRoot() &&
-           !items.IsLibraryFolder() && !items.IsPlugin() && !IsSmartPlayList(items))
+           !IsLibraryFolder(items) && !items.IsPlugin() && !IsSmartPlayList(items))
     items.SetContent("files");
 
   return bResult;

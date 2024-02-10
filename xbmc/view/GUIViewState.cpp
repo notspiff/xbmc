@@ -76,7 +76,7 @@ CGUIViewState* CGUIViewState::GetViewState(int windowId, const CFileItemList& it
     return new CGUIViewStateMusicSearch(items);
 
   if (IsSmartPlayList(items) || url.IsProtocol("upnp") ||
-      items.IsLibraryFolder())
+      IsLibraryFolder(items))
   {
     if (items.GetContent() == "songs" ||
         items.GetContent() == "albums" ||

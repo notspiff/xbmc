@@ -379,7 +379,7 @@ CGUIViewStateMusicSmartPlaylist::CGUIViewStateMusicSmartPlaylist(const CFileItem
     AddSortMethod(SortByBPM, 38080,
                   LABEL_MASKS("%T - %A", "%f")); // Title - Artist, bpm, empty, empty
 
-    if (IsSmartPlayList(items) || items.IsLibraryFolder())
+    if (IsSmartPlayList(items) || IsLibraryFolder(items))
       AddPlaylistOrder(items, LABEL_MASKS(strTrack, "%D"));
     else
     {
@@ -423,7 +423,7 @@ CGUIViewStateMusicSmartPlaylist::CGUIViewStateMusicSmartPlaylist(const CFileItem
     // userrating
     AddSortMethod(SortByUserRating, 38018, LABEL_MASKS("%F", "", strAlbum, "%r"));  // Filename, empty | Userdefined, UserRating
 
-    if (IsSmartPlayList(items) || items.IsLibraryFolder())
+    if (IsSmartPlayList(items) || IsLibraryFolder(items))
       AddPlaylistOrder(items, LABEL_MASKS("%F", "", strAlbum, "%D"));
     else
     {

@@ -10,6 +10,9 @@
 
 class CFileItem;
 
+//! \brief Check whether an item is a library folder (smart playlist).
+bool IsLibraryFolder(const CFileItem& item);
+
 //! \brief Check whether an item is a playlist.
 bool IsPlayList(const CFileItem& item);
 

@@ -171,7 +171,6 @@ public:
    */
   bool IsDeleted() const;
 
-  bool IsLibraryFolder() const;
   bool IsPythonScript() const;
   bool IsPlugin() const;
   bool IsScript() const;

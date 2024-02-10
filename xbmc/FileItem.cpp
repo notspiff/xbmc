@@ -969,14 +969,6 @@ bool CFileItem::IsFileFolder(EFileFolderType types) const
   return false;
 }
 
-bool CFileItem::IsLibraryFolder() const
-{
-  if (HasProperty("library.filter") && GetProperty("library.filter").asBoolean())
-    return true;
-
-  return URIUtils::IsLibraryFolder(m_strPath);
-}
-
 bool CFileItem::IsPythonScript() const
 {
   return URIUtils::HasExtension(m_strPath, ".py");
@@ -2657,7 +2649,7 @@ void CFileItemList::Stack(bool stackFiles /* = true */)
   if (IsVirtualDirectoryRoot() ||
       IsLiveTV() ||
       IsSourcesPath() ||
-      IsLibraryFolder())
+      IsLibraryFolder(*this))
     return;
 
   SetProperty("isstacked", true);
@@ -3078,7 +3070,7 @@ std::string CFileItem::GetUserMusicThumb(bool alwaysCheckRemote /* = false */, b
    || (URIUtils::IsFTP(m_strPath) && !CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_bFTPThumbs)
    || IsPlugin()
    || IsAddonsPath()
-   || IsLibraryFolder()
+   || IsLibraryFolder(*this)
    || IsParentFolder()
    || IsMusicDb())
     return "";
@@ -3197,7 +3189,7 @@ bool CFileItem::SkipLocalArt() const
        || (URIUtils::IsFTP(m_strPath) && !CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_bFTPThumbs)
        || IsPlugin()
        || IsAddonsPath()
-       || IsLibraryFolder()
+       || IsLibraryFolder(*this)
        || IsParentFolder()
        || IsLiveTV()
        || IsPVRRecording()

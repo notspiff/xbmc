@@ -488,7 +488,7 @@ bool CGUIWindowVideoNav::GetDirectory(const std::string &strDirectory, CFileItem
       std::string label;
       if (items.GetLabel().empty() && m_rootDir.IsSource(items.GetPath(), CMediaSourceSettings::GetInstance().GetSources("video"), &label))
         items.SetLabel(label);
-      if (!items.IsSourcesPath() && !items.IsLibraryFolder())
+      if (!items.IsSourcesPath() && !IsLibraryFolder(items))
         LoadVideoInfo(items, m_database);
     }
 
@@ -837,7 +837,7 @@ void CGUIWindowVideoNav::GetContextButtons(int itemNumber, CContextButtons &butt
           buttons.Add(CONTEXT_BUTTON_RENAME, 118);
         }
         // add "Set/Change content" to folders
-        if (item->m_bIsFolder && !IsVideoDb(*item) && !IsPlayList(*item) && !IsSmartPlayList(*item) && !item->IsLibraryFolder() && !item->IsLiveTV() && !item->IsPlugin() && !item->IsAddonsPath() && !URIUtils::IsUPnP(item->GetPath()))
+        if (item->m_bIsFolder && !IsVideoDb(*item) && !IsPlayList(*item) && !IsSmartPlayList(*item) && !IsLibraryFolder(*item) && !item->IsLiveTV() && !item->IsPlugin() && !item->IsAddonsPath() && !URIUtils::IsUPnP(item->GetPath()))
         {
           if (info && info->Content() != CONTENT_NONE)
             buttons.Add(CONTEXT_BUTTON_SET_CONTENT, 20442);
@@ -1106,7 +1106,7 @@ bool CGUIWindowVideoNav::ApplyWatchedFilter(CFileItemList &items)
   if (!IsVideoDb(items))
     filterWatched = true;
   if (items.GetContent() == "tvshows" &&
-     (IsSmartPlayList(items) || items.IsLibraryFolder()))
+     (IsSmartPlayList(items) || IsLibraryFolder(items)))
     node = NODE_TYPE_TITLE_TVSHOWS; // so that the check below works
 
   int watchMode = CMediaSettings::GetInstance().GetWatchedMode(m_vecItems->GetContent());

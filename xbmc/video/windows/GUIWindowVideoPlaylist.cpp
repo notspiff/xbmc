@@ -22,6 +22,7 @@
 #include "guilib/LocalizeStrings.h"
 #include "input/actions/Action.h"
 #include "input/actions/ActionIDs.h"
+#include "playlists/PlayListFileItemClassify.h"
 #include "playlists/PlayListM3U.h"
 #include "settings/MediaSettings.h"
 #include "settings/MediaSourceSettings.h"
@@ -71,7 +72,7 @@ void CGUIWindowVideoPlaylist::OnPrepareFileItems(CFileItemList& items)
         m_rootDir.IsSource(items.GetPath(), CMediaSourceSettings::GetInstance().GetSources("video"),
                            &label))
       items.SetLabel(label);
-    if (!items.IsSourcesPath() && !items.IsLibraryFolder())
+    if (!items.IsSourcesPath() && !IsLibraryFolder(items))
       LoadVideoInfo(items, m_database);
   }
 }

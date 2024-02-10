@@ -201,7 +201,7 @@ void CAsyncGetItemsForPlaylist::GetItemsForPlaylist(const std::shared_ptr<CFileI
     }
 
     if (items.GetContent().empty() && !IsVideoDb(items) && !items.IsVirtualDirectoryRoot() &&
-        !items.IsSourcesPath() && !items.IsLibraryFolder())
+        !items.IsSourcesPath() && !IsLibraryFolder(items))
     {
       CVideoDatabase db;
       if (db.Open())

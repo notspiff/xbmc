@@ -13,6 +13,14 @@
 #include "utils/URIUtils.h"
 #include "utils/Variant.h"
 
+bool IsLibraryFolder(const CFileItem& item)
+{
+  if (item.HasProperty("library.filter") && item.GetProperty("library.filter").asBoolean())
+    return true;
+
+  return URIUtils::IsLibraryFolder(item.GetPath());
+}
+
 bool IsPlayList(const CFileItem& item)
 {
   return PLAYLIST::CPlayListFactory::IsPlaylist(item);
