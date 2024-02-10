@@ -987,11 +987,6 @@ bool CFileItem::IsGame() const
   return CGameUtils::HasGameExtension(m_strPath);
 }
 
-bool CFileItem::IsSubtitle() const
-{
-  return URIUtils::HasExtension(m_strPath, CServiceBroker::GetFileExtensionProvider().GetSubtitleExtensions());
-}
-
 bool CFileItem::IsInternetStream(const bool bStrictCheck /* = false */) const
 {
   if (HasProperty("IsHTTPDirectory"))

@@ -165,8 +165,6 @@ public:
    */
   std::string GetOpticalMediaPath() const;
 
-  bool IsSubtitle() const;
-
   /*!
    \brief Check whether an item is an audio item. Note that this returns true for
     anything with a music info tag, so that may include eg. folders.

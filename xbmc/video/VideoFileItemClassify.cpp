@@ -27,6 +27,11 @@ bool IsDiscStub(const CFileItem& item)
   return URIUtils::HasExtension(item.GetPath(), CServiceBroker::GetFileExtensionProvider().GetDiscStubExtensions());
 }
 
+bool IsSubtitle(const CFileItem& item)
+{
+  return URIUtils::HasExtension(item.GetPath(), CServiceBroker::GetFileExtensionProvider().GetSubtitleExtensions());
+}
+
 bool IsVideo(const CFileItem& item)
 {
   /* check preset mime type */

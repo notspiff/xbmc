@@ -113,3 +113,13 @@ TEST(TesVideoFileItemClassify, VideoExtensions)
       EXPECT_TRUE(IsVideo(CFileItem(ext, false)));
   }
 }
+
+TEST(TesVideoFileItemClassify, IsSubtitle)
+{
+  const auto& exts = CServiceBroker::GetFileExtensionProvider().GetSubtitleExtensions();
+  for (const auto& ext : StringUtils::Split(exts, "|"))
+  {
+    if (!ext.empty())
+      EXPECT_TRUE(IsSubtitle(CFileItem(ext, false)));
+  }
+}
