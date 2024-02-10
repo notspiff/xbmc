@@ -13,13 +13,13 @@
 
 #include <array>
 
-struct CueDefinition
+struct SimpleDefinition
 {
   std::string path;
   bool result;
 };
 
-class CuesheetTest : public testing::WithParamInterface<CueDefinition>
+class CuesheetTest : public testing::WithParamInterface<SimpleDefinition>
                    , public testing::Test
 {};
 
@@ -29,8 +29,25 @@ TEST_P(CuesheetTest, IsCUESheet)
 }
 
 const auto cuesheet_tests = std::array{
-  CueDefinition{"/home/user/test.cue", true},
-  CueDefinition{"/home/user/test.foo", false},
+  SimpleDefinition{"/home/user/test.cue", true},
+  SimpleDefinition{"/home/user/test.foo", false},
 };
 
 INSTANTIATE_TEST_SUITE_P(TestMusicFileItemClassify, CuesheetTest, testing::ValuesIn(cuesheet_tests));
+
+class LyricsTest : public testing::WithParamInterface<SimpleDefinition>
+                 , public testing::Test
+{};
+
+TEST_P(LyricsTest, IsLyrics)
+{
+  EXPECT_EQ(IsLyrics(CFileItem(GetParam().path, false)), GetParam().result);
+}
+
+const auto lyrics_tests = std::array{
+  SimpleDefinition{"/home/user/test.lrc", true},
+  SimpleDefinition{"/home/user/test.cdg", true},
+  SimpleDefinition{"/home/user/test.not", false},
+};
+
+INSTANTIATE_TEST_SUITE_P(TestMusicFileItemClassify, LyricsTest, testing::ValuesIn(lyrics_tests));

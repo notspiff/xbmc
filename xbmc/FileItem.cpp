@@ -987,11 +987,6 @@ bool CFileItem::IsGame() const
   return CGameUtils::HasGameExtension(m_strPath);
 }
 
-bool CFileItem::IsLyrics() const
-{
-  return URIUtils::HasExtension(m_strPath, ".cdg|.lrc");
-}
-
 bool CFileItem::IsSubtitle() const
 {
   return URIUtils::HasExtension(m_strPath, CServiceBroker::GetFileExtensionProvider().GetSubtitleExtensions());

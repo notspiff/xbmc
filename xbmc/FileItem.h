@@ -165,7 +165,6 @@ public:
    */
   std::string GetOpticalMediaPath() const;
 
-  bool IsLyrics() const;
   bool IsSubtitle() const;
 
   /*!
