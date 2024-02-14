@@ -17,6 +17,7 @@
 #include "settings/Settings.h"
 #include "settings/SettingsComponent.h"
 #include "settings/lib/Setting.h"
+#include "utils/FileUtils.h"
 #include "utils/URIUtils.h"
 #include "utils/log.h"
 #include "video/VideoDatabase.h"
@@ -24,6 +25,9 @@
 
 #include <cstdint>
 #include <vector>
+
+#include <array>
+#include <algorithm>
 
 namespace
 {
@@ -177,6 +181,27 @@ VIDEO_UTILS::ResumeInformation GetNonFolderItemResumeInformation(const CFileItem
 
 namespace VIDEO_UTILS
 {
+std::string GetOpticalMediaPath(const CFileItem& item)
+{
+  auto exists = [&item](const std::string& file)
+  {
+    const std::string path = URIUtils::AddFileToFolder(item.GetPath(), file);
+    return CFileUtils::Exists(path);
+  };
+
+  const auto files = std::array{
+    "VIDEO_TS.IFO",
+    "index.bdmv",
+    "INDEX.BDM",
+    "VIDEO_TS/VIDEO_TS.IFO",
+    "BDMV/index.bdmv",
+    "BDMV/INDEX.BDM",
+  };
+
+  const auto it = std::find_if(files.begin(), files.end(), exists);
+  return it != files.end() ? *it : std::string{};
+}
+
 bool IsAutoPlayNextItem(const CFileItem& item)
 {
   if (!item.HasVideoInfoTag())
