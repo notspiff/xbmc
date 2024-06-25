@@ -20,6 +20,7 @@
 #include "settings/SettingsComponent.h"
 #include "utils/FileExtensionProvider.h"
 #include "utils/FileUtils.h"
+#include "utils/ThumbUtils.h"
 #include "utils/URIUtils.h"
 #include "utils/Variant.h"
 #include "utils/log.h"
@@ -478,7 +479,7 @@ std::vector<std::string> CVideoItemArtworkFanartHandler::GetRemoteArt() const
 
 std::string CVideoItemArtworkFanartHandler::GetLocalArt() const
 {
-  return m_item->GetLocalFanart();
+  return THUMBS::GetLocalFanart(*m_item);
 }
 
 std::string CVideoItemArtworkFanartHandler::UpdateEmbeddedArt(const std::string& art)
