@@ -48,6 +48,7 @@
 #include "utils/GroupUtils.h"
 #include "utils/LabelFormatter.h"
 #include "utils/StringUtils.h"
+#include "utils/ThumbUtils.h"
 #include "utils/URIUtils.h"
 #include "utils/Variant.h"
 #include "utils/XMLUtils.h"
@@ -10710,7 +10711,7 @@ void CVideoDatabase::ExportToXML(const std::string &path, bool singleFile /* = t
         }
         else
         {
-          std::string nfoFile(URIUtils::ReplaceExtension(item.GetTBNFile(), ".nfo"));
+          std::string nfoFile(URIUtils::ReplaceExtension(THUMBS::GetTBNFile(item), ".nfo"));
 
           if (item.IsOpticalMediaFile())
           {
@@ -10863,7 +10864,7 @@ void CVideoDatabase::ExportToXML(const std::string &path, bool singleFile /* = t
         }
         else
         {
-          std::string nfoFile(URIUtils::ReplaceExtension(item.GetTBNFile(), ".nfo"));
+          std::string nfoFile(URIUtils::ReplaceExtension(THUMBS::GetTBNFile(item), ".nfo"));
 
           if (overwrite || !CFile::Exists(nfoFile, false))
           {
@@ -11064,7 +11065,7 @@ void CVideoDatabase::ExportToXML(const std::string &path, bool singleFile /* = t
           }
           else
           {
-            std::string nfoFile(URIUtils::ReplaceExtension(item.GetTBNFile(), ".nfo"));
+            std::string nfoFile(URIUtils::ReplaceExtension(THUMBS::GetTBNFile(item), ".nfo"));
 
             if (overwrite || !CFile::Exists(nfoFile, false))
             {
