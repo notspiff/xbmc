@@ -79,6 +79,31 @@ const auto local_fanart_tests = std::array{
     FanartTest{"videodb://movies/1", "foo-fanart.jpg"},
 };
 
+struct IconTest
+{
+  std::string path;
+  std::string icon;
+  std::string overlay{};
+  bool isFolder = true;
+  bool valid = true;
+};
+
+class FillInDefaultIconTest : public testing::WithParamInterface<IconTest>, public testing::Test
+{
+};
+
+const auto icon_tests = std::array{
+    IconTest{"pvr://guide", "", "", false, false},
+    IconTest{"/home/user/test.pvr", "DefaultTVShows.png"},
+    IconTest{"/home/user/test.zip", "DefaultFile.png"},
+    IconTest{"/home/user/test.mp3", "DefaultAudio.png"},
+    IconTest{"/home/user/test.avi", "DefaultVideo.png"},
+    IconTest{"/home/user/test.jpg", "DefaultPicture.png"},
+    IconTest{"/home/user/test.m3u", "DefaultPlaylist.png"},
+    IconTest{"/home/user/test.xsp", "DefaultPlaylist.png"},
+    IconTest{"/home/user/test.py", "DefaultScript.png"},
+};
+
 struct TbnTest
 {
   std::string path;
@@ -120,6 +145,20 @@ TEST(TestThumbUtils, GetTbnStack)
   EXPECT_EQ(THUMBS::GetTBNFile(item), path / "foo-cd1.tbn");
   std::filesystem::remove(path / "foo-cd1.tbn");
 }
+
+TEST_P(FillInDefaultIconTest, FillInDefaultIcon)
+{
+  CFileItem item(GetParam().path, false);
+  if (!GetParam().valid)
+    item.SetArt("icon", "InvalidImage.png");
+  THUMBS::FillInDefaultIcon(item);
+  EXPECT_EQ(item.GetArt("icon"), GetParam().valid ? GetParam().icon : "InvalidImage.png");
+  EXPECT_EQ(item.GetOverlayImage(), GetParam().overlay);
+}
+
+INSTANTIATE_TEST_SUITE_P(TestThumbUtils,
+                         FillInDefaultIconTest,
+                         testing::ValuesIn(icon_tests));
 
 TEST_P(GetLocalFanartTest, GetLocalFanart)
 {

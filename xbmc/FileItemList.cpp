@@ -27,6 +27,7 @@
 #include "utils/FileExtensionProvider.h"
 #include "utils/Random.h"
 #include "utils/RegExp.h"
+#include "utils/ThumbUtils.h"
 #include "utils/URIUtils.h"
 #include "utils/log.h"
 #include "video/VideoFileItemClassify.h"
@@ -545,7 +546,7 @@ void CFileItemList::FillInDefaultIcons()
   for (int i = 0; i < (int)m_items.size(); ++i)
   {
     CFileItemPtr pItem = m_items[i];
-    pItem->FillInDefaultIcon();
+    THUMBS::FillInDefaultIcon(*pItem);
   }
 }
 
